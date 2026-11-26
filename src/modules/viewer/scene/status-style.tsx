@@ -41,7 +41,9 @@ export function HatchPattern({ id, size = 10 }: { id: string; size?: number }) {
 export const ACTIVE_FILL_OPACITY = 0.32;
 
 /** Inline style of a hotspot polygon; `color` may be a CSS colour or var(). */
-export function hotspotStyle(color: string, active: boolean): CSSProperties {
+export function hotspotStyle(color: string, active: boolean, emphasis?: "match" | "dim"): CSSProperties {
+  if (!active && emphasis === "match") return { fill: color, fillOpacity: 0.35, stroke: color, strokeOpacity: 0.9, filter: "none" };
+  if (!active && emphasis === "dim") return { fill: "#000000", fillOpacity: 0.55, stroke: "#000000", strokeOpacity: 0, filter: "none" };
   return {
     fill: color,
     fillOpacity: active ? ACTIVE_FILL_OPACITY : 0,

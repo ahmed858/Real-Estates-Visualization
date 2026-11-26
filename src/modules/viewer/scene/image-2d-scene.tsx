@@ -15,7 +15,25 @@ import { HatchPattern, STATUS_STYLE, hotspotStyle } from "./status-style";
 
 const pointsAttr = (h: Hotspot) => h.points.map(([x, y]) => `${x},${y}`).join(" ");
 
-export function Image2DScene({ scene, imageUrl, unitStatusOf, hotspotLabel, onSelect, onHover }: SceneRendererProps) {
+/** A small pill at the centre of the hotspot's bounding box, sized in image pixels relative to the image. */
+function Badge({ hotspot, text }: { hotspot: Hotspot; text: string }) {
+  const xs = hotspot.points.map(([x]) => x);
+  const ys = hotspot.points.map(([, y]) => y);
+  const cx = (Math.min(...xs) + Math.max(...xs)) / 2;
+  const cy = (Math.min(...ys) + Math.max(...ys)) / 2;
+  const h = Math.max(14, Math.min(48, (Math.max(...ys) - Math.min(...ys)) * 0.4));
+  const w = h * (0.9 + 0.55 * text.length);
+  return (
+    <g pointerEvents="none" aria-hidden="true" data-badge={hotspot.id}>
+      <rect x={cx - w / 2} y={cy - h / 2} width={w} height={h} rx={h / 2} fill="#09090b" fillOpacity={0.85} stroke="#ffffff" strokeOpacity={0.6} vectorEffect="non-scaling-stroke" />
+      <text x={cx} y={cy} dominantBaseline="central" textAnchor="middle" fontSize={h * 0.6} fontWeight={600} fill="#ffffff">
+        {text}
+      </text>
+    </g>
+  );
+}
+
+export function Image2DScene({ scene, imageUrl, unitStatusOf, hotspotLabel, onSelect, onHover, hotspotEmphasis, hotspotBadge }: SceneRendererProps) {
   const { width, height } = scene.image;
   const hatchId = `hatch-${useId().replace(/:/g, "")}`;
   const [activeId, setActiveId] = useState<string | null>(null);
@@ -48,6 +66,8 @@ export function Image2DScene({ scene, imageUrl, unitStatusOf, hotspotLabel, onSe
           const status = isScene ? undefined : unitStatusOf(h);
           const style = STATUS_STYLE[status ?? "scene"];
           const active = activeId === h.id;
+          const emphasis = hotspotEmphasis?.(h);
+          const badge = hotspotBadge?.(h);
           // Scene hotspots glow in the project's brand colour, with the neutral colour as fallback.
           const color = isScene ? `var(--brand-primary, ${style.color})` : style.color;
           return (
@@ -56,6 +76,7 @@ export function Image2DScene({ scene, imageUrl, unitStatusOf, hotspotLabel, onSe
                 data-hotspot={h.id}
                 data-status={status ?? (isScene ? "scene" : "unknown")}
                 data-active={active ? "true" : undefined}
+                data-emphasis={emphasis}
                 points={pointsAttr(h)}
                 fill={style.color}
                 strokeWidth={1.5}
@@ -66,7 +87,7 @@ export function Image2DScene({ scene, imageUrl, unitStatusOf, hotspotLabel, onSe
                 role="button"
                 tabIndex={0}
                 aria-label={hotspotLabel(h)}
-                style={hotspotStyle(color, active)}
+                style={hotspotStyle(color, active, emphasis)}
                 className="cursor-pointer outline-none transition-[fill-opacity,stroke-opacity,filter] duration-200 ease-out motion-reduce:transition-none"
                 onClick={() => activate(h)}
                 onKeyDown={onKey(h)}
@@ -75,6 +96,7 @@ export function Image2DScene({ scene, imageUrl, unitStatusOf, hotspotLabel, onSe
                 onFocus={() => enter(h)}
                 onBlur={() => leave(h)}
               />
+              {badge !== undefined && <Badge hotspot={h} text={badge} />}
               {style.hatch && active && <polygon points={pointsAttr(h)} fill={`url(#${hatchId})`} pointerEvents="none" aria-hidden="true" data-hatch={h.id} />}
             </g>
           );

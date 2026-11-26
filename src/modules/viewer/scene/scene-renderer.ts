@@ -16,7 +16,16 @@ export interface SceneRendererProps {
   onSelect?: (hotspot: Hotspot) => void;
   /** Called with the hotspot under the pointer or keyboard focus, and with null when it leaves. */
   onHover?: (hotspot: Hotspot | null) => void;
+  /**
+   * While a filter is active: "match" keeps a hotspot visible in its colour,
+   * "dim" darkens it. Undefined (or no callback) means the normal look.
+   */
+  hotspotEmphasis?: (hotspot: Hotspot) => HotspotEmphasis | undefined;
+  /** Short text shown on a hotspot, e.g. how many matching units lie below a scene hotspot. */
+  hotspotBadge?: (hotspot: Hotspot) => string | undefined;
 }
+
+export type HotspotEmphasis = "match" | "dim";
 
 export type SceneRenderer = ComponentType<SceneRendererProps>;
 

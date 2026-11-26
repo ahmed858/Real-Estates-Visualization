@@ -7,6 +7,7 @@ export { buildUnitCode } from "./scene-tree/unit-code";
 export { computeSceneStats, sumStats } from "./units/scene-stats";
 export type { SceneStats } from "./units/scene-stats";
 export { bedroomMixOf, computeBedroomMix } from "./units/bedroom-mix";
+export { rollUpUnits } from "./units/roll-up";
 export type { BedroomCount } from "./units/bedroom-mix";
 export { filterUnits, matchesFilter } from "./units/filter-units";
 export type { FilterableUnit, RangeFilter, UnitFilter } from "./units/filter-units";
