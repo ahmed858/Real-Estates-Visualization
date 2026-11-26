@@ -79,7 +79,7 @@ If a real client arrives early, Phase 6 may move ahead of Phase 4.
 - Verify: `npm test`, `npm run check`.
 
 ### U-103 Scene tree model
-- Phase 1 · Module `domain` · Depends on: U-101 · Gated: no · Status: `todo`
+- Phase 1 · Module `domain` · Depends on: U-101 · Gated: no · Status: `done`
 - Build an in-memory tree from a validated config: find scene by id, children,
   breadcrumbs (path from root), expand typical floors into concrete floors,
   list all unit codes referenced by hotspots.
