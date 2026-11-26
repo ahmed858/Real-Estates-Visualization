@@ -3,21 +3,21 @@
 Ordered work units. The hourly agent takes the **first** unit whose status is
 `todo`, whose dependencies are all `done`, and that has no open `[agent]` PR.
 Only Phases 1 and 2 are broken down; later phases stay as headlines until the
-agent proposes their breakdown in a gated planning unit.
+agent writes their breakdown in a planning unit.
 
 **Statuses** (as they read on `develop`): `todo` · `done` · `blocked` (question
 in `docs/QUESTIONS.md`).
 
 A unit's PR sets its status to `done`, so the unit only reads `done` on
 `develop` once that PR is merged. While the PR is open (a draft means a run is
-working on it; a gated PR waits for the owner), the unit is taken: no other
-run picks it, and units that depend on it wait.
+working on it), the unit is taken: no other run picks it, and units that
+depend on it wait.
 
-**Gated** units change something the rest of the project builds on. Their PR is
-opened **without auto-merge**, and every unit that depends on them waits until
-the owner merges. Non-gated PRs use GitHub auto-merge and merge when CI passes
-(if auto-merge is unavailable, the next run merges them once CI is green). A PR
-that changes `CLAUDE.md`, `.github/` or the module rules is always gated.
+**Every** agent PR merges into `develop` as soon as CI is green (the owner's
+decision, 2026-11-26). **Gated** units change something the rest of the
+project builds on, so their PR adds a "Decisions for the owner" section that
+the owner reviews after the merge. A PR that changes `CLAUDE.md`, `.github/` or
+the module rules is always treated as gated.
 
 Each unit lists: phase, module, dependencies, gated, acceptance criteria and
 verification commands. `npm run check` must pass for every unit.
@@ -44,7 +44,7 @@ If a real client arrives early, Phase 6 may move ahead of Phase 4.
 ## Phase 1 · Data shape
 
 ### U-101 Project config schema
-- Phase 1 · Module `schema` · Depends on: none · **Gated: yes** · Status: `todo`
+- Phase 1 · Module `schema` · Depends on: none · **Gated: yes** · Status: `done`
 - Define the project config format and its validator (pick a schema library,
   e.g. Zod, and justify it).
   - `project`: slug, name (ar/en), default locale, currency, contact
@@ -96,7 +96,7 @@ If a real client arrives early, Phase 6 may move ahead of Phase 4.
 - Verify: `npm test`.
 
 ### U-105 UnitSource interface and .xlsx reader
-- Phase 1 · Module `data-sources` · Depends on: U-102 · Gated: no · Status: `todo`
+- Phase 1 · Module `data-sources` · Depends on: U-102 · Gated: no · Status: `done`
 - `UnitSource` interface (Adapter) with `load(): Promise<UnitRow[]>`.
   `XlsxFileSource` reads the first sheet of a local `.xlsx` and returns rows
   validated by the U-102 schema. Choose a maintained xlsx library and justify it.
