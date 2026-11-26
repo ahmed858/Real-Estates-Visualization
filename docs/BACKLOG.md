@@ -31,7 +31,7 @@ verification commands. `npm run check` must pass for every unit.
 | 2 | Demo villa | Generator for a 3-storey villa with courtyard and its units sheet. |
 | 3 | Viewer | Image + coloured shapes, hover cards, side panel, villa → floor → unit navigation. **done** |
 | 4 | Sales tools | Units table with filters, WhatsApp button with unit code, Arabic/English, mobile. **done** |
-| 5 | Live status | Site re-reads the sheet continuously (Google Sheets for clients). |
+| 5 | Live status | Site re-reads the sheet continuously (Google Sheets for clients). **done** (U-503 waits for Q-2) |
 | 6 | Drawing tool | Polygon editor for real client images. |
 | 7 | Multi-client | A link per project, logo and colours per client. |
 | 8 | Extras | Each on its own: gallery, compare, share, lead form to client CRM, location map. |
@@ -542,6 +542,98 @@ Google Sheet and the site shows the new statuses shortly after.
 - Verify: `npm test`.
 
 ### U-507 Plan Phase 6 (drawing tool)
-- Phase 5 · Docs · Depends on: U-505, U-506 · **Gated: yes** · Status: `todo`
+- Phase 5 · Docs · Depends on: U-505, U-506 · **Gated: yes** · Status: `done`
 - Break Phase 6 into units in this file, using what Phase 5 produced.
+- Verify: `npm run check`.
+
+---
+
+## Phase 6 · Drawing tool
+
+Written by U-507 from what Phase 5 produced: a project is `project.json`
+(scene tree with polygon hotspots in image pixels, validated by
+`parseProjectConfig`) plus images in `projects/<slug>/` and a units source
+(`units.xlsx` or a Google Sheet) read through `createUnitSource`; the viewer
+draws scenes with the `Image2DScene` Strategy and already zooms and pans
+(`viewer/scene/zoom.ts`); `npm run validate` checks a whole project. Today the
+owner writes hotspot points by hand. Phase 6 adds an internal editor in the
+empty `editor` module to draw them on a real client image and export a valid
+`project.json`, which the owner commits like any other project file. The
+editor never writes to the server's disk and is off unless enabled.
+
+### U-601 Editor route behind a switch
+- Phase 6 · App + `editor` · Depends on: U-507 · **Gated: yes** · Status: `todo`
+- `/editor/<slug>` loads the project through `ProjectSource` and shows its
+  scene list and the selected scene image (read-only for now). It answers 404
+  unless `EDITOR_ENABLED=true`, documented in `.env.example`; Vercel leaves it
+  unset, so the owner runs the editor locally with `npm run dev`.
+- Acceptance: tests for the switch (enabled, disabled, unknown slug) and the
+  scene list; the viewer routes are unchanged.
+- Verify: `npm run check`.
+
+### U-602 Polygon geometry helpers
+- Phase 6 · `domain` · Depends on: U-507 · Gated: no · Status: `todo`
+- Pure functions the editor needs: clamp a point to the image, distance to
+  the nearest vertex and edge, whether a click closes the polygon (near the
+  first point), polygon area and self-intersection check, rounding points to
+  whole pixels.
+- Acceptance: unit tests for each, including degenerate polygons.
+- Verify: `npm test`.
+
+### U-603 Editor state with undo and redo
+- Phase 6 · `editor` · Depends on: U-602 · **Gated: yes** · Status: `todo`
+- A pure reducer over an editable copy of the project config, with commands
+  (Command pattern) for: start a hotspot, add a point, move a vertex, delete
+  a vertex, close the polygon, delete a hotspot, set a hotspot target. Undo and
+  redo replay the command history. No React in this unit.
+- Acceptance: reducer tests for every command, undo/redo, and that a closed
+  polygon has at least 3 points.
+- Verify: `npm test`.
+
+### U-604 Drawing canvas
+- Phase 6 · `editor` · Depends on: U-601, U-603 · Gated: no · Status: `todo`
+- An SVG layer over the scene image: click to add points, click the first
+  point to close, drag a vertex to move it, select a hotspot to delete it,
+  Escape cancels the shape in progress, Ctrl/Cmd+Z and Shift+Ctrl/Cmd+Z undo
+  and redo. Points are stored in image pixels whatever the zoom.
+- Acceptance: component tests (testing-library) for drawing, closing,
+  dragging, deleting and undo; existing hotspots render like the viewer.
+- Verify: `npm run check`.
+
+### U-605 Hotspot target picker
+- Phase 6 · `editor` · Depends on: U-604 · Gated: no · Status: `todo`
+- For the selected hotspot, choose its target: a child scene, a unit code
+  from the units source (listing units not yet drawn first), or a unit suffix
+  on a typical floor. The hotspot id is suggested from the target.
+- Acceptance: tests for each target form and for the "not yet drawn" list.
+- Verify: `npm test`.
+
+### U-606 Add a scene from a project image
+- Phase 6 · `editor` · Depends on: U-605 · Gated: no · Status: `todo`
+- Add a child scene (kind, Arabic and English title, typical floor range)
+  from an image already in `projects/<slug>/images/`; the editor reads the
+  image width and height itself, so the owner never types them.
+- Acceptance: tests for the scene form and image size reading (PNG, JPEG,
+  SVG); the new scene passes `parseProjectConfig`.
+- Verify: `npm run check`.
+
+### U-607 Live validation and export
+- Phase 6 · `editor` · Depends on: U-606 · **Gated: yes** · Status: `todo`
+- The editor shows the same problems `npm run validate` finds, as the owner
+  edits (each linked to its scene and hotspot), and a "Download project.json"
+  button that is enabled only when there are no errors. The file is
+  formatted like the existing projects so diffs stay small.
+- Acceptance: round-trip test (load the demo projects, export without edits,
+  output equals the committed `project.json`); tests for blocked export.
+- Verify: `npm run check`.
+
+### U-608 Owner guide for the editor
+- Phase 6 · Docs · Depends on: U-607 · Gated: no · Status: `todo`
+- `docs/editor.md`: from a client's images to a committed project with the
+  editor (enable it, draw, pick targets, validate, download, commit).
+- Verify: `npm test`.
+
+### U-609 Plan Phase 7 (multi-client)
+- Phase 6 · Docs · Depends on: U-608 · **Gated: yes** · Status: `todo`
+- Break Phase 7 into units in this file, using what Phase 6 produced.
 - Verify: `npm run check`.
