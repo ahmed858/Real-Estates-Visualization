@@ -32,7 +32,7 @@ verification commands. `npm run check` must pass for every unit.
 | 3 | Viewer | Image + coloured shapes, hover cards, side panel, villa → floor → unit navigation. **done** |
 | 4 | Sales tools | Units table with filters, WhatsApp button with unit code, Arabic/English, mobile. **done** |
 | 5 | Live status | Site re-reads the sheet continuously (Google Sheets for clients). **done** (U-503 waits for Q-2) |
-| 6 | Drawing tool | Polygon editor for real client images. |
+| 6 | Drawing tool | Polygon editor for real client images. **done** |
 | 7 | Multi-client | A link per project, logo and colours per client. |
 | 8 | Extras | Each on its own: gallery, compare, share, lead form to client CRM, location map. |
 | later | Premium | 360° rotation and 3D model views. |
@@ -656,6 +656,93 @@ editor never writes to the server's disk and is off unless enabled.
 - Verify: `npm test`.
 
 ### U-609 Plan Phase 7 (multi-client)
-- Phase 6 · Docs · Depends on: U-608 · **Gated: yes** · Status: `todo`
+- Phase 6 · Docs · Depends on: U-608 · **Gated: yes** · Status: `done`
 - Break Phase 7 into units in this file, using what Phase 6 produced.
+- Verify: `npm run check`.
+
+---
+
+## Phase 7 · Multi-client
+
+Written by U-609 from what Phase 6 produced. Much of "a link per project,
+logo and colours per client" already works: every folder in `projects/` is
+served at `/p/<slug>` through `FileProjectSource`, and the viewer and units
+table already use `branding.logo`, `primaryColor` and `accentColor`. The
+owner can now draw a project with the editor (`docs/editor.md`), but still
+writes the first `project.json` by hand, every project folder is public as
+soon as it is committed, the home page only links the demo, pages share one
+title and icon, and nothing checks that a client's colours stay readable.
+Phase 7 closes those gaps so the owner can onboard and hand over a client
+project without touching code.
+
+### U-701 New project command
+- Phase 7 · `tools` · Depends on: U-609 · Gated: no · Status: `todo`
+- `npm run new:project -- <slug> <root-image>` creates `projects/<slug>/`
+  with `images/`, a copy of the units template sheet and a minimal
+  `project.json` (project block with placeholders, root scene with the image
+  size read by `readImageSize`), so the owner never types the first file
+  that `docs/editor.md` step 1 asks for. Refuses an existing folder or a
+  slug the schema rejects. Update `docs/editor.md` step 1.
+- Acceptance: tests for the scaffold (files written, config passes
+  `parseProjectConfig` once placeholders are filled, refusals).
+- Verify: `npm run check`.
+
+### U-702 Page title, description and icon per project
+- Phase 7 · App · Depends on: U-609 · Gated: no · Status: `todo`
+- `generateMetadata` for `/p/<slug>`, its scenes and `/p/<slug>/units`:
+  title from the project and scene name in the page's locale, a short
+  description, the client logo as icon and the root image as the Open Graph
+  image, so a link shared on WhatsApp shows the client's project, not
+  "Unit Explorer". Read the metadata guide in `node_modules/next/dist/docs/`
+  first.
+- Acceptance: tests for the metadata builder (both locales, scene pages,
+  unknown slug).
+- Verify: `npm run check`.
+
+### U-703 Readable brand colours
+- Phase 7 · `domain` + `viewer` + `tools` · Depends on: U-609 · Gated: no · Status: `todo`
+- A pure contrast helper (WCAG relative luminance) picks black or white text
+  on `primaryColor` and `accentColor`, and the viewer uses it wherever text
+  sits on a brand colour. `npm run validate` (and the editor's Problems
+  panel, through the shared domain checks) warns when a brand colour is too
+  close to the dark stage or to a status colour.
+- Acceptance: unit tests for the contrast maths and the new warnings.
+- Verify: `npm run check`.
+
+### U-704 Published and hidden projects
+- Phase 7 · `schema` + `data-sources` + App · Depends on: U-609 · **Gated: yes** · Status: `todo`
+- An optional `project.published` flag (default `true`, so existing projects
+  keep working). A project with `published: false` answers 404 on `/p/...`
+  unless `PREVIEW_PROJECTS=true` (documented in `.env.example`), so the
+  owner can commit a client's work in progress and share it only from a
+  preview deployment. The editor ignores the flag.
+- Acceptance: schema tests; page-state tests for published, hidden, hidden
+  with preview on.
+- Verify: `npm run check`.
+
+### U-705 Project directory on the home page
+- Phase 7 · App · Depends on: U-704 · Gated: no · Status: `todo`
+- `ProjectSource` gains a `list()` of published slugs; `/` shows a card per
+  published project (logo, name in its default locale, link) instead of the
+  single demo link. Hidden projects never appear.
+- Acceptance: tests for `list()` (valid, invalid and hidden projects) and
+  the home page cards.
+- Verify: `npm run check`.
+
+### U-706 A client's own domain opens their project
+- Phase 7 · App · Depends on: U-705 · **Gated: yes** · Status: `todo`
+- An optional `PROJECT_DOMAINS` env var (`host=slug,host=slug`, documented in
+  `.env.example`) maps a hostname to a project: on that host `/` shows the
+  project and `/units` its table, and other projects are not reachable.
+  In this Next.js version request rewriting lives in `proxy.ts` (read
+  `node_modules/next/dist/docs/01-app/03-api-reference/03-file-conventions/proxy.md`).
+  The domain itself is set up by the owner in Vercel; the agent never
+  touches deployments.
+- Acceptance: tests for parsing the env var (bad entries ignored with a
+  logged warning) and for the host-to-path mapping.
+- Verify: `npm run check`.
+
+### U-707 Plan Phase 8 (extras)
+- Phase 7 · Docs · Depends on: U-706 · **Gated: yes** · Status: `todo`
+- Break Phase 8 into units in this file, using what Phase 7 produced.
 - Verify: `npm run check`.
