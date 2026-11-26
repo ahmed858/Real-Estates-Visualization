@@ -346,16 +346,15 @@ The viewer is desktop-only and uses the project's default locale.
   the floor card content and hidden-until-hover hotspots; RTL and LTR.
 - Verify: `npm run check`, Vercel preview.
 
-### U-410 Photo facade for the demo villa
-- Phase 4 · `projects/demo-villa` · Depends on: U-409 · Gated: no · Status: `blocked`
-- Replace the SVG facade with a real building photo under a free
-  commercial-use licence (CC0, Pexels or Unsplash licence), saved as
-  `projects/demo-villa/images/facade.jpg`, with its source URL and licence in
-  `projects/demo-villa/README.md`. Draw one floor polygon per storey on it and
-  keep the floor plans. Never use images from reference sites.
-- Blocked until the owner supplies the photo (see `docs/QUESTIONS.md`); a
-  Claude session in the owner's project thread may do it directly.
-- Verify: `npm run validate -- demo-villa`, `npm run check`.
+### U-410 Photo demo project
+- Phase 4 · `projects/demo-residence` · Depends on: none · Gated: no · Status: `done`
+- A second demo, `projects/demo-residence`, built on a real building photo the
+  owner picked from Pexels (free commercial licence, credited in its README):
+  facade photo → 6 floors → 4 apartments per floor, 24 units. The landing page
+  opens it. `demo-villa` stays as the generated test project. Never use
+  images from reference sites.
+- Done directly in the owner's project thread, ahead of U-409.
+- Verify: `npm run validate -- demo-residence`, `npm run check`.
 
 ### U-402 WhatsApp enquiry button
 - Phase 4 · Module `viewer` · Depends on: U-310 · Gated: no · Status: `todo`
