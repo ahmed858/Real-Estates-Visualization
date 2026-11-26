@@ -360,7 +360,7 @@ The viewer is desktop-only and uses the project's default locale.
 - Verify: `npm run validate -- demo-residence`, `npm run check`.
 
 ### U-402 WhatsApp enquiry button
-- Phase 4 · Module `viewer` · Depends on: U-310 · Gated: no · Status: `todo`
+- Phase 4 · Module `viewer` · Depends on: U-310 · Gated: no · Status: `done`
 - In the unit details panel, a button that opens
   `https://wa.me/<number>?text=<message>` with `project.contact.whatsapp`
   (digits only) and a prefilled message in the current locale that names the

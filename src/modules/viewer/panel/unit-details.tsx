@@ -1,6 +1,8 @@
-// Side panel content for a selected unit: its facts, plan image and notes.
+// Side panel content for a selected unit: its facts, a WhatsApp enquiry
+// button, plan image and notes.
 import { formatPrice, type UnitSummary } from "../scene/hover-card";
 import type { ViewerLocale, ViewerText } from "../layout/viewer-text";
+import { WhatsAppButton } from "../contact/whatsapp-button";
 
 export interface UnitDetailsProps {
   unit: UnitSummary;
@@ -8,9 +10,11 @@ export interface UnitDetailsProps {
   locale: ViewerLocale;
   currency: string;
   onClose: () => void;
+  /** WhatsApp link for an enquiry about this unit; omitted hides the button. */
+  enquiryHref?: string;
 }
 
-export function UnitDetails({ unit, text, locale, currency, onClose }: UnitDetailsProps) {
+export function UnitDetails({ unit, text, locale, currency, onClose, enquiryHref }: UnitDetailsProps) {
   const num = new Intl.NumberFormat(locale === "ar" ? "ar-EG" : "en-US");
   const rows: [string, string][] = [
     [text.card.status, text.status[unit.status]],
@@ -38,6 +42,7 @@ export function UnitDetails({ unit, text, locale, currency, onClose }: UnitDetai
           </div>
         ))}
       </dl>
+      {enquiryHref && <WhatsAppButton href={enquiryHref} label={text.contact.unitButton} />}
       {unit.planImageUrl && (
         // eslint-disable-next-line @next/next/no-img-element
         <img src={unit.planImageUrl} alt={text.panel.plan(unit.code)} className="w-full rounded border border-white/10 bg-white" />
