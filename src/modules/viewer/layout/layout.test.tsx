@@ -45,6 +45,35 @@ describe("ViewerLayout", () => {
     expect(within(screen.getByTestId("viewer-panel")).getByText("panel")).toBeTruthy();
   });
 
+  it.each(["ar", "en"] as const)("puts the header and nav in the translucent bar over a dark, edge-to-edge stage (%s)", (locale) => {
+    const { container } = render(
+      <ViewerLayout
+        locale={locale}
+        brand={{ primary: "#1a6b4f", accent: "#c89b3c" }}
+        header={<header>head</header>}
+        nav={<nav>crumbs</nav>}
+        scene={<p>scene</p>}
+        legend={<p>legend</p>}
+        panel={<p>panel</p>}
+      />,
+    );
+    const root = container.firstElementChild as HTMLElement;
+    expect(root.getAttribute("dir")).toBe(locale === "ar" ? "rtl" : "ltr");
+    expect(root.className).toContain("bg-zinc-950");
+    expect(root.style.getPropertyValue("--stage-height")).toBe("100dvh");
+    const stage = screen.getByTestId("viewer-stage");
+    expect(stage.className).not.toMatch(/\bp-\d/);
+    expect(within(stage).getByText("scene")).toBeTruthy();
+    const bar = screen.getByTestId("viewer-topbar");
+    expect(bar.parentElement).toBe(stage);
+    expect(bar.className).toMatch(/absolute/);
+    expect(bar.className).toMatch(/backdrop-blur/);
+    expect(within(bar).getByText("head")).toBeTruthy();
+    expect(within(bar).getByText("crumbs")).toBeTruthy();
+    expect(within(bar).queryByText("scene")).toBeNull();
+    expect(within(screen.getByTestId("viewer-panel")).getByText("panel")).toBeTruthy();
+  });
+
   it("is left-to-right for English", () => {
     const { container } = render(<ViewerLayout locale="en" brand={{ primary: "#000000", accent: "#ffffff" }} header={null} scene={null} legend={null} panel={null} />);
     expect((container.firstElementChild as HTMLElement).getAttribute("dir")).toBe("ltr");

@@ -68,12 +68,20 @@ function cardContent(h: Hotspot, props: SceneStageProps, codeOf: (h: Hotspot) =>
   return unit ? { kind: "unit", unit } : null;
 }
 
-/** Top-centre of the hotspot's bounding box, as percentages of the image size. */
+/** Hotspots whose top lies above this share of the image height get their card below the anchor. */
+const FLIP_BELOW = 0.35;
+
+/**
+ * Top-centre of the hotspot's bounding box, as percentages of the image size.
+ * Near the top of the image the card hangs below that point instead of above
+ * it, so the stage edge does not cut it off and the top bar does not hide it.
+ */
 function anchorOf(h: Hotspot, scene: Scene) {
   const xs = h.points.map(([x]) => x);
   const ys = h.points.map(([, y]) => y);
   const cx = (Math.min(...xs) + Math.max(...xs)) / 2;
-  return { left: `${(cx / scene.image.width) * 100}%`, top: `${(Math.min(...ys) / scene.image.height) * 100}%` };
+  const top = Math.min(...ys) / scene.image.height;
+  return { left: `${(cx / scene.image.width) * 100}%`, top: `${top * 100}%`, below: top < FLIP_BELOW };
 }
 
 export function SceneStage(props: SceneStageProps) {
@@ -87,8 +95,12 @@ export function SceneStage(props: SceneStageProps) {
   const floorCodes = floors.find((f) => f.floor === selectedFloor);
   const codeOf = (h: Hotspot) => hotspotUnitCode(h, floorCodes);
   const content = hovered ? cardContent(hovered, props, codeOf) : null;
+  const anchor = hovered ? anchorOf(hovered, scene) : null;
+  // The scene fits the stage: as wide as the stage allows, and never taller
+  // than --stage-height (set by the viewer layout; the viewport by default).
+  const ratio = scene.image.width / scene.image.height;
   return (
-    <div className="relative">
+    <div className="relative mx-auto w-full" style={{ maxWidth: `calc(var(--stage-height, 100dvh) * ${ratio})` }} data-testid="scene-stage">
       <SceneView
         scene={scene}
         imageUrl={imageUrl}
@@ -109,8 +121,13 @@ export function SceneStage(props: SceneStageProps) {
           if (code && units[code]) selectUnit(code);
         }}
       />
-      {hovered && content && (
-        <div className="pointer-events-none absolute z-10 -translate-x-1/2 -translate-y-full pb-2" style={anchorOf(hovered, scene)} data-testid="hover-card">
+      {anchor && content && (
+        <div
+          className={`pointer-events-none absolute z-30 -translate-x-1/2 ${anchor.below ? "translate-y-0 pt-12" : "-translate-y-full pb-2"}`}
+          style={{ left: anchor.left, top: anchor.top }}
+          data-testid="hover-card"
+          data-placement={anchor.below ? "below" : "above"}
+        >
           <HoverCard content={content} text={text} locale={locale} currency={currency} />
         </div>
       )}

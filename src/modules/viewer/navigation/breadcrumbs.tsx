@@ -28,10 +28,10 @@ export function Breadcrumbs({ items, label }: BreadcrumbsProps) {
                 </span>
               ) : (
                 <>
-                  <Link href={item.href} className="text-[var(--brand-primary)] underline-offset-2 hover:underline">
+                  <Link href={item.href} className="text-zinc-300 underline-offset-2 hover:text-white hover:underline">
                     {item.title}
                   </Link>
-                  <span aria-hidden="true" className="text-zinc-400">
+                  <span aria-hidden="true" className="text-zinc-500">
                     /
                   </span>
                 </>

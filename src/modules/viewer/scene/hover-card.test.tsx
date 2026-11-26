@@ -135,6 +135,7 @@ describe("SceneStage hover card", () => {
     const anchor = screen.getByTestId("hover-card");
     expect(anchor.style.left).toBe("50%");
     expect(anchor.style.top).toBe("50%");
+    expect(anchor.getAttribute("data-placement")).toBe("above");
     fireEvent.blur(hotspot);
     expect(screen.queryByRole("tooltip")).toBeNull();
   });
@@ -144,6 +145,19 @@ describe("SceneStage hover card", () => {
     fireEvent.mouseEnter(screen.getByRole("button", { name: "Ground floor" }));
     expect(screen.getByTestId("card-total").textContent).toBe("8 units");
     expect(screen.getByTestId("bedroom-mix")).toBeTruthy();
+  });
+
+  it("hangs the card below the anchor for a hotspot near the top of the image", () => {
+    render(<SceneStage {...props()} />);
+    fireEvent.mouseEnter(screen.getByRole("button", { name: "Unit G-01, Available" }));
+    const anchor = screen.getByTestId("hover-card");
+    expect(anchor.style.top).toBe("0%");
+    expect(anchor.getAttribute("data-placement")).toBe("below");
+  });
+
+  it("fits the scene to the stage height", () => {
+    render(<SceneStage {...props()} />);
+    expect(screen.getByTestId("scene-stage").style.maxWidth).toBe("calc(var(--stage-height, 100dvh) * 1.3333333333333333)");
   });
 
   it("shows no card for a unit missing from the sheet", () => {
