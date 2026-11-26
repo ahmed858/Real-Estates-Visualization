@@ -251,7 +251,7 @@ client components for interaction; project data is read on the server.
 - Verify: `npm run check`, open the Vercel preview at `/p/demo-villa`.
 
 ### U-306 Status colours and legend
-- Phase 3 · Module `viewer` · Depends on: U-304 · Gated: no · Status: `todo`
+- Phase 3 · Module `viewer` · Depends on: U-304 · Gated: no · Status: `done`
 - One palette for available / reserved / sold, readable on light images,
   with a legend that shows counts (from the U-104 stats) and does not rely on
   colour alone (labels and patterns or outlines).
