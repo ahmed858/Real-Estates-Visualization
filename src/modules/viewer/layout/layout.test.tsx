@@ -87,7 +87,7 @@ describe("SceneStage", () => {
       <SceneStage
         scene={facade}
         imageUrl="/files/demo-villa/images/facade.svg"
-        units={{ "G-01": { code: "G-01", type: "Apartment", bedrooms: 2, areaM2: 120, price: 1000000, status: "reserved" } }}
+        units={{ "G-01": { code: "G-01", type: "Apartment", floor: 0, bedrooms: 2, bathrooms: 1, areaM2: 120, price: 1000000, status: "reserved" } }}
         sceneTitles={{ facade: "الواجهة", ground: "الدور الأرضي" }}
         sceneCounts={{}}
         currency="EGP"

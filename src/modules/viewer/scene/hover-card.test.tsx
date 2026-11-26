@@ -4,7 +4,7 @@ import type { Scene } from "@/modules/schema";
 import { HoverCard, SceneStage, formatPrice, viewerText, type SceneStageProps } from "../index";
 
 const en = viewerText("en");
-const unit = { code: "G-01", type: "Apartment", bedrooms: 3, areaM2: 145, price: 2500000, status: "available" } as const;
+const unit = { code: "G-01", type: "Apartment", floor: 0, bedrooms: 3, bathrooms: 2, areaM2: 145, price: 2500000, status: "available" } as const;
 
 const scene: Scene = {
   id: "facade",

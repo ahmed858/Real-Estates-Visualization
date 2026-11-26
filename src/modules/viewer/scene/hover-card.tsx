@@ -3,14 +3,19 @@
 import { UNIT_STATUSES, type UnitStatus } from "@/modules/schema";
 import type { ViewerLocale, ViewerText } from "../layout/viewer-text";
 
-/** The unit facts the card needs (a subset of a sheet row, safe to send to the browser). */
+/** Unit facts shown by the hover card and the side panel (a sheet row without its bookkeeping). */
 export interface UnitSummary {
   code: string;
   type: string;
+  floor: number;
   bedrooms: number;
+  bathrooms: number;
   areaM2: number;
   price: number;
   status: UnitStatus;
+  /** URL of the unit's plan image, when the sheet names one. */
+  planImageUrl?: string;
+  notes?: string;
 }
 
 export type HoverCardContent =
