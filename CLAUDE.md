@@ -61,6 +61,8 @@ npm run lint      # eslint + module boundary check
 npm run typecheck # route types + tsc
 npm test          # vitest
 npm run build     # production build
+npm run generate:demo  # regenerate projects/demo-villa
+npm run check:demo     # regenerate, validate, fail if projects/demo-villa changed
 npm run check     # all of the above, what CI runs
 ```
 

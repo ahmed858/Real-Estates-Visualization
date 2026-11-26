@@ -11,7 +11,8 @@
     "test": "vitest run",
     "validate": "tsx scripts/validate.ts",
     "generate:demo": "tsx scripts/generate-demo.ts",
-    "check": "npm run lint && npm run typecheck && npm run test && npm run build"
+    "check:demo": "node scripts/check-demo.mjs",
+    "check": "npm run lint && npm run typecheck && npm run test && npm run check:demo && npm run build"
   },
   "dependencies": {
     "next": "16.4.6",
