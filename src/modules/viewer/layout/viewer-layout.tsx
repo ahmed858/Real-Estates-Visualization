@@ -1,7 +1,9 @@
 // Page frame of the viewer on a dark page: the scene fills the stage edge to
 // edge, the header and navigation sit over its top on a translucent bar, the
 // status legend floats at its bottom and the side panel is on the inline-end
-// side. Each area is a slot, so later units replace one piece without
+// side. Below 768px (phone frame) the top bar sticks above the scene instead
+// of covering it, the scene is at most 60% of the screen tall, the legend
+// follows the scene and the side panel becomes a bottom sheet. Each area is a slot, so later units replace one piece without
 // touching the rest.
 import type { CSSProperties, ReactNode } from "react";
 import type { ViewerLocale } from "./viewer-text";
@@ -19,19 +21,30 @@ export interface ViewerLayoutProps {
   panel: ReactNode;
 }
 
+/** Below this width (Tailwind `md`, 768px) the viewer uses the phone frame. */
+export const MOBILE_BREAKPOINT_PX = 768;
+
 export function ViewerLayout({ locale, brand, header, nav, scene, legend, panel }: ViewerLayoutProps) {
-  const style = { "--brand-primary": brand.primary, "--brand-accent": brand.accent, "--stage-height": "100dvh" } as CSSProperties;
+  const style = { "--brand-primary": brand.primary, "--brand-accent": brand.accent } as CSSProperties;
   return (
-    <div lang={locale} dir={viewerText(locale).dir} style={style} className="flex min-h-screen flex-1 flex-row bg-zinc-950 text-zinc-100">
-      <main className="relative flex min-h-[100dvh] min-w-0 flex-1 items-center justify-center overflow-hidden" data-testid="viewer-stage">
-        {scene}
-        <div className="absolute inset-x-0 top-0 z-20 bg-zinc-950/55 backdrop-blur-md" data-testid="viewer-topbar">
+    <div
+      lang={locale}
+      dir={viewerText(locale).dir}
+      style={style}
+      className="flex min-h-screen flex-1 flex-col overflow-x-hidden bg-zinc-950 text-zinc-100 [--stage-height:60dvh] md:flex-row md:[--stage-height:100dvh]"
+    >
+      <main className="relative flex min-w-0 flex-1 flex-col md:min-h-[100dvh] md:items-center md:justify-center md:overflow-hidden" data-testid="viewer-stage">
+        <div className="sticky top-0 z-20 bg-zinc-950/80 backdrop-blur-md md:absolute md:inset-x-0 md:bg-zinc-950/55" data-testid="viewer-topbar">
           {header}
-          {nav && <div className="px-6 pb-3">{nav}</div>}
+          {nav && <div className="px-4 pb-2 md:px-6 md:pb-3">{nav}</div>}
         </div>
-        <div className="absolute bottom-4 start-4 z-20 rounded-full bg-zinc-950/65 px-4 py-2 backdrop-blur-md">{legend}</div>
+        {scene}
+        <div className="z-20 mx-4 my-3 self-start rounded-2xl bg-zinc-950/65 px-4 py-2 backdrop-blur-md md:absolute md:bottom-4 md:start-4 md:m-0 md:rounded-full">{legend}</div>
       </main>
-      <aside className="h-[100dvh] w-80 shrink-0 overflow-y-auto border-s border-white/10 bg-zinc-900 p-4" data-testid="viewer-panel">
+      <aside
+        className="sticky bottom-0 z-30 max-h-[45dvh] w-full shrink-0 overflow-y-auto rounded-t-2xl border-t border-white/10 bg-zinc-900 p-4 shadow-[0_-8px_24px_rgba(0,0,0,0.5)] md:static md:h-[100dvh] md:max-h-none md:w-80 md:rounded-none md:border-s md:border-t-0 md:shadow-none"
+        data-testid="viewer-panel"
+      >
         {panel}
       </aside>
     </div>

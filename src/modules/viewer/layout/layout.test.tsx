@@ -60,7 +60,7 @@ describe("ViewerLayout", () => {
     const root = container.firstElementChild as HTMLElement;
     expect(root.getAttribute("dir")).toBe(locale === "ar" ? "rtl" : "ltr");
     expect(root.className).toContain("bg-zinc-950");
-    expect(root.style.getPropertyValue("--stage-height")).toBe("100dvh");
+    expect(root.className).toContain("md:[--stage-height:100dvh]");
     const stage = screen.getByTestId("viewer-stage");
     expect(stage.className).not.toMatch(/\bp-\d/);
     expect(within(stage).getByText("scene")).toBeTruthy();
@@ -72,6 +72,26 @@ describe("ViewerLayout", () => {
     expect(within(bar).getByText("crumbs")).toBeTruthy();
     expect(within(bar).queryByText("scene")).toBeNull();
     expect(within(screen.getByTestId("viewer-panel")).getByText("panel")).toBeTruthy();
+  });
+
+  it.each(["ar", "en"] as const)("uses the phone frame below the md breakpoint (%s)", (locale) => {
+    const { container } = render(
+      <ViewerLayout locale={locale} brand={{ primary: "#000000", accent: "#ffffff" }} header={<header>head</header>} nav={<nav>crumbs</nav>} scene={<p>scene</p>} legend={<p>legend</p>} panel={<p>panel</p>} />,
+    );
+    const root = container.firstElementChild as HTMLElement;
+    const cls = (el: HTMLElement) => el.className.split(/\s+/);
+    // Stacked and never wider than the screen; the scene at most 60% of the screen tall.
+    expect(cls(root)).toEqual(expect.arrayContaining(["flex-col", "md:flex-row", "overflow-x-hidden", "[--stage-height:60dvh]"]));
+    // The top bar sticks above the scene on phones and covers it from md up.
+    const bar = screen.getByTestId("viewer-topbar");
+    expect(cls(bar)).toEqual(expect.arrayContaining(["sticky", "top-0", "md:absolute"]));
+    // The panel is a bottom sheet on phones and the side column from md up.
+    const panel = screen.getByTestId("viewer-panel");
+    expect(cls(panel)).toEqual(expect.arrayContaining(["sticky", "bottom-0", "rounded-t-2xl", "max-h-[45dvh]", "md:static", "md:w-80"]));
+    // Order in the page on phones: bar, scene, legend; then the sheet.
+    const stage = screen.getByTestId("viewer-stage");
+    expect([...stage.children].map((c) => c.textContent)).toEqual(["headcrumbs", "scene", "legend"]);
+    expect(stage.nextElementSibling).toBe(panel);
   });
 
   it("is left-to-right for English", () => {
