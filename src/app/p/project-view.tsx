@@ -5,7 +5,7 @@ import { join } from "node:path";
 import { notFound } from "next/navigation";
 import { FileProjectSource, ProjectSourceError, type LoadedProject } from "@/modules/data-sources";
 import { computeSceneStats, createSceneTree } from "@/modules/domain";
-import { Breadcrumbs, FloorPicker, ProjectHeader, SceneStage, type UnitSummary, SidePanel, StatusLegend, ViewerLayout, ViewerMessage, viewerText } from "@/modules/viewer";
+import { Breadcrumbs, FloorPicker, LANG_PARAM, LocaleSwitch, ProjectHeader, resolveLocale, withLocale, SceneStage, type UnitSummary, SidePanel, StatusLegend, ViewerLayout, ViewerMessage, viewerText } from "@/modules/viewer";
 
 const projects = new FileProjectSource(join(process.cwd(), "projects"));
 
@@ -19,8 +19,14 @@ export interface ProjectViewParams {
   sceneId?: string;
 }
 
-export async function ProjectView({ params }: { params: Promise<ProjectViewParams> }) {
+export interface ProjectViewProps {
+  params: Promise<ProjectViewParams>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}
+
+export async function ProjectView({ params, searchParams }: ProjectViewProps) {
   const { slug, sceneId } = await params;
+  const query = await searchParams;
   let project: LoadedProject;
   try {
     project = await projects.load(slug);
@@ -31,7 +37,8 @@ export async function ProjectView({ params }: { params: Promise<ProjectViewParam
   }
 
   const { config, units } = project;
-  const locale = config.project.defaultLocale;
+  const defaultLocale = config.project.defaultLocale;
+  const locale = resolveLocale(query[LANG_PARAM], defaultLocale);
   const text = viewerText(locale);
   const tree = createSceneTree(config);
   if (sceneId !== undefined && !tree.has(sceneId)) notFound();
@@ -54,7 +61,7 @@ export async function ProjectView({ params }: { params: Promise<ProjectViewParam
   );
   const sceneCounts = Object.fromEntries([...allStats].map(([id, s]) => [id, s.byStatus]));
   const sceneTitles = Object.fromEntries(tree.scenes.map((s) => [s.id, s.title[locale]]));
-  const sceneHrefs = Object.fromEntries(tree.scenes.map((s) => [s.id, sceneUrl(slug, s.id, tree.root.id)]));
+  const sceneHrefs = Object.fromEntries(tree.scenes.map((s) => [s.id, withLocale(sceneUrl(slug, s.id, tree.root.id), locale, defaultLocale)]));
   const crumbs = tree.breadcrumbs(scene.id).map((s) => ({ id: s.id, title: s.title[locale], href: sceneHrefs[s.id] }));
   const name = config.project.name[locale];
 
@@ -62,7 +69,7 @@ export async function ProjectView({ params }: { params: Promise<ProjectViewParam
     <ViewerLayout
       locale={locale}
       brand={{ primary: config.project.branding.primaryColor, accent: config.project.branding.accentColor }}
-      header={<ProjectHeader name={name} logoUrl={projectFileUrl(slug, config.project.branding.logo)} text={text} />}
+      header={<ProjectHeader name={name} logoUrl={projectFileUrl(slug, config.project.branding.logo)} text={text} actions={<LocaleSwitch locale={locale} defaultLocale={defaultLocale} />} />}
       nav={
         <div className="flex flex-wrap items-center justify-between gap-4">
           <Breadcrumbs items={crumbs} label={text.breadcrumbs} />
