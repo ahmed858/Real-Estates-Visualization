@@ -1,4 +1,4 @@
-import { cp, mkdtemp, rm, writeFile } from "node:fs/promises";
+import { cp, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -69,5 +69,45 @@ describe("FileProjectSource", () => {
     const error = await errorOf(source.load("demo-villa"));
     expect(error.kind).toBe("invalid-units");
     expect(error.issues).toContain("row 3, area_m2: must be a number");
+  });
+});
+
+describe("FileProjectSource: units source from project.json", () => {
+  async function withUnits(units: unknown, factory?: ConstructorParameters<typeof FileProjectSource>[1]) {
+    const root = await mkdtemp(join(tmpdir(), "projects-"));
+    await cp(join(projectsDir, "demo-villa"), join(root, "demo-villa"), { recursive: true });
+    const file = join(root, "demo-villa", "project.json");
+    const config = JSON.parse(await readFile(file, "utf8")) as Record<string, unknown>;
+    await writeFile(file, JSON.stringify({ ...config, units }));
+    return new FileProjectSource(root, factory);
+  }
+
+  it("uses units.xlsx when the config says xlsx", async () => {
+    const project = await (await withUnits({ source: "xlsx" })).load("demo-villa");
+    expect(project.units).toHaveLength(5);
+  });
+
+  it("passes the configured source to the factory, defaulting to xlsx", async () => {
+    const seen: unknown[] = [];
+    const factory = (units: unknown) => {
+      seen.push(units);
+      return { load: async () => [] };
+    };
+    await new FileProjectSource(projectsDir, factory).load("demo-villa");
+    const sheet = { source: "google-sheet", sheetId: "x".repeat(44) };
+    await (await withUnits(sheet, factory)).load("demo-villa");
+    expect(seen).toEqual([{ source: "xlsx" }, { ...sheet, gid: "0" }]);
+  });
+
+  it("reports a source this build cannot read as invalid units", async () => {
+    const source = await withUnits({ source: "google-sheet", sheetId: "x".repeat(44) });
+    const error = await errorOf(source.load("demo-villa"));
+    expect(error).toMatchObject({ kind: "invalid-units", issues: ['units.source: units source "google-sheet" is not supported yet'] });
+  });
+
+  it("reports a bad units block as an invalid config", async () => {
+    const error = await errorOf((await withUnits({ source: "airtable" })).load("demo-villa"));
+    expect(error.kind).toBe("invalid-config");
+    expect(error.issues[0]).toMatch(/^units\.source: /);
   });
 });

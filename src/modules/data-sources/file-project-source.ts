@@ -1,13 +1,12 @@
 // Adapter: reads a project from projects/<slug>/ on disk: project.json plus its units sheet.
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
-import { formatSheetIssue, parseProjectConfig } from "@/modules/schema";
+import { DEFAULT_UNITS_SOURCE, formatSheetIssue, parseProjectConfig } from "@/modules/schema";
 import { ProjectSourceError, type LoadedProject, type ProjectSource } from "./project-source";
-import { UnitSourceError, type UnitSource } from "./unit-source";
-import { XlsxFileSource } from "./xlsx-file-source";
+import { UnitSourceError } from "./unit-source";
+import { createUnitSource, PROJECT_UNITS_FILE, UnsupportedUnitSourceError, type UnitSourceFactory } from "./unit-source-factory";
 
 export const PROJECT_CONFIG_FILE = "project.json";
-export const PROJECT_UNITS_FILE = "units.xlsx";
 
 /** A slug is a single folder name: lowercase letters, digits and single dashes. */
 const SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
@@ -17,7 +16,7 @@ const isMissing = (e: unknown) => (e as NodeJS.ErrnoException)?.code === "ENOENT
 export class FileProjectSource implements ProjectSource {
   constructor(
     private readonly projectsDir: string,
-    private readonly unitSource: (projectDir: string) => UnitSource = (dir) => new XlsxFileSource(join(dir, PROJECT_UNITS_FILE)),
+    private readonly unitSource: UnitSourceFactory = createUnitSource,
   ) {}
 
   async load(slug: string): Promise<LoadedProject> {
@@ -43,8 +42,10 @@ export class FileProjectSource implements ProjectSource {
     }
 
     try {
-      return { config: parsed.value, units: await this.unitSource(dir).load() };
+      const units = this.unitSource(parsed.value.units ?? DEFAULT_UNITS_SOURCE, dir);
+      return { config: parsed.value, units: await units.load() };
     } catch (e) {
+      if (e instanceof UnsupportedUnitSourceError) throw new ProjectSourceError(slug, "invalid-units", [`units.source: ${e.message}`]);
       if (e instanceof UnitSourceError) throw new ProjectSourceError(slug, "invalid-units", e.issues.map(formatSheetIssue));
       if (isMissing(e)) throw new ProjectSourceError(slug, "invalid-units", [`${PROJECT_UNITS_FILE} not found`]);
       throw e;
