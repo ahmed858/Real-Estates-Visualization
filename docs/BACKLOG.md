@@ -512,7 +512,7 @@ Google Sheet and the site shows the new statuses shortly after.
 - Verify: `npm test`.
 
 ### U-504 Refresh interval and caching
-- Phase 5 · App + `data-sources` · Depends on: U-502 · **Gated: yes** · Status: `todo`
+- Phase 5 · App + `data-sources` · Depends on: U-502 · **Gated: yes** · Status: `done`
 - Cache each project's unit rows for a refresh interval (default 60 seconds,
   overridable per project in `project.json`) with the Next.js cache APIs of
   this version (read `node_modules/next/dist/docs/` first), so visitors do not

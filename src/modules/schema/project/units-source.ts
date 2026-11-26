@@ -2,6 +2,11 @@
 // missing the project uses its local units.xlsx, so existing projects keep working.
 import { z } from "zod";
 
+/** How long the site reuses rows read from a live source before reading it again. */
+export const DEFAULT_REFRESH_SECONDS = 60;
+export const MIN_REFRESH_SECONDS = 10;
+export const MAX_REFRESH_SECONDS = 3600;
+
 export const UNITS_SOURCE_KINDS = ["xlsx", "google-sheet"] as const;
 
 /** The local units.xlsx in the project folder (today's default). */
@@ -18,6 +23,12 @@ const googleSheetUnitsSourceSchema = z
       .string()
       .regex(/^\d+$/, 'must be the tab number from the sheet link (…#gid=<number>), e.g. "0"')
       .default("0"),
+    refreshSeconds: z
+      .number()
+      .int("must be a whole number of seconds")
+      .min(MIN_REFRESH_SECONDS, `must be at least ${MIN_REFRESH_SECONDS} seconds`)
+      .max(MAX_REFRESH_SECONDS, `must be at most ${MAX_REFRESH_SECONDS} seconds (1 hour)`)
+      .default(DEFAULT_REFRESH_SECONDS),
   })
   .strict();
 
