@@ -57,3 +57,12 @@ export function useSelectedFloor(floors: readonly number[]): number | undefined 
   const wanted = raw === null ? NaN : Number(raw);
   return floors.includes(wanted) ? wanted : floors[0];
 }
+
+/** The whole query string of the current URL (e.g. "?status=sold"), kept in sync like useUrlParam. */
+export function useUrlSearch(): string {
+  return useSyncExternalStore(
+    subscribe,
+    () => window.location.search,
+    () => "",
+  );
+}

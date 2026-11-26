@@ -1,10 +1,10 @@
 // Server view of /p/<slug>/units: loads the project and renders the units
-// table, each row linking to the unit on its scene (with ?floor= on typical floors).
+// table with its filter bar, each row linking to the unit on its scene (with ?floor= on typical floors).
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ProjectSourceError, type LoadedProject } from "@/modules/data-sources";
 import { createSceneTree } from "@/modules/domain";
-import { FLOOR_PARAM, LANG_PARAM, LocaleSwitch, ProjectHeader, UNIT_PARAM, UnitsTable, ViewerMessage, resolveLocale, unitTableRows, viewerText, withLocale } from "@/modules/viewer";
+import { FLOOR_PARAM, LANG_PARAM, LocaleSwitch, ProjectHeader, UNIT_PARAM, FilteredUnitsTable, ViewerMessage, resolveLocale, unitTableRows, viewerText, withLocale } from "@/modules/viewer";
 import { projectFileUrl, projects, sceneUrl, type ProjectViewProps } from "./project-view";
 
 export async function UnitsView({ params, searchParams }: ProjectViewProps) {
@@ -41,9 +41,7 @@ export async function UnitsView({ params, searchParams }: ProjectViewProps) {
             {text.table.back}
           </Link>
         </div>
-        <div className="overflow-x-auto rounded-lg border border-white/10 bg-white/5">
-          <UnitsTable rows={rows} currency={config.project.currency} locale={locale} />
-        </div>
+        <FilteredUnitsTable rows={rows} currency={config.project.currency} locale={locale} />
       </main>
     </div>
   );

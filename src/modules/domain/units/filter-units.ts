@@ -16,13 +16,16 @@ export interface UnitFilter {
   area?: RangeFilter;
 }
 
+/** The unit fields a filter looks at (a sheet row, or any summary of one). */
+export type FilterableUnit = Pick<UnitRow, "status" | "type" | "bedrooms" | "floor" | "price" | "areaM2">;
+
 const inList = <T>(list: readonly T[] | undefined, value: T) => !list || list.length === 0 || list.includes(value);
 const inRange = (range: RangeFilter | undefined, value: number) =>
   !range || ((range.min === undefined || value >= range.min) && (range.max === undefined || value <= range.max));
 const normaliseType = (t: string) => t.trim().toLowerCase();
 
 /** True when a unit matches every criterion of the filter. Type matching ignores case and spaces at the ends. */
-export function matchesFilter(unit: UnitRow, filter: UnitFilter): boolean {
+export function matchesFilter(unit: FilterableUnit, filter: UnitFilter): boolean {
   return (
     inList(filter.status, unit.status) &&
     inList(filter.type?.map(normaliseType), normaliseType(unit.type)) &&
@@ -34,6 +37,6 @@ export function matchesFilter(unit: UnitRow, filter: UnitFilter): boolean {
 }
 
 /** Units matching the filter, in their original order. */
-export function filterUnits(units: readonly UnitRow[], filter: UnitFilter): UnitRow[] {
+export function filterUnits<T extends FilterableUnit>(units: readonly T[], filter: UnitFilter): T[] {
   return units.filter((u) => matchesFilter(u, filter));
 }
