@@ -2,7 +2,7 @@
 
 Ordered work units. The hourly agent takes the **first** unit whose status is
 `todo`, whose dependencies are all `done`, and that has no open `[agent]` PR.
-Phases 1 to 3 are broken down; later phases stay as headlines until the
+Phases 1 to 4 are broken down; later phases stay as headlines until the
 agent writes their breakdown in a planning unit.
 
 **Statuses** (as they read on `develop`): `todo` · `done` · `blocked` (question
@@ -29,7 +29,7 @@ verification commands. `npm run check` must pass for every unit.
 | 0 | Foundation | App skeleton, rules, CI, this backlog. **done** |
 | 1 | Data shape | Project and sheet formats, validator, collection guide. |
 | 2 | Demo villa | Generator for a 3-storey villa with courtyard and its units sheet. |
-| 3 | Viewer | Image + coloured shapes, hover cards, side panel, villa → floor → unit navigation. |
+| 3 | Viewer | Image + coloured shapes, hover cards, side panel, villa → floor → unit navigation. **done** |
 | 4 | Sales tools | Units table with filters, WhatsApp button with unit code, Arabic/English, mobile. |
 | 5 | Live status | Site re-reads the sheet continuously (Google Sheets for clients). |
 | 6 | Drawing tool | Polygon editor for real client images. |
@@ -293,6 +293,96 @@ client components for interaction; project data is read on the server.
 - Verify: `npm test`.
 
 ### U-311 Plan Phase 4 (sales tools)
-- Phase 3 · Docs · Depends on: U-310 · **Gated: yes** · Status: `todo`
+- Phase 3 · Docs · Depends on: U-310 · **Gated: yes** · Status: `done`
 - Break Phase 4 into units in this file, using what Phase 3 produced.
+- Verify: `npm run check`.
+
+---
+
+## Phase 4 · Sales tools
+
+Written by U-311 from what Phase 3 produced: routes `/p/<slug>` and
+`/p/<slug>/<sceneId>` (`src/app/p/project-view.tsx`) that load a project
+through `ProjectSource` and compose `ViewerLayout` slots (header, nav, scene,
+legend, panel); `SceneStage` (client) with hover cards, unit selection in the
+URL (`?unit=`) and the typical floor picker (`?floor=`) through
+`useUrlParam`; `SidePanel` with unit details and the scene summary;
+`computeSceneStats` and the pure `filterUnits` (`domain`); fixed ar/en wording
+in `viewer/layout/viewer-text.ts`; `project.contact.whatsapp` in the config.
+The viewer is desktop-only and uses the project's default locale.
+
+### U-401 Locale switch (Arabic / English)
+- Phase 4 · App + `viewer` · Depends on: U-310 · **Gated: yes** · Status: `todo`
+- A language toggle in the header. Pick how the locale is carried (e.g.
+  `?lang=en` through `useUrlParam`, or a `/p/<slug>/en/...` segment) and say
+  why in the PR. Default stays `project.defaultLocale`; `lang`/`dir` and every
+  label, scene title and number format follow the chosen locale.
+- Acceptance: component tests for both directions; switching keeps the
+  current scene, floor and unit.
+- Verify: `npm run check`, Vercel preview.
+
+### U-402 WhatsApp enquiry button
+- Phase 4 · Module `viewer` · Depends on: U-310 · Gated: no · Status: `todo`
+- In the unit details panel, a button that opens
+  `https://wa.me/<number>?text=<message>` with `project.contact.whatsapp`
+  (digits only) and a prefilled message in the current locale that names the
+  project and the unit code (and floor for typical floors). A general
+  "contact us" button in the header uses the same builder without a unit.
+- Acceptance: unit tests for the link builder (encoding, Arabic text, number
+  normalisation); component test that the panel button carries the unit code.
+- Verify: `npm test`.
+
+### U-403 Units table
+- Phase 4 · App + `viewer` · Depends on: U-401 · Gated: no · Status: `todo`
+- Route `/p/<slug>/units`: every unit of the project in a sortable table
+  (code, floor, type, bedrooms, area, price, status), with status shown as in
+  the legend. A row links to the unit on its scene (`/p/<slug>/<sceneId>?unit=`
+  plus `?floor=` for typical floors). Link to the table from the header.
+- Acceptance: component tests for sorting and row links; works on the demo
+  villa and the U-310 tower fixture.
+- Verify: `npm run check`, Vercel preview.
+
+### U-404 Table filters
+- Phase 4 · Module `viewer` · Depends on: U-403 · Gated: no · Status: `todo`
+- Filter bar over the table using the `domain` `filterUnits` (status, type,
+  bedrooms, price range, area range, floor). Filters live in the URL so a
+  filtered list can be shared; "clear filters" resets them; an empty result
+  says so.
+- Acceptance: component tests for each filter and the URL round trip.
+- Verify: `npm test`.
+
+### U-405 Highlight filtered units on the scene
+- Phase 4 · Module `viewer` · Depends on: U-404 · Gated: no · Status: `todo`
+- The same filters can be applied from the scene view: matching hotspots stay
+  coloured, others are dimmed, and scene hotspots show how many matching
+  units lie below them.
+- Acceptance: component tests on the demo villa data.
+- Verify: `npm test`.
+
+### U-406 Mobile layout
+- Phase 4 · App + `viewer` · Depends on: U-401 · **Gated: yes** · Status: `todo`
+- Below a breakpoint the side panel becomes a bottom sheet, the header
+  compacts, hover cards become tap-to-show (first tap shows the card, second
+  opens), and the scene can be pinch-zoomed or scrolled. Pick the breakpoint
+  and interaction rules and list them in the PR.
+- Acceptance: component tests for the tap behaviour; Playwright screenshots
+  at phone width attached to the PR (not committed); no horizontal page
+  scroll.
+- Verify: `npm run check`, Vercel preview on a phone.
+
+### U-407 Accessibility and keyboard pass
+- Phase 4 · App + `viewer` · Depends on: U-406 · Gated: no · Status: `todo`
+- Keyboard order header → nav → scene → panel; visible focus on hotspots;
+  Escape closes the unit panel; the hover card is announced; contrast of all
+  text in both themes.
+- Acceptance: component tests for Escape and focus order; findings and fixes
+  listed in the PR.
+- Verify: `npm test`.
+
+### U-408 Plan Phase 5 (live status)
+- Phase 4 · Docs · Depends on: U-407 · **Gated: yes** · Status: `todo`
+- Break Phase 5 into units in this file, using what Phase 4 produced. Phase 5
+  needs a Google Sheets `UnitSource` and credentials; list in
+  `docs/QUESTIONS.md` what the owner must provide (service account or
+  published sheet, refresh interval).
 - Verify: `npm run check`.
