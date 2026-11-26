@@ -25,3 +25,18 @@ export {
   segmentsIntersect,
 } from "./geometry/polygon";
 export type { ImageSize, NearestEdge, NearestVertex } from "./geometry/polygon";
+export {
+  checkProjectFit,
+  CONFIG_FILE,
+  hotspotUnitsExistInSheet,
+  missingFile,
+  referencedFiles,
+  scenesAreReachable,
+  sheetScenesMatch,
+  sheetUnitsArePlaced,
+  UNITS_FILE,
+  unitsLabel,
+} from "./validation/checks";
+export type { FileReference } from "./validation/checks";
+export { errorsOf, formatReport, warningsOf } from "./validation/report";
+export type { Finding, Severity, ValidationReport } from "./validation/report";

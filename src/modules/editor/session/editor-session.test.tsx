@@ -102,6 +102,44 @@ describe("EditorSession", () => {
   });
 });
 
+describe("live problems", () => {
+  const files = ["images/facade.svg", "images/ground.svg", "images/logo.svg", "images/typical.png"];
+
+  it("updates as the owner edits and links each problem to its scene and hotspot", () => {
+    const view = render(<EditorSession config={config()} editorPath="/editor/demo" fileBaseUrl="/files/demo/" units={[]} existingFiles={files} />);
+    const q = (selector: string) => view.container.querySelector(selector);
+    const problems = within(screen.getByRole("region", { name: "Problems" }));
+    // The ground floor is not opened by any facade hotspot yet.
+    expect(problems.getByRole("status").textContent).toBe("0 errors, 1 warning");
+    const canvas = q("svg[role='application']")!;
+    const clickAt = (x: number, y: number) => fireEvent.click(canvas, { clientX: x * 2, clientY: y * 2 });
+    clickAt(60, 60);
+    clickAt(90, 60);
+    clickAt(90, 90);
+    clickAt(60, 60);
+    // A new shape has no target yet: an error on facade / shape-1.
+    // Like npm run validate, a schema error hides the cross-checks until it is fixed.
+    expect(problems.getByRole("status").textContent).toBe("1 error, 0 warnings");
+    const link = problems.getByRole("button", { name: /Error: project.json \(root.hotspots\[0\].target.unit\)/ });
+    fireEvent.click(within(screen.getByRole("navigation", { name: "Scenes" })).getByRole("link", { name: /Ground/ }));
+    fireEvent.click(link);
+    expect(q("image")?.getAttribute("href")).toBe("/files/demo/images/facade.svg");
+    expect(q('[data-hotspot="shape-1"]')?.getAttribute("aria-selected")).toBe("true");
+    // Pointing it at the ground floor fixes both problems.
+    fireEvent.change(screen.getByLabelText("Leads to"), { target: { value: "scene" } });
+    fireEvent.click(screen.getByRole("button", { name: "Apply" }));
+    expect(problems.getByRole("status").textContent).toBe("No problems found.");
+  });
+
+  it("reports missing files and unit rows that are not drawn", () => {
+    render(<EditorSession config={config()} editorPath="/editor/demo" fileBaseUrl="/files/demo/" units={[{ code: "G-01", scene: "ground", floor: 0, type: "Flat", bedrooms: 1, bathrooms: 1, areaM2: 50, price: 1, status: "available", sheetRow: 2 }]} existingFiles={["images/facade.svg"]} />);
+    const text = screen.getByRole("region", { name: "Problems" }).textContent;
+    expect(text).toContain('file "images/ground.svg" does not exist');
+    expect(text).toContain('file "images/logo.svg" does not exist');
+    expect(text).toContain('unit "G-01" is not drawn on any scene');
+  });
+});
+
 describe("scene items", () => {
   it("lists scenes with depth and editor links", () => {
     expect(editorSceneItems(config(), "/editor/demo")).toEqual([

@@ -2,10 +2,11 @@
 // sizes, then hands them to the client editing session, which opens the scene
 // from ?scene=<id> (default the root) and keeps edits across scenes.
 // Internal tool, English only.
+import { access } from "node:fs/promises";
 import { join } from "node:path";
 import { notFound } from "next/navigation";
 import { listProjectImages } from "@/modules/data-sources";
-import { createSceneTree } from "@/modules/domain";
+import { createSceneTree, referencedFiles } from "@/modules/domain";
 import { EditorSession } from "@/modules/editor";
 import { ViewerMessage } from "@/modules/viewer";
 import { projectFileUrl, projects } from "../p/project-view";
@@ -24,7 +25,12 @@ export async function EditorView({ params, searchParams }: EditorViewProps) {
   if (state.kind === "invalid") return <ViewerMessage title={`Project "${slug}" has invalid data`} details={state.issues} />;
 
   const tree = createSceneTree(state.project.config);
+  const projectDir = join(process.cwd(), "projects", slug);
   const images = await listProjectImages(join(process.cwd(), "projects"), slug);
+  // Files the live checks may ask about: every image, plus whatever the saved project refers to.
+  const referenced = referencedFiles(state.project.config, tree, state.project.units).map((r) => r.path);
+  const present = await Promise.all(referenced.map((p) => access(join(projectDir, p)).then(() => p, () => undefined)));
+  const existingFiles = [...new Set([...images.map((i) => i.path), ...present.filter((p): p is string => p !== undefined)])];
   const initialSceneId = typeof sceneParam === "string" && tree.has(sceneParam) ? sceneParam : tree.root.id;
 
   return (
@@ -39,6 +45,8 @@ export async function EditorView({ params, searchParams }: EditorViewProps) {
         fileBaseUrl={projectFileUrl(slug, "")}
         unitCodes={state.project.units.map((u) => u.code)}
         images={images}
+        units={state.project.units}
+        existingFiles={existingFiles}
       />
     </div>
   );

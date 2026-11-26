@@ -29,6 +29,8 @@ export interface EditorWorkspaceProps extends SceneWorkspaceBaseProps {
 }
 
 export interface SceneWorkspaceProps extends SceneWorkspaceBaseProps {
+  /** Hotspot selected when the workspace opens (e.g. from a problem link). */
+  initialSelectedId?: string;
   state: EditorState;
   dispatch: Dispatch<EditorAction>;
 }
@@ -47,8 +49,8 @@ export function EditorWorkspace({ config, ...props }: EditorWorkspaceProps) {
   return <SceneWorkspace state={state} dispatch={dispatch} {...props} />;
 }
 
-export function SceneWorkspace({ state, dispatch, sceneId, imageUrl, unitCodes = [], images = [] }: SceneWorkspaceProps) {
-  const [selected, setSelected] = useState<string>();
+export function SceneWorkspace({ state, dispatch, sceneId, imageUrl, unitCodes = [], images = [], initialSelectedId }: SceneWorkspaceProps) {
+  const [selected, setSelected] = useState<string | undefined>(initialSelectedId);
   const doc = state.present;
   const scene = createSceneTree(doc.config).get(sceneId);
   const draft = doc.draft?.sceneId === sceneId ? doc.draft.points : undefined;

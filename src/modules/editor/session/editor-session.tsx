@@ -3,9 +3,11 @@
 // and which scene is open, so edits (and added scenes) survive switching
 // scenes and undo/redo spans them. The scene list comes from the edited
 // config and switches scenes in the page, keeping ?scene=<id> in the URL.
-import { useEffect, useReducer, useState } from "react";
+import { useDeferredValue, useEffect, useMemo, useReducer, useState } from "react";
 import { createSceneTree } from "@/modules/domain";
-import type { ProjectConfig, SceneImage } from "@/modules/schema";
+import type { ProjectConfig, SceneImage, UnitRow } from "@/modules/schema";
+import { liveFindings } from "../validation/live-findings";
+import { ProblemList } from "../validation/problem-list";
 import { SceneWorkspace } from "../canvas/editor-workspace";
 import { createEditorState, editorReducer } from "../state/editor-state";
 import { SceneList } from "../workspace/scene-list";
@@ -21,19 +23,30 @@ export interface EditorSessionProps {
   fileBaseUrl: string;
   unitCodes?: readonly string[];
   images?: readonly SceneImage[];
+  /** Rows of the units source, for the live checks; undefined when it could not be read. */
+  units?: readonly UnitRow[];
+  /** Project-relative paths of files that exist, for the live checks. */
+  existingFiles?: readonly string[];
 }
 
-export function EditorSession({ config, initialSceneId, editorPath, fileBaseUrl, unitCodes, images }: EditorSessionProps) {
+export function EditorSession({ config, initialSceneId, editorPath, fileBaseUrl, unitCodes, images, units, existingFiles = [] }: EditorSessionProps) {
   const [state, dispatch] = useReducer(editorReducer, config, createEditorState);
   const [openId, setOpenId] = useState(initialSceneId);
+  // A problem link selects its hotspot: remount the workspace with that selection.
+  const [focus, setFocus] = useState<{ hotspotId?: string; n: number }>({ n: 0 });
+  const files = useMemo(() => new Set(existingFiles), [existingFiles]);
+  // Deferred so dragging a vertex stays smooth while the checks catch up.
+  const checkedConfig = useDeferredValue(state.present.config);
+  const findings = useMemo(() => liveFindings({ config: checkedConfig, units, existingFiles: files }), [checkedConfig, units, files]);
   const tree = createSceneTree(state.present.config);
   // An undo can remove the open scene (e.g. undoing "add scene"): fall back to the root.
   const sceneId = openId && tree.has(openId) ? openId : tree.root.id;
   const scene = tree.get(sceneId);
 
-  const open = (id: string) => {
+  const open = (id: string, hotspotId?: string) => {
     setOpenId(id);
-    window.history.pushState(null, "", editorSceneHref(editorPath, id));
+    setFocus((f) => ({ hotspotId, n: f.n + 1 }));
+    if (id !== sceneId) window.history.pushState(null, "", editorSceneHref(editorPath, id));
   };
 
   useEffect(() => {
@@ -44,9 +57,12 @@ export function EditorSession({ config, initialSceneId, editorPath, fileBaseUrl,
 
   return (
     <div className="grid flex-1 gap-6 p-6 md:grid-cols-[16rem_1fr]">
-      <SceneList scenes={editorSceneItems(state.present.config, editorPath)} selectedId={sceneId} onSelect={open} />
+      <div className="flex flex-col gap-6">
+        <SceneList scenes={editorSceneItems(state.present.config, editorPath)} selectedId={sceneId} onSelect={(id) => open(id)} />
+        <ProblemList findings={findings} onOpen={open} />
+      </div>
       <main>
-        <SceneWorkspace key={sceneId} state={state} dispatch={dispatch} sceneId={sceneId} imageUrl={`${fileBaseUrl}${scene.image.path}`} unitCodes={unitCodes} images={images} />
+        <SceneWorkspace key={`${sceneId}#${focus.n}`} initialSelectedId={focus.hotspotId} state={state} dispatch={dispatch} sceneId={sceneId} imageUrl={`${fileBaseUrl}${scene.image.path}`} unitCodes={unitCodes} images={images} />
       </main>
     </div>
   );

@@ -630,7 +630,7 @@ editor never writes to the server's disk and is off unless enabled.
 - Verify: `npm run check`.
 
 ### U-607 Live validation in the editor
-- Phase 6 · `domain` + `editor` · Depends on: U-610 · **Gated: yes** · Status: `todo`
+- Phase 6 · `domain` + `editor` · Depends on: U-610 · **Gated: yes** · Status: `done`
 - Split by U-607's run: the export half is U-611.
 - The editor shows the same problems `npm run validate` finds, as the owner
   edits, each linked to its scene and hotspot (a click opens the scene and
