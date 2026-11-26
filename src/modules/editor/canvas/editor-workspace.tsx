@@ -4,7 +4,8 @@
 // canvas with a small toolbar. Edits live in the page until export (U-607).
 import { useEffect, useReducer, useState } from "react";
 import { createSceneTree } from "@/modules/domain";
-import type { ProjectConfig } from "@/modules/schema";
+import type { ProjectConfig, SceneImage } from "@/modules/schema";
+import { AddSceneForm } from "../scenes/add-scene-form";
 import type { EditorCommand } from "../state/commands";
 import { canRedo, canUndo, createEditorState, editorReducer } from "../state/editor-state";
 import { DrawingCanvas } from "./drawing-canvas";
@@ -18,6 +19,8 @@ export interface EditorWorkspaceProps {
   imageUrl: string;
   /** Unit codes from the project's units source, for the target picker. */
   unitCodes?: readonly string[];
+  /** Images of the project folder with their sizes, for adding a child scene. */
+  images?: readonly SceneImage[];
 }
 
 const isTyping = (target: EventTarget | null) =>
@@ -28,7 +31,7 @@ const otherIds = (ids: Set<string>, own: string) => {
   return ids;
 };
 
-export function EditorWorkspace({ config, sceneId, imageUrl, unitCodes = [] }: EditorWorkspaceProps) {
+export function EditorWorkspace({ config, sceneId, imageUrl, unitCodes = [], images = [] }: EditorWorkspaceProps) {
   const [state, dispatch] = useReducer(editorReducer, config, createEditorState);
   const [selected, setSelected] = useState<string>();
   const doc = state.present;
@@ -114,6 +117,21 @@ export function EditorWorkspace({ config, sceneId, imageUrl, unitCodes = [] }: E
       <p className="text-sm text-zinc-400">
         {scene.id} · {scene.image.width}×{scene.image.height} px · {scene.hotspots.length} hotspots
       </p>
+      <section aria-label="Child scenes" className="flex flex-col gap-2">
+        <h2 className="text-sm font-semibold">Child scenes</h2>
+        {scene.children.length > 0 ? (
+          <ul className="text-sm text-zinc-300">
+            {scene.children.map((c) => (
+              <li key={c.id}>
+                {c.title.en} · {c.id} · {c.image.path}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="text-sm text-zinc-400">None yet.</p>
+        )}
+        <AddSceneForm config={doc.config} images={images} onAdd={(child) => dispatch({ type: "do", command: { type: "add-scene", parentId: sceneId, scene: child } })} />
+      </section>
     </section>
   );
 }

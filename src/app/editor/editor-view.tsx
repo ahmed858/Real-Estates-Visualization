@@ -1,7 +1,9 @@
 // Server view of /editor/<slug>: the scene list and a read-only preview of the
 // selected scene (?scene=<id>, default the root) on the drawing canvas.
 // Internal tool, English only.
+import { join } from "node:path";
 import { notFound } from "next/navigation";
+import { listProjectImages } from "@/modules/data-sources";
 import { createSceneTree } from "@/modules/domain";
 import { EditorWorkspace, SceneList, type EditorSceneItem } from "@/modules/editor";
 import { ViewerMessage } from "@/modules/viewer";
@@ -21,6 +23,7 @@ export async function EditorView({ params, searchParams }: EditorViewProps) {
   if (state.kind === "invalid") return <ViewerMessage title={`Project "${slug}" has invalid data`} details={state.issues} />;
 
   const tree = createSceneTree(state.project.config);
+  const images = await listProjectImages(join(process.cwd(), "projects"), slug);
   const selectedId = typeof sceneParam === "string" && tree.has(sceneParam) ? sceneParam : tree.root.id;
   const scene = tree.get(selectedId);
   const items: EditorSceneItem[] = tree.scenes.map((s) => ({
@@ -39,7 +42,7 @@ export async function EditorView({ params, searchParams }: EditorViewProps) {
       <div className="grid flex-1 gap-6 p-6 md:grid-cols-[16rem_1fr]">
         <SceneList scenes={items} selectedId={selectedId} />
         <main>
-          <EditorWorkspace key={selectedId} config={state.project.config} sceneId={selectedId} imageUrl={projectFileUrl(slug, scene.image.path)} unitCodes={state.project.units.map((u) => u.code)} />
+          <EditorWorkspace key={selectedId} config={state.project.config} sceneId={selectedId} imageUrl={projectFileUrl(slug, scene.image.path)} unitCodes={state.project.units.map((u) => u.code)} images={images} />
         </main>
       </div>
     </div>

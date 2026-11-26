@@ -20,3 +20,7 @@ export { TargetPicker } from "./targets/target-picker";
 export type { TargetPickerProps } from "./targets/target-picker";
 export { hotspotIds, makeTarget, suffixOf, suggestHotspotId, targetOptions, toId } from "./targets/target-options";
 export type { CodeOption, SceneOption, TargetKind, TargetOptions } from "./targets/target-options";
+export { AddSceneForm } from "./scenes/add-scene-form";
+export type { AddSceneFormProps } from "./scenes/add-scene-form";
+export { buildScene } from "./scenes/build-scene";
+export type { BuildSceneResult, SceneFormInput } from "./scenes/build-scene";

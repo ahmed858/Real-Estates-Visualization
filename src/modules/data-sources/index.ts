@@ -16,5 +16,6 @@ export { createUnitSource, createUnitSourceFactory, PROJECT_UNITS_FILE, Unsuppor
 export type { UnitSourceFactory, UnitSourceFactoryOptions } from "./unit-source-factory";
 export { CachedUnitSource } from "./cached-unit-source";
 export type { Clock } from "./cached-unit-source";
-export { IMAGE_CONTENT_TYPES, readProjectImage } from "./project-files";
-export type { ProjectFile } from "./project-files";
+export { IMAGE_CONTENT_TYPES, listProjectImages, PROJECT_IMAGES_DIR, readProjectImage } from "./project-files";
+export type { ProjectFile, ProjectImage } from "./project-files";
+export { readImageSize } from "./image-size";
