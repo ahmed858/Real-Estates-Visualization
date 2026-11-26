@@ -1,16 +1,23 @@
 # Backlog
 
 Ordered work units. The hourly agent takes the **first** unit whose status is
-`todo`, whose dependencies are all `done`, and that is not waiting on owner
-approval. Only Phases 1 and 2 are broken down; later phases stay as headlines
-until the agent proposes their breakdown in a gated planning unit.
+`todo`, whose dependencies are all `done`, and that has no open `[agent]` PR.
+Only Phases 1 and 2 are broken down; later phases stay as headlines until the
+agent proposes their breakdown in a gated planning unit.
 
-**Statuses:** `todo` · `in-progress` · `in-review` (gated PR waiting for the
-owner) · `done` · `blocked` (question in `docs/QUESTIONS.md`).
+**Statuses** (as they read on `develop`): `todo` · `done` · `blocked` (question
+in `docs/QUESTIONS.md`).
+
+A unit's PR sets its status to `done`, so the unit only reads `done` on
+`develop` once that PR is merged. While the PR is open (a draft means a run is
+working on it; a gated PR waits for the owner), the unit is taken: no other
+run picks it, and units that depend on it wait.
 
 **Gated** units change something the rest of the project builds on. Their PR is
 opened **without auto-merge**, and every unit that depends on them waits until
-the owner merges. Non-gated PRs use GitHub auto-merge and merge when CI passes.
+the owner merges. Non-gated PRs use GitHub auto-merge and merge when CI passes
+(if auto-merge is unavailable, the next run merges them once CI is green). A PR
+that changes `CLAUDE.md`, `.github/` or the module rules is always gated.
 
 Each unit lists: phase, module, dependencies, gated, acceptance criteria and
 verification commands. `npm run check` must pass for every unit.
@@ -59,7 +66,7 @@ If a real client arrives early, Phase 6 may move ahead of Phase 4.
 - Verify: `npm test`, `npm run check`.
 
 ### U-102 Units sheet schema
-- Phase 1 · Module `schema` · Depends on: none · **Gated: yes** · Status: `todo`
+- Phase 1 · Module `schema` · Depends on: none · **Gated: yes** · Status: `done`
 - Fixed columns, one row per unit: `code`, `scene` (floor scene id), `floor`,
   `type`, `bedrooms`, `bathrooms`, `area_m2`, `price`, `status`, `plan_image`
   (optional), `notes` (optional).

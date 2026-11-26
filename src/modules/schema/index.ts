@@ -25,3 +25,13 @@ export type {
 export { LOCALES } from "./project/primitives";
 export { formatPath, parseProjectConfig } from "./project/parse-project-config";
 export type { ParseResult, ValidationError } from "./project/parse-project-config";
+export {
+  OPTIONAL_UNIT_COLUMNS,
+  REQUIRED_UNIT_COLUMNS,
+  UNIT_COLUMNS,
+  formatSheetIssue,
+  parseUnitsSheet,
+} from "./units/units-sheet";
+export type { SheetIssue, SheetParseResult, SheetTable, UnitColumn, UnitRow } from "./units/units-sheet";
+export { STATUS_SPELLINGS, UNIT_STATUSES, normaliseStatus } from "./units/status";
+export type { UnitStatus } from "./units/status";
