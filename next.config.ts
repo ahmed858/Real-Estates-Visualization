@@ -8,6 +8,7 @@ const nextConfig: NextConfig = {
   outputFileTracingIncludes: {
     "/files/*": ["./projects/**/*"],
     "/p/**": ["./projects/**/*"],
+    "/editor/**": ["./projects/**/*"],
   },
   turbopack: {
     rules: {
