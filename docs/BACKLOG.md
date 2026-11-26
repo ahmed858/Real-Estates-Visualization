@@ -229,7 +229,7 @@ client components for interaction; project data is read on the server.
 - Verify: `npm run check`.
 
 ### U-304 Scene renderer Strategy and Image2DScene
-- Phase 3 · Module `viewer` · Depends on: U-303 · **Gated: yes** · Status: `todo`
+- Phase 3 · Module `viewer` · Depends on: U-303 · **Gated: yes** · Status: `done`
 - `SceneRenderer` interface and a registry keyed by the scene's `type`
   (`image-2d` now; `360` and `3d` plug in later without touching callers).
   `Image2DScene` draws the scene image with an SVG overlay in the image's
