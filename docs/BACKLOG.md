@@ -30,7 +30,7 @@ verification commands. `npm run check` must pass for every unit.
 | 1 | Data shape | Project and sheet formats, validator, collection guide. |
 | 2 | Demo villa | Generator for a 3-storey villa with courtyard and its units sheet. |
 | 3 | Viewer | Image + coloured shapes, hover cards, side panel, villa → floor → unit navigation. **done** |
-| 4 | Sales tools | Units table with filters, WhatsApp button with unit code, Arabic/English, mobile. |
+| 4 | Sales tools | Units table with filters, WhatsApp button with unit code, Arabic/English, mobile. **done** |
 | 5 | Live status | Site re-reads the sheet continuously (Google Sheets for clients). |
 | 6 | Drawing tool | Polygon editor for real client images. |
 | 7 | Multi-client | A link per project, logo and colours per client. |
@@ -450,9 +450,86 @@ The viewer is desktop-only and uses the project's default locale.
 - Verify: `npm test`.
 
 ### U-408 Plan Phase 5 (live status)
-- Phase 4 · Docs · Depends on: U-407 · **Gated: yes** · Status: `todo`
+- Phase 4 · Docs · Depends on: U-407 · **Gated: yes** · Status: `done`
 - Break Phase 5 into units in this file, using what Phase 4 produced. Phase 5
   needs a Google Sheets `UnitSource` and credentials; list in
   `docs/QUESTIONS.md` what the owner must provide (service account or
   published sheet, refresh interval).
+- Verify: `npm run check`.
+
+---
+
+## Phase 5 · Live status
+
+Written by U-408 from what Phase 4 produced: the viewer reads a project
+through `ProjectSource` (`FileProjectSource` = `project.json` + an
+`XlsxFileSource` for `units.xlsx`), and every view (scene, units table,
+filters, cards, WhatsApp) only sees validated `UnitRow`s. Pages already
+render per request inside Suspense (Cache Components is on). Phase 5 swaps
+where the rows come from, without touching the viewer: a client edits a
+Google Sheet and the site shows the new statuses shortly after.
+
+### U-501 Units source in the project config
+- Phase 5 · `schema` + `data-sources` · Depends on: U-407 · **Gated: yes** · Status: `todo`
+- Optional `units` block in `project.json`: `{ "source": "xlsx" }` (default,
+  today's `units.xlsx`) or `{ "source": "google-sheet", "sheetId": "…",
+  "gid": "0" }`. `FileProjectSource` picks the `UnitSource` from it through a
+  small factory, so adding a source never changes the viewer.
+- Acceptance: schema tests for both forms and bad input; factory tests;
+  `docs/data-format.md` updated; demo projects unchanged.
+- Verify: `npm run check`.
+
+### U-502 Google Sheet source (shared by link)
+- Phase 5 · `data-sources` · Depends on: U-501 · Gated: no · Status: `todo`
+- `GoogleSheetCsvSource` reads the sheet's CSV export
+  (`https://docs.google.com/spreadsheets/d/<id>/export?format=csv&gid=<gid>`)
+  for a sheet shared as "anyone with the link can view", parses it with a
+  small CSV reader (quotes, commas, newlines, UTF-8 Arabic) and validates the
+  rows with the U-102 schema, reporting sheet row numbers like the xlsx source.
+- Acceptance: tests with a mocked `fetch` and CSV fixtures (Arabic statuses,
+  quoted cells, an invalid row, HTTP error, a sheet that is not shared).
+- Verify: `npm test`.
+
+### U-503 Google Sheet source for private sheets (service account)
+- Phase 5 · `data-sources` · Depends on: U-502 · **Gated: yes** · Status: `blocked`
+- For clients who will not share the sheet by link: read it with the Google
+  Sheets API v4 as a service account the client shares the sheet with.
+  Credentials come from environment variables documented in `.env.example`,
+  never from the repo.
+- Blocked until the owner answers Q-2 in `docs/QUESTIONS.md`.
+- Verify: `npm test`.
+
+### U-504 Refresh interval and caching
+- Phase 5 · App + `data-sources` · Depends on: U-502 · **Gated: yes** · Status: `todo`
+- Cache each project's unit rows for a refresh interval (default 60 seconds,
+  overridable per project in `project.json`) with the Next.js cache APIs of
+  this version (read `node_modules/next/dist/docs/` first), so visitors do not
+  hit Google on every request and a status change shows within the interval.
+  Uses 60 seconds until the owner answers Q-3.
+- Acceptance: tests that rows are reused inside the interval and re-read
+  after it (fake timers / injected clock).
+- Verify: `npm run check`, Vercel preview.
+
+### U-505 Keep the last good data when the sheet breaks
+- Phase 5 · `data-sources` + `viewer` · Depends on: U-504 · Gated: no · Status: `todo`
+- If the sheet cannot be read or a client edit makes it invalid, keep serving
+  the last valid rows and show a small "status may be out of date" note in the
+  viewer; log the problems for the owner. Without any earlier good data, show
+  the existing invalid-data message.
+- Acceptance: tests for fetch failure, invalid edit after a good read, and
+  first read failing.
+- Verify: `npm test`.
+
+### U-506 Client guide for the Google Sheet
+- Phase 5 · Docs · Depends on: U-502 · **Gated: yes** · Status: `todo`
+- Add to `docs/collection-guide/ar.md` and `en.md`: how the client copies the
+  units template into Google Sheets, shares it (per the Q-2 answer), which
+  columns they may edit (status, price, notes) and which they must not
+  (code, scene); and a ready-to-copy template link placeholder.
+- Acceptance: both languages say the same thing (existing parity test).
+- Verify: `npm test`.
+
+### U-507 Plan Phase 6 (drawing tool)
+- Phase 5 · Docs · Depends on: U-505, U-506 · **Gated: yes** · Status: `todo`
+- Break Phase 6 into units in this file, using what Phase 5 produced.
 - Verify: `npm run check`.
