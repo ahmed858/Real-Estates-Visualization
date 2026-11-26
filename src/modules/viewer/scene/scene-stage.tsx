@@ -2,7 +2,9 @@
 // Client boundary for the scene: turns plain, serialisable data from the page
 // (unit summaries by code, scene titles and counts by id) into the callbacks
 // SceneView needs, and shows the hover card for the hovered or focused
-// hotspot. Clicking a unit selects it in the URL (see useSelectedUnit). Server pages cannot pass functions to client components.
+// hotspot. Clicking a unit selects it in the URL (see useSelectedUnit);
+// clicking a scene hotspot opens that scene. Server pages cannot pass functions to client components.
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import type { Hotspot, Scene, UnitStatus } from "@/modules/schema";
 import { viewerText, type ViewerLocale, type ViewerText } from "../layout/viewer-text";
@@ -19,6 +21,8 @@ export interface SceneStageProps {
   sceneTitles: Readonly<Record<string, string>>;
   /** Units per status for each scene id (rolled up the tree), shown on scene hotspot cards. */
   sceneCounts: Readonly<Record<string, Record<UnitStatus, number>>>;
+  /** URL of each scene id; selecting a scene hotspot navigates there. */
+  sceneHrefs: Readonly<Record<string, string>>;
   /** ISO 4217 code of the project currency, e.g. "EGP". */
   currency: string;
   locale: ViewerLocale;
@@ -59,6 +63,7 @@ export function SceneStage(props: SceneStageProps) {
   const text = viewerText(locale);
   const [hovered, setHovered] = useState<Hotspot | null>(null);
   const [, selectUnit] = useSelectedUnit();
+  const router = useRouter();
   const content = hovered ? cardContent(hovered, props) : null;
   return (
     <div className="relative">
@@ -69,7 +74,11 @@ export function SceneStage(props: SceneStageProps) {
         hotspotLabel={hotspotLabeller(units, sceneTitles, text)}
         onHover={setHovered}
         onSelect={(h) => {
-          if ("unit" in h.target && units[h.target.unit]) selectUnit(h.target.unit);
+          const t = h.target;
+          if ("scene" in t) {
+            const href = props.sceneHrefs[t.scene];
+            if (href) router.push(href);
+          } else if ("unit" in t && units[t.unit]) selectUnit(t.unit);
         }}
       />
       {hovered && content && (

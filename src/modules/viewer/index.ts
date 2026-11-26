@@ -27,3 +27,5 @@ export type { SidePanelProps } from "./panel/side-panel";
 export { UnitDetails } from "./panel/unit-details";
 export type { UnitDetailsProps } from "./panel/unit-details";
 export { UNIT_PARAM, selectUnit, useSelectedUnit } from "./selection/use-selected-unit";
+export { Breadcrumbs } from "./navigation/breadcrumbs";
+export type { BreadcrumbsProps, Crumb } from "./navigation/breadcrumbs";

@@ -12,6 +12,7 @@ export interface ViewerText {
   details: string;
   selectHint: string;
   logoAlt: (projectName: string) => string;
+  breadcrumbs: string;
   card: { type: string; bedrooms: string; area: string; squareMetres: string; price: string; status: string };
   panel: { floor: string; bathrooms: string; notes: string; plan: (code: string) => string; close: string; units: string; priceRange: string; areaRange: string };
 }
@@ -25,6 +26,7 @@ const TEXT: Record<ViewerLocale, ViewerText> = {
     details: "التفاصيل",
     selectHint: "اختر دورًا أو وحدة من الصورة لعرض تفاصيلها.",
     logoAlt: (name) => `شعار ${name}`,
+    breadcrumbs: "مسار التصفح",
     card: { type: "النوع", bedrooms: "غرف النوم", area: "المساحة", squareMetres: "م²", price: "السعر", status: "الحالة" },
     panel: {
       floor: "الدور",
@@ -45,6 +47,7 @@ const TEXT: Record<ViewerLocale, ViewerText> = {
     details: "Details",
     selectHint: "Pick a floor or a unit on the image to see its details.",
     logoAlt: (name) => `${name} logo`,
+    breadcrumbs: "Breadcrumbs",
     card: { type: "Type", bedrooms: "Bedrooms", area: "Area", squareMetres: "m²", price: "Price", status: "Status" },
     panel: {
       floor: "Floor",
