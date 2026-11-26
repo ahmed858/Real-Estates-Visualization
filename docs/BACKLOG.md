@@ -492,7 +492,7 @@ Google Sheet and the site shows the new statuses shortly after.
 - Verify: `npm test`.
 
 ### U-508 Validator reads the configured units source
-- Phase 5 · `tools` · Depends on: U-502 · Gated: no · Status: `todo`
+- Phase 5 · `tools` · Depends on: U-502 · Gated: no · Status: `done`
 - Split from U-502. `npm run validate` picks its `UnitSource` from the
   config's `units` block through `createUnitSource` instead of always reading
   `units.xlsx`, and names the source in its findings (the file name for xlsx,
