@@ -402,7 +402,7 @@ The viewer is desktop-only and uses the project's default locale.
 - Verify: `npm test`.
 
 ### U-405 Highlight filtered units on the scene
-- Phase 4 · Module `viewer` · Depends on: U-404 · Gated: no · Status: `todo`
+- Phase 4 · Module `viewer` · Depends on: U-404 · Gated: no · Status: `done`
 - The same filters can be applied from the scene view: matching hotspots stay
   coloured, others are dimmed, and scene hotspots show how many matching
   units lie below them.

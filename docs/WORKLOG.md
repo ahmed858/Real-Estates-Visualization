@@ -34,4 +34,4 @@ One line per agent run, newest last:
 2026-11-26 18:05 UTC | U-402 | WhatsApp enquiry: wa.me link builder (digits only, encoded ar/en message with project, unit code, floor on typical floors); unit panel button and header "contact us" | https://github.com/ahmed858/Real-Estates-Visualization/pull/40
 2026-11-26 18:07 UTC | U-403 | /p/<slug>/units sortable table (code, floor, type, bedrooms, area, price, status swatch), rows link to the unit on its scene (+?floor= on typical floors), header link | https://github.com/ahmed858/Real-Estates-Visualization/pull/41
 2026-11-26 18:11 UTC | U-404 | Units table filter bar (status, type, bedrooms, floor, price/area ranges) kept in the URL, clear button, empty state; filterUnits accepts any unit summary | https://github.com/ahmed858/Real-Estates-Visualization/pull/42
-2026-11-26 18:16 UTC | U-405 | in progress | -
+2026-11-26 18:13 UTC | U-405 | Scene filter toggle (shared UnitFilterBar + useUnitFilter): matching hotspots stay coloured, others dimmed, floor bands show matching unit counts; optional emphasis/badge on the renderer contract | https://github.com/ahmed858/Real-Estates-Visualization/pull/44

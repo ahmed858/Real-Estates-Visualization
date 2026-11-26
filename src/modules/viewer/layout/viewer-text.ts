@@ -43,7 +43,7 @@ export interface ViewerText {
     /** Link from the table back to the scenes. */
     back: string;
     columns: Record<"code" | "floor" | "type" | "bedrooms" | "areaM2" | "price" | "status", string>;
-    filters: { label: string; min: string; max: string; clear: string; empty: string; count: (shown: string, total: string) => string };
+    filters: { label: string; toggle: string; toggleActive: string; min: string; max: string; clear: string; empty: string; count: (shown: string, total: string) => string };
   };
   panel: { floor: string; bathrooms: string; notes: string; plan: (code: string) => string; close: string; units: string; priceRange: string; areaRange: string };
 }
@@ -82,7 +82,7 @@ const TEXT: Record<ViewerLocale, ViewerText> = {
       link: "كل الوحدات",
       back: "العودة للمشروع",
       columns: { code: "الوحدة", floor: "الدور", type: "النوع", bedrooms: "غرف النوم", areaM2: "المساحة", price: "السعر", status: "الحالة" },
-      filters: { label: "تصفية الوحدات", min: "من", max: "إلى", clear: "مسح التصفية", empty: "لا توجد وحدات تطابق هذه التصفية.", count: (s, t) => `${s} من ${t} وحدة` },
+      filters: { label: "تصفية الوحدات", toggle: "تصفية", toggleActive: "تصفية (مفعّلة)", min: "من", max: "إلى", clear: "مسح التصفية", empty: "لا توجد وحدات تطابق هذه التصفية.", count: (s, t) => `${s} من ${t} وحدة` },
     },
     panel: {
       floor: "الدور",
@@ -128,7 +128,7 @@ const TEXT: Record<ViewerLocale, ViewerText> = {
       link: "All units",
       back: "Back to the project",
       columns: { code: "Unit", floor: "Floor", type: "Type", bedrooms: "Bedrooms", areaM2: "Area", price: "Price", status: "Status" },
-      filters: { label: "Filter units", min: "Min", max: "Max", clear: "Clear filters", empty: "No units match these filters.", count: (s, t) => `${s} of ${t} units` },
+      filters: { label: "Filter units", toggle: "Filter", toggleActive: "Filter (on)", min: "Min", max: "Max", clear: "Clear filters", empty: "No units match these filters.", count: (s, t) => `${s} of ${t} units` },
     },
     panel: {
       floor: "Floor",

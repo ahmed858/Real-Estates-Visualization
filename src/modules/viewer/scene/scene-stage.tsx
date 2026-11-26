@@ -8,7 +8,10 @@
 // pass functions to client components.
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { filterUnits, matchesFilter, type FilterableUnit } from "@/modules/domain";
 import type { Hotspot, Scene } from "@/modules/schema";
+import { isEmptyFilter } from "../table/filter-params";
+import { useUnitFilter } from "../table/use-unit-filter";
 import { viewerText, type ViewerLocale, type ViewerText } from "../layout/viewer-text";
 import { HoverCard, type HoverCardContent, type SceneSummary, type UnitSummary } from "./hover-card";
 import { useSelectedFloor, useSelectedUnit } from "../selection/use-selected-unit";
@@ -23,6 +26,11 @@ export interface SceneStageProps {
   sceneTitles: Readonly<Record<string, string>>;
   /** What each scene id holds (rolled up the tree), shown on the floor card of scene hotspots. */
   sceneSummaries: Readonly<Record<string, SceneSummary>>;
+  /**
+   * Every unit at or below each scene id (rolled up the tree). With a units
+   * filter in the URL, scene hotspots show how many of them match.
+   */
+  sceneUnits?: Readonly<Record<string, readonly FilterableUnit[]>>;
   /** URL of each scene id; selecting a scene hotspot navigates there. */
   sceneHrefs: Readonly<Record<string, string>>;
   /** ISO 4217 code of the project currency, e.g. "EGP". */
@@ -95,6 +103,10 @@ export function SceneStage(props: SceneStageProps) {
   const floorCodes = floors.find((f) => f.floor === selectedFloor);
   const codeOf = (h: Hotspot) => hotspotUnitCode(h, floorCodes);
   const content = hovered ? cardContent(hovered, props, codeOf) : null;
+  const { filter } = useUnitFilter();
+  const filtering = !isEmptyFilter(filter);
+  const num = new Intl.NumberFormat(locale === "ar" ? "ar-EG" : "en-US");
+  const matchesBelow = (h: Hotspot) => ("scene" in h.target ? filterUnits(props.sceneUnits?.[h.target.scene] ?? [], filter).length : 0);
   const anchor = hovered ? anchorOf(hovered, scene) : null;
   // The scene fits the stage: as wide as the stage allows, and never taller
   // than --stage-height (set by the viewer layout; the viewport by default).
@@ -110,6 +122,17 @@ export function SceneStage(props: SceneStageProps) {
         }}
         hotspotLabel={hotspotLabeller(units, sceneTitles, text, codeOf)}
         onHover={setHovered}
+        hotspotEmphasis={
+          filtering
+            ? (h) => {
+                if ("scene" in h.target) return matchesBelow(h) > 0 ? "match" : "dim";
+                const code = codeOf(h);
+                const unit = code ? units[code] : undefined;
+                return unit && matchesFilter(unit, filter) ? "match" : "dim";
+              }
+            : undefined
+        }
+        hotspotBadge={filtering ? (h) => ("scene" in h.target ? num.format(matchesBelow(h)) : undefined) : undefined}
         onSelect={(h) => {
           const t = h.target;
           if ("scene" in t) {

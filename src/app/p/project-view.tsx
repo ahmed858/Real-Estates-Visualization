@@ -5,8 +5,8 @@ import { join } from "node:path";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { FileProjectSource, ProjectSourceError, type LoadedProject } from "@/modules/data-sources";
-import { computeBedroomMix, computeSceneStats, createSceneTree } from "@/modules/domain";
-import { Breadcrumbs, FloorPicker, LANG_PARAM, LocaleSwitch, ProjectHeader, resolveLocale, withLocale, SceneStage, type SceneSummary, type UnitSummary, SidePanel, StatusLegend, ViewerLayout, ViewerMessage, viewerText, WhatsAppButton, enquiryMessage, whatsappLink } from "@/modules/viewer";
+import { computeBedroomMix, computeSceneStats, createSceneTree, rollUpUnits, type FilterableUnit } from "@/modules/domain";
+import { Breadcrumbs, FloorPicker, LANG_PARAM, LocaleSwitch, ProjectHeader, resolveLocale, withLocale, SceneFilter, SceneStage, type SceneSummary, type UnitSummary, SidePanel, StatusLegend, ViewerLayout, ViewerMessage, viewerText, WhatsAppButton, enquiryMessage, whatsappLink } from "@/modules/viewer";
 
 export const projects = new FileProjectSource(join(process.cwd(), "projects"));
 
@@ -61,6 +61,12 @@ export async function ProjectView({ params, searchParams }: ProjectViewProps) {
       ]),
   );
   const bedroomMix = computeBedroomMix(tree, units);
+  // Units below each scene hotspot of this scene, for the filter counts, and
+  // every unit of the project, for the filter options. Only the filtered fields.
+  const rolledUp = rollUpUnits(tree, units);
+  const filterable = (rows: readonly FilterableUnit[] = []): FilterableUnit[] => rows.map(({ status, type, bedrooms, floor, price, areaM2 }) => ({ status, type, bedrooms, floor, price, areaM2 }));
+  const unitsBelow = Object.fromEntries(scene.hotspots.flatMap((h) => ("scene" in h.target ? [[h.target.scene, filterable(rolledUp.get(h.target.scene))]] : [])));
+  const projectUnits = filterable(rolledUp.get(tree.root.id));
   const sceneSummaries: Record<string, SceneSummary> = Object.fromEntries(
     [...allStats].map(([id, s]) => [id, { total: s.total, byStatus: s.byStatus, bedroomMix: bedroomMix.get(id) ?? [], price: s.price, area: s.area }]),
   );
@@ -86,9 +92,10 @@ export async function ProjectView({ params, searchParams }: ProjectViewProps) {
         <div className="flex flex-wrap items-center justify-between gap-4">
           <Breadcrumbs items={crumbs} label={text.breadcrumbs} />
           {floors.length > 0 && <FloorPicker floors={floors.map((f) => f.floor)} locale={locale} />}
+          <SceneFilter units={projectUnits} locale={locale} />
         </div>
       }
-      scene={<SceneStage scene={scene} imageUrl={projectFileUrl(slug, scene.image.path)} units={sceneUnits} sceneTitles={sceneTitles} sceneSummaries={sceneSummaries} sceneHrefs={sceneHrefs} floors={floors} currency={config.project.currency} locale={locale} />}
+      scene={<SceneStage scene={scene} imageUrl={projectFileUrl(slug, scene.image.path)} units={sceneUnits} sceneTitles={sceneTitles} sceneSummaries={sceneSummaries} sceneUnits={unitsBelow} sceneHrefs={sceneHrefs} floors={floors} currency={config.project.currency} locale={locale} />}
       legend={<StatusLegend text={text} counts={stats?.byStatus} />}
       panel={<SidePanel sceneTitle={scene.title[locale]} stats={stats} units={sceneUnits} currency={config.project.currency} locale={locale} enquiry={{ whatsapp: config.project.contact.whatsapp, projectName: name, typicalFloor: floors.length > 0 }} />}
     />

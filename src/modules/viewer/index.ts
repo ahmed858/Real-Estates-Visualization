@@ -8,7 +8,7 @@ export { ACTIVE_FILL_OPACITY, HOTSPOT_FILL, STATUS_STYLE, hotspotStyle } from ".
 export type { HotspotStyle } from "./scene/status-style";
 export { DEFAULT_SCENE_RENDERERS, SceneView } from "./scene/scene-view";
 export type { SceneViewProps } from "./scene/scene-view";
-export type { SceneRenderer, SceneRendererProps, SceneRendererRegistry } from "./scene/scene-renderer";
+export type { HotspotEmphasis, SceneRenderer, SceneRendererProps, SceneRendererRegistry } from "./scene/scene-renderer";
 export { SceneStage } from "./scene/scene-stage";
 export { hotspotUnitCode } from "./scene/scene-stage";
 export type { ConcreteFloorCodes, SceneStageProps } from "./scene/scene-stage";
@@ -48,3 +48,8 @@ export type { UnitHref } from "./table/table-rows";
 export type { SortDirection, UnitSortKey } from "./table/sort-units";
 export { FilteredUnitsTable } from "./table/filtered-units-table";
 export { FILTER_PARAMS, filterToParams, isEmptyFilter, parseFilter } from "./table/filter-params";
+export { UnitFilterBar } from "./table/unit-filter-bar";
+export type { UnitFilterBarProps } from "./table/unit-filter-bar";
+export { useUnitFilter } from "./table/use-unit-filter";
+export { SceneFilter } from "./navigation/scene-filter";
+export type { SceneFilterProps } from "./navigation/scene-filter";
