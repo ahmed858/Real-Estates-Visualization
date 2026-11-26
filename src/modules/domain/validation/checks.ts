@@ -1,10 +1,16 @@
 // Cross-checks between a valid config and valid unit rows. Pure functions, no I/O.
-import type { ProjectConfig, UnitRow } from "@/modules/schema";
-import type { SceneTree } from "@/modules/domain";
+// Shared by `npm run validate` (tools) and the editor's live problem list.
+import type { ProjectConfig, UnitRow, UnitsSource } from "@/modules/schema";
+import type { SceneTree } from "../scene-tree/scene-tree";
 import type { Finding } from "./report";
 
 export const CONFIG_FILE = "project.json";
 export const UNITS_FILE = "units.xlsx";
+
+/** How findings name where the unit rows came from. */
+export function unitsLabel(units: UnitsSource): string {
+  return units.source === "xlsx" ? UNITS_FILE : "Google Sheet";
+}
 
 /** Every unit code drawn on a scene must exist in the sheet. */
 export function hotspotUnitsExistInSheet(tree: SceneTree, units: readonly UnitRow[], sheet: string = UNITS_FILE): Finding[] {
@@ -17,6 +23,8 @@ export function hotspotUnitsExistInSheet(tree: SceneTree, units: readonly UnitRo
       file: CONFIG_FILE,
       location: `scene "${p.sceneId}", hotspot "${p.hotspotId}"`,
       message: `unit "${p.code}" is not in ${sheet}`,
+      sceneId: p.sceneId,
+      hotspotId: p.hotspotId,
     }));
 }
 
@@ -72,6 +80,7 @@ export function scenesAreReachable(tree: SceneTree): Finding[] {
           file: CONFIG_FILE,
           location: `scene "${child.id}"`,
           message: `no hotspot on "${scene.id}" opens this scene, so visitors cannot reach it`,
+          sceneId: scene.id,
         });
       }
     }
@@ -79,13 +88,37 @@ export function scenesAreReachable(tree: SceneTree): Finding[] {
   return findings;
 }
 
+export interface FileReference {
+  path: string;
+  file: string;
+  location: string;
+  sceneId?: string;
+}
+
+/** The finding for a referenced file that does not exist. */
+export const missingFile = (ref: FileReference): Finding => ({
+  severity: "error",
+  file: ref.file,
+  location: ref.location,
+  message: `file "${ref.path}" does not exist`,
+  ...(ref.sceneId && { sceneId: ref.sceneId }),
+});
+
 /** Every file the config and sheet refer to, with where it was referenced. */
-export function referencedFiles(config: ProjectConfig, tree: SceneTree, units: readonly UnitRow[], sheet: string = UNITS_FILE) {
+export function referencedFiles(config: ProjectConfig, tree: SceneTree, units: readonly UnitRow[], sheet: string = UNITS_FILE): FileReference[] {
   return [
     { path: config.project.branding.logo, file: CONFIG_FILE, location: "project.branding.logo" },
-    ...tree.scenes.map((s) => ({ path: s.image.path, file: CONFIG_FILE, location: `scene "${s.id}", image.path` })),
+    ...tree.scenes.map((s) => ({ path: s.image.path, file: CONFIG_FILE, location: `scene "${s.id}", image.path`, sceneId: s.id })),
     ...units.flatMap((u) =>
       u.planImage ? [{ path: u.planImage, file: sheet, location: `row ${u.sheetRow}, plan_image` }] : [],
     ),
+  ];
+}
+
+/** Every check that needs a valid config and valid unit rows, except file existence (that needs I/O). */
+export function checkProjectFit(tree: SceneTree, units: readonly UnitRow[] | undefined, sheet: string = UNITS_FILE): Finding[] {
+  return [
+    ...scenesAreReachable(tree),
+    ...(units ? [...hotspotUnitsExistInSheet(tree, units, sheet), ...sheetUnitsArePlaced(tree, units, sheet), ...sheetScenesMatch(tree, units, sheet)] : []),
   ];
 }

@@ -629,18 +629,28 @@ editor never writes to the server's disk and is off unless enabled.
   shape is still there; an added scene appears in the list and opens.
 - Verify: `npm run check`.
 
-### U-607 Live validation and export
-- Phase 6 · `editor` · Depends on: U-610 · **Gated: yes** · Status: `todo`
+### U-607 Live validation in the editor
+- Phase 6 · `domain` + `editor` · Depends on: U-610 · **Gated: yes** · Status: `done`
+- Split by U-607's run: the export half is U-611.
 - The editor shows the same problems `npm run validate` finds, as the owner
-  edits (each linked to its scene and hotspot), and a "Download project.json"
-  button that is enabled only when there are no errors. The file is
-  formatted like the existing projects so diffs stay small.
+  edits, each linked to its scene and hotspot (a click opens the scene and
+  selects the hotspot). The pure checks move from `tools` to `domain` so
+  the CLI and the editor share one implementation.
+- Acceptance: tests that the editor and `validateProject` report the same
+  problems for the same data; tests for the links.
+- Verify: `npm run check`.
+
+### U-611 Download project.json from the editor
+- Phase 6 · `editor` · Depends on: U-607 · **Gated: yes** · Status: `todo`
+- A "Download project.json" button that is enabled only when there are no
+  errors. The file is formatted like the existing projects (defaults the
+  schema fills in are left out) so diffs stay small.
 - Acceptance: round-trip test (load the demo projects, export without edits,
   output equals the committed `project.json`); tests for blocked export.
 - Verify: `npm run check`.
 
 ### U-608 Owner guide for the editor
-- Phase 6 · Docs · Depends on: U-607 · Gated: no · Status: `todo`
+- Phase 6 · Docs · Depends on: U-611 · Gated: no · Status: `todo`
 - `docs/editor.md`: from a client's images to a committed project with the
   editor (enable it, draw, pick targets, validate, download, commit).
 - Verify: `npm test`.

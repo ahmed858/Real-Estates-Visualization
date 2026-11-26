@@ -2,7 +2,7 @@
 import { access, readFile } from "node:fs/promises";
 import { basename, join } from "node:path";
 import { DEFAULT_UNITS_SOURCE, parseProjectConfig, unitsSourceSchema, type UnitRow, type UnitsSource } from "@/modules/schema";
-import { createSceneTree } from "@/modules/domain";
+import { checkProjectFit, CONFIG_FILE, createSceneTree, missingFile, referencedFiles, UNITS_FILE, unitsLabel, type Finding, type ValidationReport } from "@/modules/domain";
 import {
   createUnitSourceFactory,
   UnitSourceError,
@@ -11,26 +11,12 @@ import {
   type UnitSource,
   type UnitSourceFactory,
 } from "@/modules/data-sources";
-import {
-  CONFIG_FILE,
-  UNITS_FILE,
-  hotspotUnitsExistInSheet,
-  referencedFiles,
-  scenesAreReachable,
-  sheetScenesMatch,
-  sheetUnitsArePlaced,
-} from "./checks";
-import type { Finding, ValidationReport } from "./report";
 
 export interface ValidateOptions {
   /** Creates the unit source from the config's `units` block. Defaults to the app's factory. */
   unitSource?: UnitSourceFactory;
 }
 
-/** How findings name where the rows came from. */
-export function unitsLabel(units: UnitsSource): string {
-  return units.source === "xlsx" ? UNITS_FILE : "Google Sheet";
-}
 
 /**
  * The units source the config asks for: the `units` block when it is valid,
@@ -111,14 +97,11 @@ export async function validateProject(dir: string, options: ValidateOptions = {}
   const config = parsed?.ok ? parsed.value : undefined;
   if (config) {
     const tree = createSceneTree(config);
-    findings.push(...scenesAreReachable(tree));
+    findings.push(...checkProjectFit(tree, sheet.units, label));
     const units = sheet.units ?? [];
-    if (sheet.units) {
-      findings.push(...hotspotUnitsExistInSheet(tree, units, label), ...sheetUnitsArePlaced(tree, units, label), ...sheetScenesMatch(tree, units, label));
-    }
     for (const ref of referencedFiles(config, tree, units, label)) {
       if (!(await exists(join(dir, ref.path)))) {
-        findings.push({ severity: "error", file: ref.file, location: ref.location, message: `file "${ref.path}" does not exist` });
+        findings.push(missingFile(ref));
       }
     }
   }

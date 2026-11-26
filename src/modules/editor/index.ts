@@ -27,3 +27,7 @@ export type { BuildSceneResult, SceneFormInput } from "./scenes/build-scene";
 export { EditorSession } from "./session/editor-session";
 export type { EditorSessionProps } from "./session/editor-session";
 export { editorSceneHref, editorSceneItems, SCENE_PARAM, sceneIdFromSearch } from "./session/scene-items";
+export { liveFindings, locatePath } from "./validation/live-findings";
+export type { LiveProject } from "./validation/live-findings";
+export { ProblemList } from "./validation/problem-list";
+export type { ProblemListProps } from "./validation/problem-list";
