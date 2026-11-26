@@ -14,6 +14,8 @@ export interface SceneRendererProps {
   hotspotLabel: (hotspot: Hotspot) => string;
   /** Called when a hotspot is clicked or activated with the keyboard. */
   onSelect?: (hotspot: Hotspot) => void;
+  /** Called with the hotspot under the pointer or keyboard focus, and with null when it leaves. */
+  onHover?: (hotspot: Hotspot | null) => void;
 }
 
 export type SceneRenderer = ComponentType<SceneRendererProps>;

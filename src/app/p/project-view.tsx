@@ -5,8 +5,7 @@ import { join } from "node:path";
 import { notFound } from "next/navigation";
 import { FileProjectSource, ProjectSourceError, type LoadedProject } from "@/modules/data-sources";
 import { computeSceneStats, createSceneTree } from "@/modules/domain";
-import type { UnitStatus } from "@/modules/schema";
-import { ProjectHeader, SceneStage, ScenePanel, StatusLegend, ViewerLayout, ViewerMessage, viewerText } from "@/modules/viewer";
+import { ProjectHeader, SceneStage, type UnitSummary, ScenePanel, StatusLegend, ViewerLayout, ViewerMessage, viewerText } from "@/modules/viewer";
 
 const projects = new FileProjectSource(join(process.cwd(), "projects"));
 
@@ -34,9 +33,16 @@ export async function ProjectView({ params }: { params: Promise<ProjectViewParam
   const tree = createSceneTree(config);
   if (sceneId !== undefined && !tree.has(sceneId)) notFound();
   const scene = tree.get(sceneId ?? tree.root.id);
-  const stats = computeSceneStats(tree, units).get(scene.id);
+  const allStats = computeSceneStats(tree, units);
+  const stats = allStats.get(scene.id);
 
-  const unitStatus: Record<string, UnitStatus> = Object.fromEntries(units.map((u) => [u.code, u.status]));
+  const drawn = new Set(scene.hotspots.flatMap((h) => ("unit" in h.target ? [h.target.unit] : [])));
+  const sceneUnits: Record<string, UnitSummary> = Object.fromEntries(
+    units
+      .filter((u) => drawn.has(u.code))
+      .map(({ code, type, bedrooms, areaM2, price, status }) => [code, { code, type, bedrooms, areaM2, price, status }]),
+  );
+  const sceneCounts = Object.fromEntries([...allStats].map(([id, s]) => [id, s.byStatus]));
   const sceneTitles = Object.fromEntries(tree.scenes.map((s) => [s.id, s.title[locale]]));
   const name = config.project.name[locale];
 
@@ -45,7 +51,7 @@ export async function ProjectView({ params }: { params: Promise<ProjectViewParam
       locale={locale}
       brand={{ primary: config.project.branding.primaryColor, accent: config.project.branding.accentColor }}
       header={<ProjectHeader name={name} logoUrl={projectFileUrl(slug, config.project.branding.logo)} text={text} />}
-      scene={<SceneStage scene={scene} imageUrl={projectFileUrl(slug, scene.image.path)} unitStatus={unitStatus} sceneTitles={sceneTitles} locale={locale} />}
+      scene={<SceneStage scene={scene} imageUrl={projectFileUrl(slug, scene.image.path)} units={sceneUnits} sceneTitles={sceneTitles} sceneCounts={sceneCounts} currency={config.project.currency} locale={locale} />}
       legend={<StatusLegend text={text} counts={stats?.byStatus} />}
       panel={<ScenePanel sceneTitle={scene.title[locale]} text={text} />}
     />

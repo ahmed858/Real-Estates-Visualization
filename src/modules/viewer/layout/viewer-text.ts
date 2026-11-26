@@ -12,6 +12,7 @@ export interface ViewerText {
   details: string;
   selectHint: string;
   logoAlt: (projectName: string) => string;
+  card: { type: string; bedrooms: string; area: string; squareMetres: string; price: string; status: string };
 }
 
 const TEXT: Record<ViewerLocale, ViewerText> = {
@@ -23,6 +24,7 @@ const TEXT: Record<ViewerLocale, ViewerText> = {
     details: "التفاصيل",
     selectHint: "اختر دورًا أو وحدة من الصورة لعرض تفاصيلها.",
     logoAlt: (name) => `شعار ${name}`,
+    card: { type: "النوع", bedrooms: "غرف النوم", area: "المساحة", squareMetres: "م²", price: "السعر", status: "الحالة" },
   },
   en: {
     dir: "ltr",
@@ -32,6 +34,7 @@ const TEXT: Record<ViewerLocale, ViewerText> = {
     details: "Details",
     selectHint: "Pick a floor or a unit on the image to see its details.",
     logoAlt: (name) => `${name} logo`,
+    card: { type: "Type", bedrooms: "Bedrooms", area: "Area", squareMetres: "m²", price: "Price", status: "Status" },
   },
 };
 
