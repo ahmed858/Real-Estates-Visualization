@@ -2,7 +2,9 @@
 // Reading unit status from a spreadsheet (.xlsx, Google Sheets) behind one interface.
 // Other modules may import ONLY from "@/modules/data-sources" (this file), never from files inside it.
 export { UnitSourceError, UnitSourceReadError } from "./unit-source";
-export type { UnitSource, UnitSourceReadErrorKind } from "./unit-source";
+export type { LoadedUnits, StaleUnits, UnitSource, UnitSourceReadErrorKind } from "./unit-source";
+export { LastGoodUnitSource } from "./last-good-unit-source";
+export type { ProblemLogger } from "./last-good-unit-source";
 export { GoogleSheetCsvSource, googleSheetCsvUrl } from "./google-sheet-csv-source";
 export type { FetchLike } from "./google-sheet-csv-source";
 export { XlsxFileSource } from "./xlsx-file-source";

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ProjectSourceError, type LoadedProject } from "@/modules/data-sources";
 import { createSceneTree } from "@/modules/domain";
-import { FLOOR_PARAM, LANG_PARAM, LocaleSwitch, ProjectHeader, UNIT_PARAM, FilteredUnitsTable, ViewerMessage, resolveLocale, unitTableRows, viewerText, withLocale } from "@/modules/viewer";
+import { FLOOR_PARAM, LANG_PARAM, LocaleSwitch, ProjectHeader, UNIT_PARAM, FilteredUnitsTable, StaleDataNote, ViewerMessage, resolveLocale, unitTableRows, viewerText, withLocale } from "@/modules/viewer";
 import { projectFileUrl, projects, sceneUrl, type ProjectViewProps } from "./project-view";
 
 export async function UnitsView({ params, searchParams }: ProjectViewProps) {
@@ -41,6 +41,7 @@ export async function UnitsView({ params, searchParams }: ProjectViewProps) {
             {text.table.back}
           </Link>
         </div>
+        {project.unitsStale && <StaleDataNote text={text} />}
         <FilteredUnitsTable rows={rows} currency={config.project.currency} locale={locale} />
       </main>
     </div>

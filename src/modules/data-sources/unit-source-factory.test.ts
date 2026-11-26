@@ -1,6 +1,6 @@
 import { fileURLToPath } from "node:url";
 import { describe, expect, it, vi } from "vitest";
-import { CachedUnitSource, createUnitSource, createUnitSourceFactory, UnsupportedUnitSourceError, XlsxFileSource, type FetchLike, type UnitSource } from "./index";
+import { createUnitSource, createUnitSourceFactory, LastGoodUnitSource, UnsupportedUnitSourceError, XlsxFileSource, type FetchLike, type UnitSource } from "./index";
 
 const demoVilla = fileURLToPath(new URL("../../../projects/demo-villa", import.meta.url));
 
@@ -12,7 +12,7 @@ describe("createUnitSource", () => {
   });
 
   it("reads a Google Sheet through a cached source", () => {
-    expect(createUnitSource({ source: "google-sheet", sheetId: "x".repeat(44), gid: "0", refreshSeconds: 60 }, demoVilla)).toBeInstanceOf(CachedUnitSource);
+    expect(createUnitSource({ source: "google-sheet", sheetId: "x".repeat(44), gid: "0", refreshSeconds: 60 }, demoVilla)).toBeInstanceOf(LastGoodUnitSource);
   });
 
   it("reports a source this build does not know", () => {
@@ -30,10 +30,13 @@ describe("createUnitSourceFactory: Google Sheet refresh interval", () => {
     let time = 0;
     let status = "available";
     const fetchFn = vi.fn<FetchLike>(async () => new Response(CSV + status, { headers: { "content-type": "text/csv" } }));
-    const factory = createUnitSourceFactory({ now: () => time, fetch: fetchFn });
+    const log = vi.fn();
+    const factory = createUnitSourceFactory({ now: () => time, fetch: fetchFn, log });
     const statusNow = async (units = sheet()) => (await factory(units, demoVilla).load())[0].status;
     return {
       fetchFn,
+      log,
+      factory,
       statusNow,
       advance: (ms: number) => (time += ms),
       edit: (next: string) => (status = next),
@@ -69,5 +72,25 @@ describe("createUnitSourceFactory: Google Sheet refresh interval", () => {
     await statusNow(sheet(60, "7"));
     expect(fetchFn).toHaveBeenCalledTimes(2);
     expect(fetchFn.mock.calls.map(([url]) => url.slice(-5))).toEqual(["gid=0", "gid=7"]);
+  });
+});
+
+describe("createUnitSourceFactory: a sheet that breaks after a good read", () => {
+  it("keeps serving the last good rows with a stale notice and logs why", async () => {
+    let time = 0;
+    let body = "code,scene,floor,type,bedrooms,bathrooms,area_m2,price,status\nG-01,ground,0,Apartment,2,1,100,1000000,available";
+    const log = vi.fn();
+    const factory = createUnitSourceFactory({ now: () => time, fetch: async () => new Response(body, { headers: { "content-type": "text/csv" } }), log });
+    const units = { source: "google-sheet" as const, sheetId: "x".repeat(44), gid: "0", refreshSeconds: 60 };
+
+    const first = await factory(units, demoVilla).loadWithStatus!();
+    expect(first.stale).toBeUndefined();
+
+    body = body.replace("available", "maybe");
+    time = 61_000;
+    const second = await factory(units, demoVilla).loadWithStatus!();
+    expect(second.rows).toEqual(first.rows);
+    expect(second.stale).toEqual({ lastGoodAt: 0, problems: [expect.stringMatching(/^row 2, status: "maybe" is not a known status/)] });
+    expect(log).toHaveBeenCalledOnce();
   });
 });

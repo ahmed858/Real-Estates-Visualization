@@ -115,3 +115,17 @@ describe("FileProjectSource: units source from project.json", () => {
     expect(error.issues[0]).toMatch(/^units\.source: /);
   });
 });
+
+describe("FileProjectSource: stale units", () => {
+  it("passes a stale notice from the unit source on to the loaded project", async () => {
+    const stale = { lastGoodAt: 1_000, problems: ["row 4, price: must be a number"] };
+    const factory = () => ({ load: async () => [], loadWithStatus: async () => ({ rows: [], stale }) });
+    const project = await new FileProjectSource(projectsDir, factory).load("demo-villa");
+    expect(project.unitsStale).toEqual(stale);
+  });
+
+  it("has no notice for fresh units", async () => {
+    const project = await new FileProjectSource(projectsDir).load("demo-villa");
+    expect(project).not.toHaveProperty("unitsStale");
+  });
+});

@@ -49,7 +49,11 @@ Paste the id, not the whole link: a full URL in `sheetId` is rejected.
 A status change in the sheet shows on the site within `refreshSeconds`. Each
 server instance keeps its own copy, so Google sees at most one read per tab
 per interval per instance. A failed read is not kept; the next visitor's
-request tries again.
+request tries again. Meanwhile, if the sheet was read correctly before, the
+site keeps showing those last good rows with a small "Unit status may be out
+of date" note and logs the problems on the server (Vercel runtime logs). If
+the sheet has never been read correctly, the invalid-data page lists the
+problems.
 
 ### Scene
 

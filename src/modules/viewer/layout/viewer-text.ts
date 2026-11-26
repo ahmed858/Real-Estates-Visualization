@@ -13,6 +13,8 @@ export interface ViewerText {
   selectHint: string;
   logoAlt: (projectName: string) => string;
   breadcrumbs: string;
+  /** Shown when the unit statuses come from the last good copy of the sheet. */
+  staleNote: string;
   card: {
     type: string;
     bedrooms: string;
@@ -59,6 +61,7 @@ const TEXT: Record<ViewerLocale, ViewerText> = {
     selectHint: "اختر دورًا أو وحدة من الصورة لعرض تفاصيلها.",
     logoAlt: (name) => `شعار ${name}`,
     breadcrumbs: "مسار التصفح",
+    staleNote: "قد لا تكون حالة الوحدات محدّثة الآن.",
     card: {
       type: "النوع",
       bedrooms: "غرف النوم",
@@ -106,6 +109,7 @@ const TEXT: Record<ViewerLocale, ViewerText> = {
     selectHint: "Pick a floor or a unit on the image to see its details.",
     logoAlt: (name) => `${name} logo`,
     breadcrumbs: "Breadcrumbs",
+    staleNote: "Unit status may be out of date.",
     card: {
       type: "Type",
       bedrooms: "Bedrooms",
