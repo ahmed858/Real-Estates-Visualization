@@ -151,7 +151,7 @@ clean architectural SVG, not photos.
 - Verify: `npm test`.
 
 ### U-202 Floor plan SVG renderer
-- Phase 2 · Module `tools` · Depends on: U-201 · Gated: no · Status: `todo`
+- Phase 2 · Module `tools` · Depends on: U-201 · Gated: no · Status: `done`
 - Render each floor (with courtyard on the ground floor) to SVG: walls, room
   labels, doors/windows as simple symbols, a north arrow and scale bar.
 - Acceptance: snapshot tests of the SVG; files open in a browser.
