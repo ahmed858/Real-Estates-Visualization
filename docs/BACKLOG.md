@@ -572,7 +572,7 @@ editor never writes to the server's disk and is off unless enabled.
 - Verify: `npm run check`.
 
 ### U-602 Polygon geometry helpers
-- Phase 6 · `domain` · Depends on: U-507 · Gated: no · Status: `todo`
+- Phase 6 · `domain` · Depends on: U-507 · Gated: no · Status: `done`
 - Pure functions the editor needs: clamp a point to the image, distance to
   the nearest vertex and edge, whether a click closes the polygon (near the
   first point), polygon area and self-intersection check, rounding points to
