@@ -285,7 +285,7 @@ client components for interaction; project data is read on the server.
 - Verify: `npm run check`, Vercel preview.
 
 ### U-310 Typical floor picker
-- Phase 3 · Module `viewer` · Depends on: U-309 · Gated: no · Status: `todo`
+- Phase 3 · Module `viewer` · Depends on: U-309 · Gated: no · Status: `done`
 - For a typical floor scene, a floor selector (from the expanded floors) sets
   the concrete floor; unit codes and statuses follow the selected floor.
   Needs a small fixture project with a typical floor (not the demo villa).

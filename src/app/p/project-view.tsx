@@ -5,7 +5,7 @@ import { join } from "node:path";
 import { notFound } from "next/navigation";
 import { FileProjectSource, ProjectSourceError, type LoadedProject } from "@/modules/data-sources";
 import { computeSceneStats, createSceneTree } from "@/modules/domain";
-import { Breadcrumbs, ProjectHeader, SceneStage, type UnitSummary, SidePanel, StatusLegend, ViewerLayout, ViewerMessage, viewerText } from "@/modules/viewer";
+import { Breadcrumbs, FloorPicker, ProjectHeader, SceneStage, type UnitSummary, SidePanel, StatusLegend, ViewerLayout, ViewerMessage, viewerText } from "@/modules/viewer";
 
 const projects = new FileProjectSource(join(process.cwd(), "projects"));
 
@@ -39,7 +39,11 @@ export async function ProjectView({ params }: { params: Promise<ProjectViewParam
   const allStats = computeSceneStats(tree, units);
   const stats = allStats.get(scene.id);
 
-  const drawn = new Set(scene.hotspots.flatMap((h) => ("unit" in h.target ? [h.target.unit] : [])));
+  const floors = tree.concreteFloors(scene.id).map((f) => ({ floor: f.floor, codes: Object.fromEntries(f.units.map((u) => [u.hotspotId, u.code])) }));
+  const drawn = new Set([
+    ...scene.hotspots.flatMap((h) => ("unit" in h.target ? [h.target.unit] : [])),
+    ...floors.flatMap((f) => Object.values(f.codes)),
+  ]);
   const sceneUnits: Record<string, UnitSummary> = Object.fromEntries(
     units
       .filter((u) => drawn.has(u.code))
@@ -59,8 +63,13 @@ export async function ProjectView({ params }: { params: Promise<ProjectViewParam
       locale={locale}
       brand={{ primary: config.project.branding.primaryColor, accent: config.project.branding.accentColor }}
       header={<ProjectHeader name={name} logoUrl={projectFileUrl(slug, config.project.branding.logo)} text={text} />}
-      nav={<Breadcrumbs items={crumbs} label={text.breadcrumbs} />}
-      scene={<SceneStage scene={scene} imageUrl={projectFileUrl(slug, scene.image.path)} units={sceneUnits} sceneTitles={sceneTitles} sceneCounts={sceneCounts} sceneHrefs={sceneHrefs} currency={config.project.currency} locale={locale} />}
+      nav={
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <Breadcrumbs items={crumbs} label={text.breadcrumbs} />
+          {floors.length > 0 && <FloorPicker floors={floors.map((f) => f.floor)} locale={locale} />}
+        </div>
+      }
+      scene={<SceneStage scene={scene} imageUrl={projectFileUrl(slug, scene.image.path)} units={sceneUnits} sceneTitles={sceneTitles} sceneCounts={sceneCounts} sceneHrefs={sceneHrefs} floors={floors} currency={config.project.currency} locale={locale} />}
       legend={<StatusLegend text={text} counts={stats?.byStatus} />}
       panel={<SidePanel sceneTitle={scene.title[locale]} stats={stats} units={sceneUnits} currency={config.project.currency} locale={locale} />}
     />

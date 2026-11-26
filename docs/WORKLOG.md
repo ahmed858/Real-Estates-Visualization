@@ -26,4 +26,4 @@ One line per agent run, newest last:
 2026-11-26 10:36 UTC | U-307 | Hover/focus card: unit facts with price in project currency, scene title with status counts; onHover on the renderer contract | https://github.com/ahmed858/Real-Estates-Visualization/pull/27
 2026-11-26 10:39 UTC | U-308 | Side panel: unit details with plan image and notes from ?unit=, scene summary otherwise; URL-backed selection hook | https://github.com/ahmed858/Real-Estates-Visualization/pull/28
 2026-11-26 10:43 UTC | U-309 | Scene hotspots navigate, breadcrumbs back up, bilingual not-found page for unknown project/scene | https://github.com/ahmed858/Real-Estates-Visualization/pull/29
-2026-11-26 10:46 UTC | U-310 | in progress | -
+2026-11-26 10:46 UTC | U-310 | Typical floor picker: ?floor= in the URL, unit codes/statuses/cards/selection follow the floor; tower fixture | https://github.com/ahmed858/Real-Estates-Visualization/pull/30
