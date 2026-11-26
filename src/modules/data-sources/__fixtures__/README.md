@@ -32,3 +32,11 @@ await writeExcelFile([
   ['G-02','ground',0,'Apartment',3,2,'big',4400000,'on hold',null,null],
 ]).toFile(`${out}/units-invalid-row.xlsx`)
 ```
+
+CSV files in `google-sheet/`, as Google Sheets' CSV export would return them,
+read by `google-sheet-csv-source.test.ts` (hand-written):
+
+- `units.csv`: UTF-8 with a byte order mark and CRLF rows; Arabic type and
+  statuses, a quoted price with thousands separators, a quoted note with a
+  comma and one with a line break, Arabic-Indic digits.
+- `units-invalid-row.csv`: row 3 has a non-numeric `area_m2` and an unknown status.
