@@ -4,7 +4,7 @@
 import { join } from "node:path";
 import { notFound } from "next/navigation";
 import { FileProjectSource, ProjectSourceError, type LoadedProject } from "@/modules/data-sources";
-import { createSceneTree } from "@/modules/domain";
+import { computeSceneStats, createSceneTree } from "@/modules/domain";
 import type { UnitStatus } from "@/modules/schema";
 import { ProjectHeader, SceneStage, ScenePanel, StatusLegend, ViewerLayout, ViewerMessage, viewerText } from "@/modules/viewer";
 
@@ -34,6 +34,7 @@ export async function ProjectView({ params }: { params: Promise<ProjectViewParam
   const tree = createSceneTree(config);
   if (sceneId !== undefined && !tree.has(sceneId)) notFound();
   const scene = tree.get(sceneId ?? tree.root.id);
+  const stats = computeSceneStats(tree, units).get(scene.id);
 
   const unitStatus: Record<string, UnitStatus> = Object.fromEntries(units.map((u) => [u.code, u.status]));
   const sceneTitles = Object.fromEntries(tree.scenes.map((s) => [s.id, s.title[locale]]));
@@ -45,7 +46,7 @@ export async function ProjectView({ params }: { params: Promise<ProjectViewParam
       brand={{ primary: config.project.branding.primaryColor, accent: config.project.branding.accentColor }}
       header={<ProjectHeader name={name} logoUrl={projectFileUrl(slug, config.project.branding.logo)} text={text} />}
       scene={<SceneStage scene={scene} imageUrl={projectFileUrl(slug, scene.image.path)} unitStatus={unitStatus} sceneTitles={sceneTitles} locale={locale} />}
-      legend={<StatusLegend text={text} />}
+      legend={<StatusLegend text={text} counts={stats?.byStatus} />}
       panel={<ScenePanel sceneTitle={scene.title[locale]} text={text} />}
     />
   );

@@ -62,8 +62,8 @@ describe("StatusLegend", () => {
     render(<StatusLegend text={en} />);
     const legend = screen.getByRole("region", { name: "Unit status" });
     expect(within(legend).getAllByRole("listitem").map((li) => li.textContent)).toEqual(["Available", "Reserved", "Sold"]);
-    const swatch = legend.querySelector('[data-status="sold"] span') as HTMLElement;
-    expect(swatch.style.background).toBe(HOTSPOT_FILL.sold);
+    const swatch = legend.querySelector('[data-swatch="sold"] rect') as SVGRectElement;
+    expect(swatch.getAttribute("fill")).toBe(HOTSPOT_FILL.sold);
   });
 
   it("uses Arabic labels for an Arabic project", () => {
