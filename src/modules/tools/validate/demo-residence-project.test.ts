@@ -26,5 +26,10 @@ describe("projects/demo-residence", () => {
     const tops = root.hotspots.map((h) => Math.min(...h.points.map(([, y]) => y)));
     expect([...tops].sort((a, b) => a - b)).toEqual(tops);
     for (const floor of root.children) expect(floor.hotspots).toHaveLength(4);
+    for (const floor of root.children) {
+      expect(floor.image.path).toBe(
+        floor.id === "ground" ? "images/floor-plan-ground.svg" : "images/floor-plan-typical.svg",
+      );
+    }
   });
 });
