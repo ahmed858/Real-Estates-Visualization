@@ -116,7 +116,7 @@ If a real client arrives early, Phase 6 may move ahead of Phase 4.
 - Verify: `npm test`, run the CLI on a fixture.
 
 ### U-107 Collection guide (Arabic and English)
-- Phase 1 · Docs · Depends on: U-101, U-102 · **Gated: yes** · Status: `todo`
+- Phase 1 · Docs · Depends on: U-101, U-102 · **Gated: yes** · Status: `done`
 - `docs/collection-guide/ar.md` and `en.md`: what the owner collects from a
   client and in what form: facade render, a plan per floor (image or PDF),
   a plan per unit type, the units sheet, logo and brand colours, WhatsApp
