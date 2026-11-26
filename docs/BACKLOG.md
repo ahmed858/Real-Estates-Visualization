@@ -88,7 +88,7 @@ If a real client arrives early, Phase 6 may move ahead of Phase 4.
 - Verify: `npm test`.
 
 ### U-104 Status stats and filters
-- Phase 1 · Module `domain` · Depends on: U-102, U-103 · Gated: no · Status: `todo`
+- Phase 1 · Module `domain` · Depends on: U-102, U-103 · Gated: no · Status: `done`
 - Join units to scenes; per-scene counts by status (rolled up the tree), price
   and area ranges; pure filter function (status, type, bedrooms, price range,
   area range, floor).

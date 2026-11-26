@@ -9,4 +9,4 @@ One line per agent run, newest last:
 2026-11-26 08:26 UTC | U-105 | UnitSource interface, XlsxFileSource (read-excel-file), xlsx fixtures and tests | https://github.com/ahmed858/Real-Estates-Visualization/pull/6
 2026-11-26 08:28 UTC | U-103 | SceneTree index: lookup, children, parent, breadcrumbs, typical floor expansion, unit codes | https://github.com/ahmed858/Real-Estates-Visualization/pull/7
 2026-11-26 08:33 UTC | U-106 | npm run validate: config, sheet, unit codes both ways, referenced files, warnings | https://github.com/ahmed858/Real-Estates-Visualization/pull/11
-2026-11-26 08:39 UTC | U-104 | in progress | -
+2026-11-26 08:39 UTC | U-104 | Scene stats by status with price/area ranges rolled up the tree; pure unit filter | https://github.com/ahmed858/Real-Estates-Visualization/pull/12
