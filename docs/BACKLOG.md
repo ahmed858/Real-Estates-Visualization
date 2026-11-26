@@ -198,7 +198,7 @@ validator, and the generated `projects/demo-villa` (facade → 3 floors →
 client components for interaction; project data is read on the server.
 
 ### U-301 Project loader
-- Phase 3 · Module `data-sources` · Depends on: U-205 · Gated: no · Status: `todo`
+- Phase 3 · Module `data-sources` · Depends on: U-205 · Gated: no · Status: `done`
 - `ProjectSource` interface (Adapter) with `load(slug)` returning the parsed
   config and unit rows; `FileProjectSource` reads `projects/<slug>/project.json`
   and its units through a `UnitSource`. Unknown slug and invalid data give a

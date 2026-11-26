@@ -5,3 +5,6 @@ export { UnitSourceError } from "./unit-source";
 export type { UnitSource } from "./unit-source";
 export { XlsxFileSource } from "./xlsx-file-source";
 export { sheetTableFromRows } from "./sheet-table";
+export { ProjectSourceError } from "./project-source";
+export type { LoadedProject, ProjectSource, ProjectSourceErrorKind } from "./project-source";
+export { FileProjectSource, PROJECT_CONFIG_FILE, PROJECT_UNITS_FILE } from "./file-project-source";
