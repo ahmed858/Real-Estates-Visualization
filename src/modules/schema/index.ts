@@ -2,6 +2,7 @@
 // Project and units-sheet data shapes, plus validation. Depends on nothing internal.
 // Other modules may import ONLY from "@/modules/schema" (this file), never from files inside it.
 export {
+  DEFAULT_SCENE_RENDERER_TYPE,
   PROJECT_SCHEMA_VERSION,
   SCENE_KINDS,
   SCENE_RENDERER_TYPES,

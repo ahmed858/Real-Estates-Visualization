@@ -20,6 +20,8 @@ export const SCENE_KINDS = ["facade", "masterplan", "building", "floor", "unit-p
  * 360° and 3D renderers are added here later without changing the tree.
  */
 export const SCENE_RENDERER_TYPES = ["image-2d"] as const;
+/** The renderer a scene uses when project.json does not name one. */
+export const DEFAULT_SCENE_RENDERER_TYPE = "image-2d" satisfies (typeof SCENE_RENDERER_TYPES)[number];
 
 export const projectInfoSchema = z
   .object({
@@ -84,7 +86,7 @@ export const typicalFloorsSchema = z
 const sceneBaseSchema = z.object({
   id: idSchema,
   kind: z.enum(SCENE_KINDS),
-  type: z.enum(SCENE_RENDERER_TYPES).default("image-2d"),
+  type: z.enum(SCENE_RENDERER_TYPES).default(DEFAULT_SCENE_RENDERER_TYPE),
   title: localizedTextSchema,
   image: sceneImageSchema,
   floors: typicalFloorsSchema.optional(),

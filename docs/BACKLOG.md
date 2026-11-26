@@ -641,7 +641,7 @@ editor never writes to the server's disk and is off unless enabled.
 - Verify: `npm run check`.
 
 ### U-611 Download project.json from the editor
-- Phase 6 · `editor` · Depends on: U-607 · **Gated: yes** · Status: `todo`
+- Phase 6 · `editor` · Depends on: U-607 · **Gated: yes** · Status: `done`
 - A "Download project.json" button that is enabled only when there are no
   errors. The file is formatted like the existing projects (defaults the
   schema fills in are left out) so diffs stay small.
