@@ -10,9 +10,13 @@ export { buildVillaGeometry } from "./demo-villa/geometry/villa-geometry";
 export type {
   CommonArea,
   FloorGeometry,
+  FloorId,
   Opening,
   Room,
   UnitGeometry,
   VillaGeometry,
   Wall,
 } from "./demo-villa/geometry/types";
+export { floorPlanFrame, PLAN_SCALE } from "./demo-villa/svg/frame";
+export type { PlanFrame } from "./demo-villa/svg/frame";
+export { renderFloorPlanSvg } from "./demo-villa/svg/floor-plan-svg";
