@@ -393,7 +393,7 @@ The viewer is desktop-only and uses the project's default locale.
 - Verify: `npm run check`, Vercel preview.
 
 ### U-404 Table filters
-- Phase 4 · Module `viewer` · Depends on: U-403 · Gated: no · Status: `todo`
+- Phase 4 · Module `viewer` · Depends on: U-403 · Gated: no · Status: `done`
 - Filter bar over the table using the `domain` `filterUnits` (status, type,
   bedrooms, price range, area range, floor). Filters live in the URL so a
   filtered list can be shared; "clear filters" resets them; an empty result
