@@ -96,7 +96,7 @@ If a real client arrives early, Phase 6 may move ahead of Phase 4.
 - Verify: `npm test`.
 
 ### U-105 UnitSource interface and .xlsx reader
-- Phase 1 · Module `data-sources` · Depends on: U-102 · Gated: no · Status: `todo`
+- Phase 1 · Module `data-sources` · Depends on: U-102 · Gated: no · Status: `done`
 - `UnitSource` interface (Adapter) with `load(): Promise<UnitRow[]>`.
   `XlsxFileSource` reads the first sheet of a local `.xlsx` and returns rows
   validated by the U-102 schema. Choose a maintained xlsx library and justify it.
