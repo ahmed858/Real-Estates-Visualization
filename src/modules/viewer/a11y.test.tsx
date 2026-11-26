@@ -1,6 +1,7 @@
 // Accessibility and keyboard pass (U-407): focus order, visible focus on
 // hotspots, Escape closes the unit panel, the hover card is announced.
 import { act, fireEvent, render, screen } from "@testing-library/react";
+import Link from "next/link";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push: () => {} }) }));
 
@@ -37,7 +38,7 @@ const Viewer = () => (
     locale="en"
     brand={{ primary: "#1a6b4f", accent: "#c89b3c" }}
     header={<ProjectHeader name="Courtyard Villa" logoUrl="/logo.svg" text={en} actions={<button type="button">العربية</button>} />}
-    nav={<a href="/p/demo">Facade</a>}
+    nav={<Link href="/p/demo">Facade</Link>}
     scene={<SceneStage {...stage()} />}
     legend={<StatusLegend text={en} />}
     panel={<SidePanel sceneTitle="Facade" units={{ "G-01": g01 }} currency="EGP" locale="en" />}
