@@ -60,6 +60,40 @@ built from is described in [../data-format.md](../data-format.md).
 | `plan_image` | no | `images/type-a.svg` |
 | `notes` | no | `Garden view` |
 
+## Live units sheet (Google Sheets)
+
+Instead of sending the `.xlsx` file, the client can keep the units sheet in
+Google Sheets. The site then reads it directly, so a status change made by the
+sales team shows on the site within about a minute.
+
+1. Open the [Google Sheets units template](https://docs.google.com/spreadsheets/d/TEMPLATE_SHEET_ID/copy)
+   and choose "Make a copy", or upload `units-template.xlsx` to Google Drive
+   and open it with Google Sheets.
+2. Fill it in with the same rules as the units sheet above.
+3. Share it: Share > General access > "Anyone with the link", role "Viewer".
+   Never give "Editor" to the link. Only the client's own team edits the sheet.
+4. Send us the sheet link. If the units are not on the first tab, send the
+   link while that tab is open (it ends with `#gid=` and a number).
+
+Anyone who has the link can see the sheet, including prices. Keep the link
+inside the sales team.
+
+What the client may change at any time:
+
+| Column | May change | Notes |
+| --- | --- | --- |
+| `status` | yes | The main reason for the live sheet. |
+| `price` | yes | Numbers only. |
+| `notes` | yes | Shown on the unit card. |
+| `code` | no | It must match the code drawn on the plan. |
+| `scene` | no | It must match the plan the unit is drawn on. |
+
+Ask us before changing any other column, adding or deleting a unit row,
+renaming the column titles in row 1, or deleting the tab: each of these must
+also change on the plans. If an edit makes the sheet invalid, the site keeps
+showing the last correct statuses with a small "may be out of date" note
+until the sheet is fixed.
+
 ## Naming rules
 
 - File names in lowercase English letters, digits and dashes, no spaces or
@@ -74,7 +108,8 @@ built from is described in [../data-format.md](../data-format.md).
 
 - One shared folder (Google Drive, Dropbox or a zip file) per project, with
   every file at the top level, named by the rules above.
-- The units sheet as a `.xlsx` file, not a photo or a PDF.
+- The units sheet as a `.xlsx` file or a Google Sheets link (see above), not a
+  photo or a PDF.
 
 ## Checklist
 

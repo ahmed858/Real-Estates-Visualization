@@ -5,6 +5,13 @@
 - [units-template.xlsx](units-template.xlsx): the units sheet with the fixed
   columns and two example rows.
 
+The "Live units sheet" section links to a Google Sheets copy of the template
+through a placeholder, `https://docs.google.com/spreadsheets/d/TEMPLATE_SHEET_ID/copy`.
+Before sending the guide, the owner uploads `units-template.xlsx` to Google
+Sheets, shares it as "Anyone with the link can view" and replaces
+`TEMPLATE_SHEET_ID` in both guides with its id. The `/copy` ending makes
+Google offer "Make a copy" straight away.
+
 `scripts/collection-guide.test.ts` checks that the template passes the units
 sheet schema and that both guides have the same structure (headings, table
 rows, list and checklist items). Change both guides in the same PR.

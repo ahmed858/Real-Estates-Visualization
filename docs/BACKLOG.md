@@ -533,7 +533,7 @@ Google Sheet and the site shows the new statuses shortly after.
 - Verify: `npm test`.
 
 ### U-506 Client guide for the Google Sheet
-- Phase 5 · Docs · Depends on: U-502 · **Gated: yes** · Status: `todo`
+- Phase 5 · Docs · Depends on: U-502 · **Gated: yes** · Status: `done`
 - Add to `docs/collection-guide/ar.md` and `en.md`: how the client copies the
   units template into Google Sheets, shares it (per the Q-2 answer), which
   columns they may edit (status, price, notes) and which they must not
