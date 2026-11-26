@@ -52,7 +52,7 @@ Steps. Stop at the first step that says stop.
 13. If this PR completes the last unit of a phase, that counts as "phase finished" (see Notifications). The next unit after a phase is the gated planning unit that breaks the following phase into units.
 
 Notifications
-The owner gets a phone notification when a run ends with something that needs them. Only four things count: a gated PR is waiting for approval, a new question was added to docs/QUESTIONS.md, CI failed on two runs in a row, or a phase finished. In those cases, begin your final message with "Action needed:" and say what is needed, with the PR link. In every other case, your final message is one line that starts with "No action needed:" followed by a few words on what happened (or "nothing to do"). Never send email.
+The owner gets a phone notification when a run ends with something that needs them. Only four things count, and only when they happen in this run: you marked a gated PR ready for review, you added a question to docs/QUESTIONS.md, CI failed on two runs in a row, or a phase finished. A gated PR that was already waiting before this run does not count again. In those cases, begin your final message with "Action needed:" and say what is needed, with the PR link. In every other case, your final message is one line that starts with "No action needed:" followed by a few words on what happened (or "nothing to do"). Never send email.
 ```
 
 ## Controls
