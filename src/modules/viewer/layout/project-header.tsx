@@ -13,11 +13,11 @@ export interface ProjectHeaderProps {
 
 export function ProjectHeader({ name, logoUrl, text, actions }: ProjectHeaderProps) {
   return (
-    <header className="flex items-center gap-3 border-b border-[var(--brand-accent)]/40 px-6 py-3 text-white">
+    <header className="flex items-center gap-2 border-b border-[var(--brand-accent)]/40 px-4 py-2 text-white md:gap-3 md:px-6 md:py-3">
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={logoUrl} alt={text.logoAlt(name)} width={40} height={40} className="h-10 w-10 rounded-md" />
-      <h1 className="text-xl font-semibold">{name}</h1>
-      {actions && <div className="ms-auto flex items-center gap-2">{actions}</div>}
+      <img src={logoUrl} alt={text.logoAlt(name)} width={40} height={40} className="h-8 w-8 shrink-0 rounded-md md:h-10 md:w-10" />
+      <h1 className="min-w-0 truncate text-base font-semibold md:text-xl">{name}</h1>
+      {actions && <div className="ms-auto flex shrink-0 items-center gap-1 md:gap-2">{actions}</div>}
     </header>
   );
 }

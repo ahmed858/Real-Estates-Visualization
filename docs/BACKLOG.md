@@ -409,19 +409,39 @@ The viewer is desktop-only and uses the project's default locale.
 - Acceptance: component tests on the demo villa data.
 - Verify: `npm test`.
 
-### U-406 Mobile layout
-- Phase 4 · App + `viewer` · Depends on: U-401 · **Gated: yes** · Status: `todo`
-- Below a breakpoint the side panel becomes a bottom sheet, the header
-  compacts, hover cards become tap-to-show (first tap shows the card, second
-  opens), and the scene can be pinch-zoomed or scrolled. Pick the breakpoint
-  and interaction rules and list them in the PR.
-- Acceptance: component tests for the tap behaviour; Playwright screenshots
-  at phone width attached to the PR (not committed); no horizontal page
-  scroll.
+### U-406 Mobile layout (responsive frame)
+- Phase 4 · App + `viewer` · Depends on: U-401 · **Gated: yes** · Status: `done`
+- Split in the run that took it: this unit is the frame; U-412 and U-413 do
+  the touch interactions.
+- Below the 768px breakpoint the side panel becomes a bottom sheet, the
+  header compacts, the top bar sits above the scene instead of over it, the
+  legend follows the scene and the page never scrolls sideways.
+- Acceptance: component tests for the phone frame in RTL and LTR;
+  Playwright check at phone width with no horizontal page scroll.
+- Verify: `npm run check`, Vercel preview on a phone.
+
+### U-412 Tap-to-show cards on touch screens
+- Phase 4 · `viewer` · Depends on: U-406 · Gated: no · Status: `todo`
+- On touch input (pointer type `touch`), the first tap on a hotspot shows its
+  card and marks it active; a second tap on the same hotspot opens it (scene
+  or unit); a tap elsewhere hides the card. Mouse and keyboard keep today's
+  behaviour.
+- Acceptance: component tests for the tap sequence on a scene hotspot and a
+  unit hotspot, and that mouse clicks still open on the first click.
+- Verify: `npm test`.
+
+### U-413 Pinch-zoom and pan of the scene on phones
+- Phase 4 · `viewer` · Depends on: U-412 · Gated: no · Status: `todo`
+- Below the breakpoint the scene can be pinch-zoomed (1× to 3×) and panned,
+  with hotspots and cards following the image; a reset button returns to 1×.
+  No new dependency unless the PR's Design section justifies it.
+- Acceptance: component tests for the zoom state (limits, reset) and that a
+  hotspot tap still works after zooming; Playwright screenshot at phone width
+  attached to the PR (not committed).
 - Verify: `npm run check`, Vercel preview on a phone.
 
 ### U-407 Accessibility and keyboard pass
-- Phase 4 · App + `viewer` · Depends on: U-406 · Gated: no · Status: `todo`
+- Phase 4 · App + `viewer` · Depends on: U-413 · Gated: no · Status: `todo`
 - Keyboard order header → nav → scene → panel; visible focus on hotspots;
   Escape closes the unit panel; the hover card is announced; contrast of all
   text in both themes.
