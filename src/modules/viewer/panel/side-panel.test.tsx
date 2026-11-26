@@ -1,5 +1,7 @@
 import { act, fireEvent, render, screen, within } from "@testing-library/react";
-import { beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+vi.mock("next/navigation", () => ({ useRouter: () => ({ push: () => {} }) }));
+
 import type { SceneStats } from "@/modules/domain";
 import type { Scene } from "@/modules/schema";
 import { SceneStage, SidePanel, formatPrice, selectUnit, type UnitSummary } from "../index";
@@ -24,7 +26,7 @@ const scene: Scene = {
 
 const Viewer = () => (
   <>
-    <SceneStage scene={scene} imageUrl="/g.svg" units={units} sceneTitles={{ ground: "Ground floor" }} sceneCounts={{}} currency="EGP" locale="en" />
+    <SceneStage scene={scene} imageUrl="/g.svg" units={units} sceneTitles={{ ground: "Ground floor" }} sceneCounts={{}} sceneHrefs={{}} currency="EGP" locale="en" />
     <SidePanel sceneTitle="Ground floor" stats={stats} units={units} currency="EGP" locale="en" />
   </>
 );

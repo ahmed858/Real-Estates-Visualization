@@ -277,7 +277,7 @@ client components for interaction; project data is read on the server.
 - Verify: `npm test`.
 
 ### U-309 Scene navigation and breadcrumbs
-- Phase 3 · App + `viewer` · Depends on: U-305 · Gated: no · Status: `todo`
+- Phase 3 · App + `viewer` · Depends on: U-305 · Gated: no · Status: `done`
 - Clicking a scene hotspot opens that scene; breadcrumbs (from
   `SceneTree.breadcrumbs`) lead back up. Unknown scene ids give a 404 page.
 - Acceptance: facade → floor → unit and back works on the demo villa;

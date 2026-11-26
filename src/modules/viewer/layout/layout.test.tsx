@@ -1,5 +1,7 @@
 import { render, screen, within } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+vi.mock("next/navigation", () => ({ useRouter: () => ({ push: () => {} }) }));
+
 import type { Scene } from "@/modules/schema";
 import { HOTSPOT_FILL, ProjectHeader, SceneStage, ScenePanel, StatusLegend, ViewerLayout, viewerText } from "../index";
 
@@ -90,6 +92,7 @@ describe("SceneStage", () => {
         units={{ "G-01": { code: "G-01", type: "Apartment", floor: 0, bedrooms: 2, bathrooms: 1, areaM2: 120, price: 1000000, status: "reserved" } }}
         sceneTitles={{ facade: "الواجهة", ground: "الدور الأرضي" }}
         sceneCounts={{}}
+        sceneHrefs={{}}
         currency="EGP"
         locale="ar"
       />,

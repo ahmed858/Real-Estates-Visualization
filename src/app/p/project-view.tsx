@@ -5,11 +5,14 @@ import { join } from "node:path";
 import { notFound } from "next/navigation";
 import { FileProjectSource, ProjectSourceError, type LoadedProject } from "@/modules/data-sources";
 import { computeSceneStats, createSceneTree } from "@/modules/domain";
-import { ProjectHeader, SceneStage, type UnitSummary, SidePanel, StatusLegend, ViewerLayout, ViewerMessage, viewerText } from "@/modules/viewer";
+import { Breadcrumbs, ProjectHeader, SceneStage, type UnitSummary, SidePanel, StatusLegend, ViewerLayout, ViewerMessage, viewerText } from "@/modules/viewer";
 
 const projects = new FileProjectSource(join(process.cwd(), "projects"));
 
 export const projectFileUrl = (slug: string, path: string) => `/files/${slug}/${path}`;
+
+/** The root scene lives at /p/<slug>; every other scene at /p/<slug>/<sceneId>. */
+export const sceneUrl = (slug: string, sceneId: string, rootId: string) => (sceneId === rootId ? `/p/${slug}` : `/p/${slug}/${sceneId}`);
 
 export interface ProjectViewParams {
   slug: string;
@@ -47,6 +50,8 @@ export async function ProjectView({ params }: { params: Promise<ProjectViewParam
   );
   const sceneCounts = Object.fromEntries([...allStats].map(([id, s]) => [id, s.byStatus]));
   const sceneTitles = Object.fromEntries(tree.scenes.map((s) => [s.id, s.title[locale]]));
+  const sceneHrefs = Object.fromEntries(tree.scenes.map((s) => [s.id, sceneUrl(slug, s.id, tree.root.id)]));
+  const crumbs = tree.breadcrumbs(scene.id).map((s) => ({ id: s.id, title: s.title[locale], href: sceneHrefs[s.id] }));
   const name = config.project.name[locale];
 
   return (
@@ -54,7 +59,8 @@ export async function ProjectView({ params }: { params: Promise<ProjectViewParam
       locale={locale}
       brand={{ primary: config.project.branding.primaryColor, accent: config.project.branding.accentColor }}
       header={<ProjectHeader name={name} logoUrl={projectFileUrl(slug, config.project.branding.logo)} text={text} />}
-      scene={<SceneStage scene={scene} imageUrl={projectFileUrl(slug, scene.image.path)} units={sceneUnits} sceneTitles={sceneTitles} sceneCounts={sceneCounts} currency={config.project.currency} locale={locale} />}
+      nav={<Breadcrumbs items={crumbs} label={text.breadcrumbs} />}
+      scene={<SceneStage scene={scene} imageUrl={projectFileUrl(slug, scene.image.path)} units={sceneUnits} sceneTitles={sceneTitles} sceneCounts={sceneCounts} sceneHrefs={sceneHrefs} currency={config.project.currency} locale={locale} />}
       legend={<StatusLegend text={text} counts={stats?.byStatus} />}
       panel={<SidePanel sceneTitle={scene.title[locale]} stats={stats} units={sceneUnits} currency={config.project.currency} locale={locale} />}
     />

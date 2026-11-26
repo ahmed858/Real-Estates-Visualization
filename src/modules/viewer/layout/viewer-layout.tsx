@@ -10,18 +10,21 @@ export interface ViewerLayoutProps {
   /** Project brand colours, exposed to children as --brand-primary / --brand-accent. */
   brand: { primary: string; accent: string };
   header: ReactNode;
+  /** Navigation above the scene, e.g. breadcrumbs. */
+  nav?: ReactNode;
   scene: ReactNode;
   legend: ReactNode;
   panel: ReactNode;
 }
 
-export function ViewerLayout({ locale, brand, header, scene, legend, panel }: ViewerLayoutProps) {
+export function ViewerLayout({ locale, brand, header, nav, scene, legend, panel }: ViewerLayoutProps) {
   const style = { "--brand-primary": brand.primary, "--brand-accent": brand.accent } as CSSProperties;
   return (
     <div lang={locale} dir={viewerText(locale).dir} style={style} className="flex min-h-screen flex-1 flex-col">
       {header}
       <div className="flex flex-1 flex-row gap-6 p-6">
         <main className="flex min-w-0 flex-1 flex-col gap-4">
+          {nav}
           {scene}
           {legend}
         </main>

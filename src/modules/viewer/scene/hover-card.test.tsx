@@ -1,5 +1,7 @@
 import { fireEvent, render, screen, within } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+vi.mock("next/navigation", () => ({ useRouter: () => ({ push: () => {} }) }));
+
 import type { Scene } from "@/modules/schema";
 import { HoverCard, SceneStage, formatPrice, viewerText, type SceneStageProps } from "../index";
 
@@ -26,6 +28,7 @@ const props = (locale: "ar" | "en" = "en"): SceneStageProps => ({
   units: { "G-01": unit },
   sceneTitles: { facade: "Facade", ground: "Ground floor" },
   sceneCounts: { ground: { available: 1, reserved: 1, sold: 0 } },
+  sceneHrefs: { ground: "/p/demo/ground" },
   currency: "EGP",
   locale,
 });
