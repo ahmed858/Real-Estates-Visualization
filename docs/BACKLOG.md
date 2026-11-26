@@ -220,7 +220,7 @@ client components for interaction; project data is read on the server.
 - Verify: `npm test`, `npm run build`.
 
 ### U-303 Component test setup
-- Phase 3 · Tooling · Depends on: none · **Gated: yes** · Status: `todo`
+- Phase 3 · Tooling · Depends on: none · **Gated: yes** · Status: `done`
 - Add the minimum for React component tests (e.g. `@testing-library/react`
   with `jsdom` or `happy-dom`, justified in the PR) in `vitest.config.ts`,
   scoped so domain tests keep running in Node. One sample test in `viewer`.

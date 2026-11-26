@@ -6,6 +6,26 @@ export default defineConfig({
     alias: { "@": fileURLToPath(new URL("./src", import.meta.url)) },
   },
   test: {
-    include: ["src/**/*.test.{ts,tsx}", "scripts/**/*.test.{ts,mjs}"],
+    projects: [
+      {
+        // Domain, schema, data and tool tests: plain Node.
+        extends: true,
+        test: {
+          name: "node",
+          environment: "node",
+          include: ["src/**/*.test.ts", "scripts/**/*.test.{ts,mjs}"],
+        },
+      },
+      {
+        // React component tests: simulated DOM (happy-dom).
+        extends: true,
+        test: {
+          name: "dom",
+          environment: "happy-dom",
+          include: ["src/**/*.test.tsx"],
+          setupFiles: ["./vitest.setup.dom.ts"],
+        },
+      },
+    ],
   },
 });
