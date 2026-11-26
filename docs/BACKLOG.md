@@ -209,7 +209,7 @@ client components for interaction; project data is read on the server.
 - Verify: `npm test`.
 
 ### U-302 Serve project images
-- Phase 3 · App route · Depends on: U-301 · Gated: no · Status: `todo`
+- Phase 3 · App route · Depends on: U-301 · Gated: no · Status: `done`
 - Route handler `src/app/files/[slug]/[...path]` (kept outside `/p/` so it
   cannot clash with a scene id) that serves a project's
   images (`svg`, `png`, `jpg`, `webp`) with the right content type and cache
