@@ -96,7 +96,7 @@ describe("FileProjectSource: units source from project.json", () => {
     await new FileProjectSource(projectsDir, factory).load("demo-villa");
     const sheet = { source: "google-sheet", sheetId: "x".repeat(44) };
     await (await withUnits(sheet, factory)).load("demo-villa");
-    expect(seen).toEqual([{ source: "xlsx" }, { ...sheet, gid: "0" }]);
+    expect(seen).toEqual([{ source: "xlsx" }, { ...sheet, gid: "0", refreshSeconds: 60 }]);
   });
 
   it("reports a sheet that cannot be read as invalid units", async () => {

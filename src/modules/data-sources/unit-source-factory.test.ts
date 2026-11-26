@@ -1,6 +1,6 @@
 import { fileURLToPath } from "node:url";
-import { describe, expect, it } from "vitest";
-import { createUnitSource, GoogleSheetCsvSource, UnsupportedUnitSourceError, XlsxFileSource, type UnitSource } from "./index";
+import { describe, expect, it, vi } from "vitest";
+import { CachedUnitSource, createUnitSource, createUnitSourceFactory, UnsupportedUnitSourceError, XlsxFileSource, type FetchLike, type UnitSource } from "./index";
 
 const demoVilla = fileURLToPath(new URL("../../../projects/demo-villa", import.meta.url));
 
@@ -11,13 +11,63 @@ describe("createUnitSource", () => {
     expect((await source.load()).map((u) => u.code)).toEqual(["G-01", "G-02", "F-01", "F-02", "R-01"]);
   });
 
-  it("reads a Google Sheet through its CSV export", () => {
-    expect(createUnitSource({ source: "google-sheet", sheetId: "x".repeat(44), gid: "0" }, demoVilla)).toBeInstanceOf(GoogleSheetCsvSource);
+  it("reads a Google Sheet through a cached source", () => {
+    expect(createUnitSource({ source: "google-sheet", sheetId: "x".repeat(44), gid: "0", refreshSeconds: 60 }, demoVilla)).toBeInstanceOf(CachedUnitSource);
   });
 
   it("reports a source this build does not know", () => {
     const create = (): UnitSource => createUnitSource({ source: "airtable" } as never, demoVilla);
     expect(create).toThrow(UnsupportedUnitSourceError);
     expect(create).toThrow('units source "airtable" is not supported yet');
+  });
+});
+
+describe("createUnitSourceFactory: Google Sheet refresh interval", () => {
+  const CSV = "code,scene,floor,type,bedrooms,bathrooms,area_m2,price,status\nG-01,ground,0,Apartment,2,1,100,1000000,";
+  const sheet = (refreshSeconds = 60, gid = "0") => ({ source: "google-sheet" as const, sheetId: "x".repeat(44), gid, refreshSeconds });
+
+  function setup() {
+    let time = 0;
+    let status = "available";
+    const fetchFn = vi.fn<FetchLike>(async () => new Response(CSV + status, { headers: { "content-type": "text/csv" } }));
+    const factory = createUnitSourceFactory({ now: () => time, fetch: fetchFn });
+    const statusNow = async (units = sheet()) => (await factory(units, demoVilla).load())[0].status;
+    return {
+      fetchFn,
+      statusNow,
+      advance: (ms: number) => (time += ms),
+      edit: (next: string) => (status = next),
+    };
+  }
+
+  it("reuses the rows inside the interval and re-reads the sheet after it, across page requests", async () => {
+    const { fetchFn, statusNow, advance, edit } = setup();
+    expect(await statusNow()).toBe("available");
+    edit("sold");
+    advance(59_999);
+    expect(await statusNow()).toBe("available");
+    expect(fetchFn).toHaveBeenCalledTimes(1);
+    advance(1);
+    expect(await statusNow()).toBe("sold");
+    expect(fetchFn).toHaveBeenCalledTimes(2);
+  });
+
+  it("uses the project's own refresh interval", async () => {
+    const { fetchFn, statusNow, advance } = setup();
+    await statusNow(sheet(300));
+    advance(299_000);
+    await statusNow(sheet(300));
+    expect(fetchFn).toHaveBeenCalledTimes(1);
+    advance(1_000);
+    await statusNow(sheet(300));
+    expect(fetchFn).toHaveBeenCalledTimes(2);
+  });
+
+  it("keeps a separate cache per sheet tab", async () => {
+    const { fetchFn, statusNow } = setup();
+    await statusNow(sheet(60, "0"));
+    await statusNow(sheet(60, "7"));
+    expect(fetchFn).toHaveBeenCalledTimes(2);
+    expect(fetchFn.mock.calls.map(([url]) => url.slice(-5))).toEqual(["gid=0", "gid=7"]);
   });
 });

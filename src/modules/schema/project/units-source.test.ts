@@ -40,9 +40,19 @@ describe("project.json units source", () => {
     expect(result.ok && result.value.units).toEqual({ source: "xlsx" });
   });
 
-  it("accepts a Google Sheet and defaults gid to the first tab", () => {
+  it("accepts a Google Sheet and defaults gid to the first tab and refresh to 60 seconds", () => {
     const result = parse({ source: "google-sheet", sheetId: SHEET_ID });
-    expect(result.ok && result.value.units).toEqual({ source: "google-sheet", sheetId: SHEET_ID, gid: "0" });
+    expect(result.ok && result.value.units).toEqual({ source: "google-sheet", sheetId: SHEET_ID, gid: "0", refreshSeconds: 60 });
+  });
+
+  it("keeps a per-project refresh interval", () => {
+    const result = parse({ source: "google-sheet", sheetId: SHEET_ID, refreshSeconds: 300 });
+    expect(result.ok && result.value.units).toMatchObject({ refreshSeconds: 300 });
+  });
+
+  it.each([5, 3601, 30.5, "60"])("rejects refreshSeconds %j", (refreshSeconds) => {
+    const [error] = errorsOf({ source: "google-sheet", sheetId: SHEET_ID, refreshSeconds });
+    expect(error.path).toBe("units.refreshSeconds");
   });
 
   it("keeps an explicit gid", () => {

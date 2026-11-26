@@ -42,9 +42,14 @@ of these forms:
 | Form | Fields | Description |
 | --- | --- | --- |
 | `{ "source": "xlsx" }` | none | The `units.xlsx` in the project folder. Same as leaving `units` out. |
-| `{ "source": "google-sheet", "sheetId": "…", "gid": "0" }` | `sheetId` (required): the id from the sheet link `docs.google.com/spreadsheets/d/<sheetId>/edit`, letters, digits, `-` and `_`, at least 20 characters. `gid` (optional, default `"0"`): the tab number from the link's `#gid=<number>`, as a string. | A Google Sheet with the same columns as the [units sheet](#units-sheet), shared as "Anyone with the link can view". The site reads the tab's CSV export; row numbers in error messages are the sheet's row numbers. A sheet that is not shared is reported with how to share it. |
+| `{ "source": "google-sheet", "sheetId": "…", "gid": "0" }` | `sheetId` (required): the id from the sheet link `docs.google.com/spreadsheets/d/<sheetId>/edit`, letters, digits, `-` and `_`, at least 20 characters. `gid` (optional, default `"0"`): the tab number from the link's `#gid=<number>`, as a string. `refreshSeconds` (optional, default `60`, whole seconds from 10 to 3600): how long the site reuses the rows before reading the sheet again. | A Google Sheet with the same columns as the [units sheet](#units-sheet), shared as "Anyone with the link can view". The site reads the tab's CSV export; row numbers in error messages are the sheet's row numbers. A sheet that is not shared is reported with how to share it. |
 
 Paste the id, not the whole link: a full URL in `sheetId` is rejected.
+
+A status change in the sheet shows on the site within `refreshSeconds`. Each
+server instance keeps its own copy, so Google sees at most one read per tab
+per interval per instance. A failed read is not kept; the next visitor's
+request tries again.
 
 ### Scene
 
