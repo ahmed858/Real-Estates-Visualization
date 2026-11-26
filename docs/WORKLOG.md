@@ -32,3 +32,4 @@ One line per agent run, newest last:
 2026-11-26 17:55 UTC | U-409 | Hidden-until-hover hotspots with status/brand glow, dark floor card (count, status chips, bedroom mix, ranges, hint) and unit card; computeBedroomMix roll-up; stage split to U-411; gated | https://github.com/ahmed858/Real-Estates-Visualization/pull/36
 2026-11-26 18:04 UTC | U-411 | Dark edge-to-edge stage fitted to the viewport, header and breadcrumbs on a translucent overlay bar, floating legend, dark panel; hover card flips below near the top; gated | https://github.com/ahmed858/Real-Estates-Visualization/pull/39
 2026-11-26 18:05 UTC | U-402 | WhatsApp enquiry: wa.me link builder (digits only, encoded ar/en message with project, unit code, floor on typical floors); unit panel button and header "contact us" | https://github.com/ahmed858/Real-Estates-Visualization/pull/40
+2026-11-26 18:08 UTC | U-403 | in progress | -
