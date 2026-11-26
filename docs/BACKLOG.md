@@ -66,7 +66,7 @@ If a real client arrives early, Phase 6 may move ahead of Phase 4.
 - Verify: `npm test`, `npm run check`.
 
 ### U-102 Units sheet schema
-- Phase 1 · Module `schema` · Depends on: none · **Gated: yes** · Status: `todo`
+- Phase 1 · Module `schema` · Depends on: none · **Gated: yes** · Status: `done`
 - Fixed columns, one row per unit: `code`, `scene` (floor scene id), `floor`,
   `type`, `bedrooms`, `bathrooms`, `area_m2`, `price`, `status`, `plan_image`
   (optional), `notes` (optional).
