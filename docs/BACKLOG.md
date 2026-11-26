@@ -158,7 +158,7 @@ clean architectural SVG, not photos.
 - Verify: `npm test`.
 
 ### U-203 Facade SVG renderer
-- Phase 2 · Module `tools` · Depends on: U-201 · Gated: no · Status: `todo`
+- Phase 2 · Module `tools` · Depends on: U-201 · Gated: no · Status: `done`
 - Simple front elevation of the villa with one band per floor; the band
   outlines become the facade hotspots.
 - Acceptance: snapshot test; band polygons line up with the drawing.

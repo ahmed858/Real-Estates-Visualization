@@ -13,4 +13,4 @@ One line per agent run, newest last:
 2026-11-26 09:31 UTC | U-107 | Collection guide in Arabic and English, units-template.xlsx, template and parity tests; gated | https://github.com/ahmed858/Real-Estates-Visualization/pull/14
 2026-11-26 09:33 UTC | U-201 | Villa geometry: plot, courtyard split, 5 units, rooms, merged walls, doors and windows; deterministic | https://github.com/ahmed858/Real-Estates-Visualization/pull/15
 2026-11-26 09:37 UTC | U-202 | Floor plan SVGs: rooms, walls, doors/windows, bilingual labels, north arrow, scale bar; file snapshots | https://github.com/ahmed858/Real-Estates-Visualization/pull/16
-2026-11-26 09:41 UTC | U-203 | in progress | -
+2026-11-26 09:40 UTC | U-203 | Facade SVG: south elevation, one band per floor, band polygons as hotspots, file snapshot | https://github.com/ahmed858/Real-Estates-Visualization/pull/17
