@@ -33,3 +33,4 @@ One line per agent run, newest last:
 2026-11-26 18:04 UTC | U-411 | Dark edge-to-edge stage fitted to the viewport, header and breadcrumbs on a translucent overlay bar, floating legend, dark panel; hover card flips below near the top; gated | https://github.com/ahmed858/Real-Estates-Visualization/pull/39
 2026-11-26 18:05 UTC | U-402 | WhatsApp enquiry: wa.me link builder (digits only, encoded ar/en message with project, unit code, floor on typical floors); unit panel button and header "contact us" | https://github.com/ahmed858/Real-Estates-Visualization/pull/40
 2026-11-26 18:07 UTC | U-403 | /p/<slug>/units sortable table (code, floor, type, bedrooms, area, price, status swatch), rows link to the unit on its scene (+?floor= on typical floors), header link | https://github.com/ahmed858/Real-Estates-Visualization/pull/41
+2026-11-26 18:12 UTC | U-404 | in progress | -
