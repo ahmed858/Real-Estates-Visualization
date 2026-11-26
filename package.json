@@ -9,6 +9,7 @@
     "lint": "eslint && node scripts/check-boundaries.mjs",
     "typecheck": "next typegen && tsc --noEmit",
     "test": "vitest run",
+    "validate": "tsx scripts/validate.ts",
     "check": "npm run lint && npm run typecheck && npm run test && npm run build"
   },
   "dependencies": {
@@ -26,6 +27,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.4.6",
     "tailwindcss": "4.3.3",
+    "tsx": "4.23.15",
     "typescript": "^5",
     "vitest": "^5.1.2"
   },
