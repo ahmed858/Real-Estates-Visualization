@@ -371,7 +371,7 @@ The viewer is desktop-only and uses the project's default locale.
 - Verify: `npm test`.
 
 ### U-411 Edge-to-edge dark stage
-- Phase 4 · App + `viewer` · Depends on: U-409 · **Gated: yes** · Status: `todo`
+- Phase 4 · App + `viewer` · Depends on: U-409 · **Gated: yes** · Status: `done`
 - Split from U-409. The scene image fills the stage edge to edge on a dark
   page; the project header and the breadcrumbs (with the floor picker) sit
   over the image on a translucent bar. The side panel and the status legend
