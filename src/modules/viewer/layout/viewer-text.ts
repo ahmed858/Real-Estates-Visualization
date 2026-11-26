@@ -36,6 +36,7 @@ export interface ViewerText {
     unit: (project: string, code: string) => string;
     unitOnFloor: (project: string, code: string, floor: string) => string;
   };
+  zoom: { in: string; out: string; reset: string };
   table: {
     title: string;
     /** Header link to the table. */
@@ -77,6 +78,7 @@ const TEXT: Record<ViewerLocale, ViewerText> = {
       unit: (p, c) => `مرحبًا، أريد الاستفسار عن الوحدة ${c} في مشروع ${p}.`,
       unitOnFloor: (p, c, f) => `مرحبًا، أريد الاستفسار عن الوحدة ${c} في الدور ${f} في مشروع ${p}.`,
     },
+    zoom: { in: "تكبير", out: "تصغير", reset: "١×" },
     table: {
       title: "كل الوحدات",
       link: "كل الوحدات",
@@ -123,6 +125,7 @@ const TEXT: Record<ViewerLocale, ViewerText> = {
       unit: (p, c) => `Hello, I would like to ask about unit ${c} in ${p}.`,
       unitOnFloor: (p, c, f) => `Hello, I would like to ask about unit ${c} on floor ${f} in ${p}.`,
     },
+    zoom: { in: "Zoom in", out: "Zoom out", reset: "1×" },
     table: {
       title: "All units",
       link: "All units",
