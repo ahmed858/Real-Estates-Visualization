@@ -6,8 +6,9 @@ export interface WhatsAppButtonProps {
   variant?: "solid" | "outline";
 }
 
+// White text on these greens: 5.9:1 and 7.7:1 (WCAG AA asks 4.5:1).
 const LOOK = {
-  solid: "bg-[#1f8f4e] text-white hover:bg-[#197a42]",
+  solid: "bg-[#17733f] text-white hover:bg-[#135f34]",
   outline: "border border-white/60 text-white hover:bg-white/10",
 };
 

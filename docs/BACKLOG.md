@@ -441,7 +441,7 @@ The viewer is desktop-only and uses the project's default locale.
 - Verify: `npm run check`, Vercel preview on a phone.
 
 ### U-407 Accessibility and keyboard pass
-- Phase 4 · App + `viewer` · Depends on: U-413 · Gated: no · Status: `todo`
+- Phase 4 · App + `viewer` · Depends on: U-413 · Gated: no · Status: `done`
 - Keyboard order header → nav → scene → panel; visible focus on hotspots;
   Escape closes the unit panel; the hover card is announced; contrast of all
   text in both themes.
