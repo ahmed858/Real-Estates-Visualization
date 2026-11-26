@@ -4,6 +4,10 @@ const nextConfig: NextConfig = {
   /* config options here */
   cacheComponents: true,
   partialPrefetching: true,
+  // Project folders are read at request time; ship them with the server routes.
+  outputFileTracingIncludes: {
+    "/files/*": ["./projects/**/*"],
+  },
   turbopack: {
     rules: {
       "*.css": {

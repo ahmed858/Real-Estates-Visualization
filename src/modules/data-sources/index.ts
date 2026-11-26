@@ -8,3 +8,5 @@ export { sheetTableFromRows } from "./sheet-table";
 export { ProjectSourceError } from "./project-source";
 export type { LoadedProject, ProjectSource, ProjectSourceErrorKind } from "./project-source";
 export { FileProjectSource, PROJECT_CONFIG_FILE, PROJECT_UNITS_FILE } from "./file-project-source";
+export { IMAGE_CONTENT_TYPES, readProjectImage } from "./project-files";
+export type { ProjectFile } from "./project-files";
