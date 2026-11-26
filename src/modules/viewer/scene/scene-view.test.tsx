@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import type { Hotspot, Scene } from "@/modules/schema";
-import { DEFAULT_SCENE_RENDERERS, HOTSPOT_FILL, SceneView, type SceneRendererProps } from "../index";
+import { ACTIVE_FILL_OPACITY, DEFAULT_SCENE_RENDERERS, HOTSPOT_FILL, SceneView, hotspotStyle, type SceneRendererProps } from "../index";
 
 const scene: Scene = {
   id: "ground",
@@ -40,6 +40,39 @@ describe("SceneView with Image2DScene", () => {
     expect(screen.getByRole("button", { name: "Unit G-01" }).getAttribute("fill")).toBe(HOTSPOT_FILL.available);
     expect(screen.getByRole("button", { name: "Unit G-02" }).getAttribute("fill")).toBe(HOTSPOT_FILL.sold);
     expect(screen.getByRole("button", { name: "Open to-first" }).getAttribute("fill")).toBe(HOTSPOT_FILL.scene);
+  });
+
+  it("keeps hotspots invisible until hover or focus, then fills, outlines and glows the active one", () => {
+    render(<SceneView {...props()} />);
+    const g01 = screen.getByRole("button", { name: "Unit G-01" });
+    const g02 = screen.getByRole("button", { name: "Unit G-02" });
+    for (const p of screen.getAllByRole("button")) {
+      expect(p.style.fillOpacity).toBe("0");
+      expect(p.style.strokeOpacity).toBe("0");
+      expect(p.getAttribute("data-active")).toBeNull();
+    }
+    fireEvent.mouseEnter(g01);
+    expect(g01.getAttribute("data-active")).toBe("true");
+    expect(Number(g01.style.fillOpacity)).toBe(ACTIVE_FILL_OPACITY);
+    expect(Number(g01.style.strokeOpacity)).toBeGreaterThan(0.9);
+    expect(g01.style.filter).toContain("drop-shadow");
+    expect(g02.style.fillOpacity).toBe("0");
+    fireEvent.mouseLeave(g01);
+    expect(g01.style.fillOpacity).toBe("0");
+    fireEvent.focus(g02);
+    expect(g02.getAttribute("data-active")).toBe("true");
+    fireEvent.blur(g02);
+    expect(g02.getAttribute("data-active")).toBeNull();
+  });
+
+  it("glows unit hotspots in their status colour and scene hotspots in the brand colour", () => {
+    expect(hotspotStyle(HOTSPOT_FILL.sold, true)).toMatchObject({ fill: HOTSPOT_FILL.sold, fillOpacity: ACTIVE_FILL_OPACITY });
+    expect(hotspotStyle(HOTSPOT_FILL.sold, true).filter).toContain(HOTSPOT_FILL.sold);
+    expect(hotspotStyle(HOTSPOT_FILL.sold, false)).toMatchObject({ fillOpacity: 0, strokeOpacity: 0, filter: "none" });
+    render(<SceneView {...props()} />);
+    const toFirst = screen.getByRole("button", { name: "Open to-first" });
+    fireEvent.mouseEnter(toFirst);
+    expect(toFirst.getAttribute("style")).toContain(`var(--brand-primary, ${HOTSPOT_FILL.scene})`);
   });
 
   it("selects a hotspot by click and by keyboard", () => {

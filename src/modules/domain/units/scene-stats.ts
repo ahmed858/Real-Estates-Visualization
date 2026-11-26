@@ -2,6 +2,7 @@
 import { UNIT_STATUSES, type UnitRow, type UnitStatus } from "@/modules/schema";
 import type { SceneTree } from "../scene-tree/scene-tree";
 import { extend, merge, type NumberRange } from "./range";
+import { rollUpUnits } from "./roll-up";
 
 export interface SceneStats {
   total: number;
@@ -38,26 +39,12 @@ function addStats(into: SceneStats, from: SceneStats): void {
  * Sheet rows that no hotspot draws are ignored (the validator reports them).
  */
 export function computeSceneStats(tree: SceneTree, units: readonly UnitRow[]): Map<string, SceneStats> {
-  const byCode = new Map(units.map((u) => [u.code, u]));
-  const codesOn = new Map<string, Set<string>>();
-  for (const p of tree.placedUnits()) {
-    if (!codesOn.has(p.sceneId)) codesOn.set(p.sceneId, new Set());
-    codesOn.get(p.sceneId)?.add(p.code);
-  }
-
   const result = new Map<string, SceneStats>();
-  const subtreeCodes = (sceneId: string): Set<string> => {
-    const codes = new Set(codesOn.get(sceneId) ?? []);
-    for (const child of tree.children(sceneId)) for (const c of subtreeCodes(child.id)) codes.add(c);
+  for (const [sceneId, list] of rollUpUnits(tree, units)) {
     const stats = emptyStats();
-    for (const code of codes) {
-      const unit = byCode.get(code);
-      if (unit) addUnit(stats, unit);
-    }
+    for (const unit of list) addUnit(stats, unit);
     result.set(sceneId, stats);
-    return codes;
-  };
-  subtreeCodes(tree.root.id);
+  }
   return result;
 }
 

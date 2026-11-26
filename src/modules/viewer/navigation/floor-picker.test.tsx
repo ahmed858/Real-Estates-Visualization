@@ -13,7 +13,7 @@ const Tower = () => (
       imageUrl="/t.svg"
       units={towerUnits}
       sceneTitles={{ typical: "Typical floor" }}
-      sceneCounts={{}}
+      sceneSummaries={{}}
       sceneHrefs={{}}
       floors={towerFloors}
       currency="EGP"
