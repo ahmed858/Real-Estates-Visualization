@@ -2,11 +2,12 @@
 // Client boundary for the scene: turns plain, serialisable data from the page
 // (unit summaries by code, scene titles and counts by id) into the callbacks
 // SceneView needs, and shows the hover card for the hovered or focused
-// hotspot. Server pages cannot pass functions to client components.
+// hotspot. Clicking a unit selects it in the URL (see useSelectedUnit). Server pages cannot pass functions to client components.
 import { useState } from "react";
 import type { Hotspot, Scene, UnitStatus } from "@/modules/schema";
 import { viewerText, type ViewerLocale, type ViewerText } from "../layout/viewer-text";
 import { HoverCard, type HoverCardContent, type UnitSummary } from "./hover-card";
+import { useSelectedUnit } from "../selection/use-selected-unit";
 import { SceneView } from "./scene-view";
 
 export interface SceneStageProps {
@@ -57,6 +58,7 @@ export function SceneStage(props: SceneStageProps) {
   const { scene, imageUrl, units, sceneTitles, locale, currency } = props;
   const text = viewerText(locale);
   const [hovered, setHovered] = useState<Hotspot | null>(null);
+  const [, selectUnit] = useSelectedUnit();
   const content = hovered ? cardContent(hovered, props) : null;
   return (
     <div className="relative">
@@ -66,6 +68,9 @@ export function SceneStage(props: SceneStageProps) {
         unitStatusOf={(h) => ("unit" in h.target ? units[h.target.unit]?.status : undefined)}
         hotspotLabel={hotspotLabeller(units, sceneTitles, text)}
         onHover={setHovered}
+        onSelect={(h) => {
+          if ("unit" in h.target && units[h.target.unit]) selectUnit(h.target.unit);
+        }}
       />
       {hovered && content && (
         <div className="pointer-events-none absolute z-10 -translate-x-1/2 -translate-y-full pb-2" style={anchorOf(hovered, scene)} data-testid="hover-card">

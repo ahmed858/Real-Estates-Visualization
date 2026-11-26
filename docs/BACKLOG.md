@@ -268,7 +268,7 @@ client components for interaction; project data is read on the server.
 - Verify: `npm test`.
 
 ### U-308 Unit side panel
-- Phase 3 · Module `viewer` · Depends on: U-305 · Gated: no · Status: `todo`
+- Phase 3 · Module `viewer` · Depends on: U-305 · Gated: no · Status: `done`
 - Clicking a unit opens its details in the side panel; the selection is in
   the URL (`?unit=G-01`) so it can be shared. Shows the plan image when the
   sheet has `plan_image`. With nothing selected, the panel shows the scene's

@@ -5,7 +5,7 @@ import { join } from "node:path";
 import { notFound } from "next/navigation";
 import { FileProjectSource, ProjectSourceError, type LoadedProject } from "@/modules/data-sources";
 import { computeSceneStats, createSceneTree } from "@/modules/domain";
-import { ProjectHeader, SceneStage, type UnitSummary, ScenePanel, StatusLegend, ViewerLayout, ViewerMessage, viewerText } from "@/modules/viewer";
+import { ProjectHeader, SceneStage, type UnitSummary, SidePanel, StatusLegend, ViewerLayout, ViewerMessage, viewerText } from "@/modules/viewer";
 
 const projects = new FileProjectSource(join(process.cwd(), "projects"));
 
@@ -40,7 +40,10 @@ export async function ProjectView({ params }: { params: Promise<ProjectViewParam
   const sceneUnits: Record<string, UnitSummary> = Object.fromEntries(
     units
       .filter((u) => drawn.has(u.code))
-      .map(({ code, type, bedrooms, areaM2, price, status }) => [code, { code, type, bedrooms, areaM2, price, status }]),
+      .map(({ code, type, floor, bedrooms, bathrooms, areaM2, price, status, planImage, notes }) => [
+        code,
+        { code, type, floor, bedrooms, bathrooms, areaM2, price, status, ...(planImage && { planImageUrl: projectFileUrl(slug, planImage) }), ...(notes && { notes }) },
+      ]),
   );
   const sceneCounts = Object.fromEntries([...allStats].map(([id, s]) => [id, s.byStatus]));
   const sceneTitles = Object.fromEntries(tree.scenes.map((s) => [s.id, s.title[locale]]));
@@ -53,7 +56,7 @@ export async function ProjectView({ params }: { params: Promise<ProjectViewParam
       header={<ProjectHeader name={name} logoUrl={projectFileUrl(slug, config.project.branding.logo)} text={text} />}
       scene={<SceneStage scene={scene} imageUrl={projectFileUrl(slug, scene.image.path)} units={sceneUnits} sceneTitles={sceneTitles} sceneCounts={sceneCounts} currency={config.project.currency} locale={locale} />}
       legend={<StatusLegend text={text} counts={stats?.byStatus} />}
-      panel={<ScenePanel sceneTitle={scene.title[locale]} text={text} />}
+      panel={<SidePanel sceneTitle={scene.title[locale]} stats={stats} units={sceneUnits} currency={config.project.currency} locale={locale} />}
     />
   );
 }

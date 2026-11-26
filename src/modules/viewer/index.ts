@@ -22,3 +22,8 @@ export { ScenePanel } from "./layout/scene-panel";
 export type { ScenePanelProps } from "./layout/scene-panel";
 export { viewerText } from "./layout/viewer-text";
 export type { ViewerLocale, ViewerText } from "./layout/viewer-text";
+export { SidePanel } from "./panel/side-panel";
+export type { SidePanelProps } from "./panel/side-panel";
+export { UnitDetails } from "./panel/unit-details";
+export type { UnitDetailsProps } from "./panel/unit-details";
+export { UNIT_PARAM, selectUnit, useSelectedUnit } from "./selection/use-selected-unit";
