@@ -2,12 +2,13 @@
 // Loads the project through the ProjectSource interface and composes the
 // viewer layout from plain data.
 import { join } from "node:path";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { FileProjectSource, ProjectSourceError, type LoadedProject } from "@/modules/data-sources";
 import { computeBedroomMix, computeSceneStats, createSceneTree } from "@/modules/domain";
 import { Breadcrumbs, FloorPicker, LANG_PARAM, LocaleSwitch, ProjectHeader, resolveLocale, withLocale, SceneStage, type SceneSummary, type UnitSummary, SidePanel, StatusLegend, ViewerLayout, ViewerMessage, viewerText, WhatsAppButton, enquiryMessage, whatsappLink } from "@/modules/viewer";
 
-const projects = new FileProjectSource(join(process.cwd(), "projects"));
+export const projects = new FileProjectSource(join(process.cwd(), "projects"));
 
 export const projectFileUrl = (slug: string, path: string) => `/files/${slug}/${path}`;
 
@@ -75,6 +76,9 @@ export async function ProjectView({ params, searchParams }: ProjectViewProps) {
       header={<ProjectHeader name={name} logoUrl={projectFileUrl(slug, config.project.branding.logo)} text={text} actions={
             <>
               <WhatsAppButton href={whatsappLink(config.project.contact.whatsapp, enquiryMessage(text, { projectName: name }))} label={text.contact.button} variant="outline" />
+              <Link href={withLocale(`/p/${slug}/units`, locale, defaultLocale)} className="rounded-md px-3 py-1.5 text-sm font-medium text-white hover:bg-white/10">
+                {text.table.link}
+              </Link>
               <LocaleSwitch locale={locale} defaultLocale={defaultLocale} />
             </>
           } />}

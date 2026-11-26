@@ -383,7 +383,7 @@ The viewer is desktop-only and uses the project's default locale.
 - Verify: `npm run check`, Vercel preview.
 
 ### U-403 Units table
-- Phase 4 · App + `viewer` · Depends on: U-401 · Gated: no · Status: `todo`
+- Phase 4 · App + `viewer` · Depends on: U-401 · Gated: no · Status: `done`
 - Route `/p/<slug>/units`: every unit of the project in a sortable table
   (code, floor, type, bedrooms, area, price, status), with status shown as in
   the legend. A row links to the unit on its scene (`/p/<slug>/<sceneId>?unit=`

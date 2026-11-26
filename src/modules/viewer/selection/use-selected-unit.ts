@@ -3,9 +3,8 @@
 // shared by link. Any component can read or change them; components in
 // different layout slots stay in sync without knowing about each other.
 import { useSyncExternalStore } from "react";
+import { FLOOR_PARAM, UNIT_PARAM } from "./params";
 
-export const UNIT_PARAM = "unit";
-export const FLOOR_PARAM = "floor";
 const CHANGE_EVENT = "viewer:url-selection";
 
 function subscribe(onChange: () => void) {
