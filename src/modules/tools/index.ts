@@ -20,3 +20,7 @@ export type {
 export { floorPlanFrame, PLAN_SCALE } from "./demo-villa/svg/frame";
 export type { PlanFrame } from "./demo-villa/svg/frame";
 export { renderFloorPlanSvg } from "./demo-villa/svg/floor-plan-svg";
+export { buildFacadeGeometry } from "./demo-villa/facade/facade-geometry";
+export type { ElevationOpening, FacadeBand, FacadeGeometry } from "./demo-villa/facade/facade-geometry";
+export { facadeBandPolygons, facadeFrame, renderFacadeSvg } from "./demo-villa/facade/facade-svg";
+export type { FacadeFrame } from "./demo-villa/facade/facade-svg";
