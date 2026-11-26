@@ -9,7 +9,7 @@ import { HatchPattern, STATUS_STYLE } from "./status-style";
 
 const pointsAttr = (h: Hotspot) => h.points.map(([x, y]) => `${x},${y}`).join(" ");
 
-export function Image2DScene({ scene, imageUrl, unitStatusOf, hotspotLabel, onSelect }: SceneRendererProps) {
+export function Image2DScene({ scene, imageUrl, unitStatusOf, hotspotLabel, onSelect, onHover }: SceneRendererProps) {
   const { width, height } = scene.image;
   const hatchId = `hatch-${useId().replace(/:/g, "")}`;
   const activate = (h: Hotspot) => onSelect?.(h);
@@ -49,6 +49,10 @@ export function Image2DScene({ scene, imageUrl, unitStatusOf, hotspotLabel, onSe
                 className="cursor-pointer outline-none transition-[fill-opacity] [fill-opacity:0.35] hover:[fill-opacity:0.6] focus-visible:[fill-opacity:0.6]"
                 onClick={() => activate(h)}
                 onKeyDown={onKey(h)}
+                onMouseEnter={() => onHover?.(h)}
+                onMouseLeave={() => onHover?.(null)}
+                onFocus={() => onHover?.(h)}
+                onBlur={() => onHover?.(null)}
               />
               {style.hatch && <polygon points={pointsAttr(h)} fill={`url(#${hatchId})`} pointerEvents="none" aria-hidden="true" data-hatch={h.id} />}
             </g>

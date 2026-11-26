@@ -260,7 +260,7 @@ client components for interaction; project data is read on the server.
 - Verify: `npm test`.
 
 ### U-307 Hover card
-- Phase 3 · Module `viewer` · Depends on: U-305 · Gated: no · Status: `todo`
+- Phase 3 · Module `viewer` · Depends on: U-305 · Gated: no · Status: `done`
 - On hover or keyboard focus: a unit hotspot shows code, type, bedrooms, area,
   price (project currency) and status; a scene hotspot shows the scene title
   and its available/reserved/sold counts.

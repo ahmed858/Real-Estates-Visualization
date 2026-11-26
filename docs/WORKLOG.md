@@ -23,3 +23,4 @@ One line per agent run, newest last:
 2026-11-26 09:55 UTC | U-304 | SceneRenderer Strategy registry, SceneView, Image2DScene with status-coloured focusable hotspots; gated | https://github.com/ahmed858/Real-Estates-Visualization/pull/24
 2026-11-26 10:33 UTC | U-305 | /p/<slug>[/<sceneId>] viewer layout: branded header, scene stage, side panel, status legend, RTL per defaultLocale; gated | https://github.com/ahmed858/Real-Estates-Visualization/pull/25
 2026-11-26 10:33 UTC | U-306 | Status palette (3:1+ contrast), dashed outline for reserved, hatch for sold, legend swatches and per-scene counts | https://github.com/ahmed858/Real-Estates-Visualization/pull/26
+2026-11-26 10:36 UTC | U-307 | Hover/focus card: unit facts with price in project currency, scene title with status counts; onHover on the renderer contract | https://github.com/ahmed858/Real-Estates-Visualization/pull/27

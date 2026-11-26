@@ -11,6 +11,8 @@ export type { SceneViewProps } from "./scene/scene-view";
 export type { SceneRenderer, SceneRendererProps, SceneRendererRegistry } from "./scene/scene-renderer";
 export { SceneStage } from "./scene/scene-stage";
 export type { SceneStageProps } from "./scene/scene-stage";
+export { HoverCard, formatPrice } from "./scene/hover-card";
+export type { HoverCardContent, HoverCardProps, UnitSummary } from "./scene/hover-card";
 export { ViewerLayout } from "./layout/viewer-layout";
 export type { ViewerLayoutProps } from "./layout/viewer-layout";
 export { ProjectHeader } from "./layout/project-header";
