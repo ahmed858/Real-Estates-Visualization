@@ -321,6 +321,42 @@ The viewer is desktop-only and uses the project's default locale.
   current scene, floor and unit.
 - Verify: `npm run check`, Vercel preview.
 
+### U-409 Showcase scene styling (floor glow and floor card)
+- Phase 4 · `viewer` · Depends on: U-310 · **Gated: yes** · Status: `todo`
+- The owner reviewed the viewer (2026-11-26): the flat look reads as a
+  child's drawing. Clients expect a photoreal render with a polished overlay,
+  so the next demo uses a real building photo (see U-410). This unit makes
+  the overlay look premium on any image, photo or SVG:
+  - The scene image fills the stage edge to edge on a dark page; header and
+    breadcrumbs sit over it on a translucent bar.
+  - Hotspots are invisible until hover or focus; the hovered shape gets a
+    soft translucent fill in its status colour (scene hotspots use the brand
+    colour) with a bright thin outline and a subtle glow.
+  - The floor card (hover card for scene hotspots) is a dark rounded card:
+    title, unit count, status chips with coloured dots (available /
+    reserved / sold counts), a bedroom mix list (e.g. "2 bedrooms · 6
+    units"), area range, price range, and a "click to view units" hint.
+    The unit card uses the same style with the unit's own figures.
+  - Bedroom mix comes from a pure `domain` function next to
+    `computeSceneStats`, rolled up the tree like the status counts.
+- Original styling only; take the idea from the reference, never its code.
+  No new dependency unless the PR's Design section justifies it (plain
+  SVG/CSS is expected to be enough; three.js is not needed for a 2D image).
+- Acceptance: unit tests for the bedroom mix roll-up; component tests for
+  the floor card content and hidden-until-hover hotspots; RTL and LTR.
+- Verify: `npm run check`, Vercel preview.
+
+### U-410 Photo facade for the demo villa
+- Phase 4 · `projects/demo-villa` · Depends on: U-409 · Gated: no · Status: `blocked`
+- Replace the SVG facade with a real building photo under a free
+  commercial-use licence (CC0, Pexels or Unsplash licence), saved as
+  `projects/demo-villa/images/facade.jpg`, with its source URL and licence in
+  `projects/demo-villa/README.md`. Draw one floor polygon per storey on it and
+  keep the floor plans. Never use images from reference sites.
+- Blocked until the owner supplies the photo (see `docs/QUESTIONS.md`); a
+  Claude session in the owner's project thread may do it directly.
+- Verify: `npm run validate -- demo-villa`, `npm run check`.
+
 ### U-402 WhatsApp enquiry button
 - Phase 4 · Module `viewer` · Depends on: U-310 · Gated: no · Status: `todo`
 - In the unit details panel, a button that opens

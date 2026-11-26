@@ -13,4 +13,11 @@ Format:
 - Answer: (owner fills this in)
 ```
 
-_No open questions._
+## Q-1 (U-410) Photo for the demo villa facade
+- Asked: 2026-11-26
+- Question: Which building photo should the demo use? It must be free for
+  commercial use (Pexels or Unsplash licence, or CC0) and show a low-rise
+  residential building from the front with each storey visible. Upload it in
+  the project thread, or commit it as `projects/demo-villa/images/facade.jpg`
+  with its source link.
+- Answer: (owner fills this in)
