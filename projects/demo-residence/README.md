@@ -14,5 +14,8 @@ and run `npm run validate -- demo-residence`.
 - `images/facade.jpg`: photo by Mahmoud Zakariya on Pexels
   (https://www.pexels.com/photo/34281363/), used under the Pexels licence
   (free for commercial use). Cropped and resized for the web.
-- `images/floor-plan.svg` and `images/logo.svg`: original, made for this
-  project.
+- `images/floor-plan-ground.svg` (ground floor, with gardens) and
+  `images/floor-plan-typical.svg` (floors 1 to 5, with balconies): original,
+  drawn by a one-off script for this project. Both keep the same outer walls
+  and core, so the four unit hotspots fit either plan.
+- `images/logo.svg`: original, made for this project.

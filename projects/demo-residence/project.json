@@ -184,7 +184,7 @@
           "en": "Ground floor"
         },
         "image": {
-          "path": "images/floor-plan.svg",
+          "path": "images/floor-plan-ground.svg",
           "width": 1200,
           "height": 900
         },
@@ -327,7 +327,7 @@
           "en": "First floor"
         },
         "image": {
-          "path": "images/floor-plan.svg",
+          "path": "images/floor-plan-typical.svg",
           "width": 1200,
           "height": 900
         },
@@ -470,7 +470,7 @@
           "en": "Second floor"
         },
         "image": {
-          "path": "images/floor-plan.svg",
+          "path": "images/floor-plan-typical.svg",
           "width": 1200,
           "height": 900
         },
@@ -613,7 +613,7 @@
           "en": "Third floor"
         },
         "image": {
-          "path": "images/floor-plan.svg",
+          "path": "images/floor-plan-typical.svg",
           "width": 1200,
           "height": 900
         },
@@ -756,7 +756,7 @@
           "en": "Fourth floor"
         },
         "image": {
-          "path": "images/floor-plan.svg",
+          "path": "images/floor-plan-typical.svg",
           "width": 1200,
           "height": 900
         },
@@ -899,7 +899,7 @@
           "en": "Fifth floor"
         },
         "image": {
-          "path": "images/floor-plan.svg",
+          "path": "images/floor-plan-typical.svg",
           "width": 1200,
           "height": 900
         },
