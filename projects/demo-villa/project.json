@@ -1,0 +1,330 @@
+{
+  "schemaVersion": 1,
+  "project": {
+    "slug": "demo-villa",
+    "name": {
+      "ar": "فيلا الحوش",
+      "en": "Courtyard Villa"
+    },
+    "defaultLocale": "ar",
+    "currency": "EGP",
+    "contact": {
+      "whatsapp": "+201000000000"
+    },
+    "branding": {
+      "logo": "images/logo.svg",
+      "primaryColor": "#1a6b4f",
+      "accentColor": "#c89b3c"
+    }
+  },
+  "root": {
+    "id": "facade",
+    "kind": "facade",
+    "title": {
+      "ar": "الواجهة",
+      "en": "Facade"
+    },
+    "image": {
+      "path": "images/facade.svg",
+      "width": 800,
+      "height": 568
+    },
+    "hotspots": [
+      {
+        "id": "ground",
+        "points": [
+          [
+            80,
+            308
+          ],
+          [
+            720,
+            308
+          ],
+          [
+            720,
+            448
+          ],
+          [
+            80,
+            448
+          ]
+        ],
+        "target": {
+          "scene": "ground"
+        }
+      },
+      {
+        "id": "first",
+        "points": [
+          [
+            80,
+            180
+          ],
+          [
+            720,
+            180
+          ],
+          [
+            720,
+            308
+          ],
+          [
+            80,
+            308
+          ]
+        ],
+        "target": {
+          "scene": "first"
+        }
+      },
+      {
+        "id": "roof",
+        "points": [
+          [
+            80,
+            136
+          ],
+          [
+            340,
+            136
+          ],
+          [
+            340,
+            60
+          ],
+          [
+            720,
+            60
+          ],
+          [
+            720,
+            180
+          ],
+          [
+            80,
+            180
+          ]
+        ],
+        "target": {
+          "scene": "roof"
+        }
+      }
+    ],
+    "children": [
+      {
+        "id": "ground",
+        "kind": "floor",
+        "title": {
+          "ar": "الدور الأرضي",
+          "en": "Ground floor"
+        },
+        "image": {
+          "path": "images/floor-ground.svg",
+          "width": 920,
+          "height": 1340
+        },
+        "hotspots": [
+          {
+            "id": "g-01",
+            "points": [
+              [
+                140,
+                140
+              ],
+              [
+                400,
+                140
+              ],
+              [
+                400,
+                300
+              ],
+              [
+                460,
+                300
+              ],
+              [
+                460,
+                1100
+              ],
+              [
+                140,
+                1100
+              ]
+            ],
+            "target": {
+              "unit": "G-01"
+            }
+          },
+          {
+            "id": "g-02",
+            "points": [
+              [
+                520,
+                140
+              ],
+              [
+                780,
+                140
+              ],
+              [
+                780,
+                1100
+              ],
+              [
+                460,
+                1100
+              ],
+              [
+                460,
+                300
+              ],
+              [
+                520,
+                300
+              ]
+            ],
+            "target": {
+              "unit": "G-02"
+            }
+          }
+        ]
+      },
+      {
+        "id": "first",
+        "kind": "floor",
+        "title": {
+          "ar": "الدور الأول",
+          "en": "First floor"
+        },
+        "image": {
+          "path": "images/floor-first.svg",
+          "width": 920,
+          "height": 1340
+        },
+        "hotspots": [
+          {
+            "id": "f-01",
+            "points": [
+              [
+                140,
+                140
+              ],
+              [
+                400,
+                140
+              ],
+              [
+                400,
+                300
+              ],
+              [
+                460,
+                300
+              ],
+              [
+                460,
+                700
+              ],
+              [
+                140,
+                700
+              ]
+            ],
+            "target": {
+              "unit": "F-01"
+            }
+          },
+          {
+            "id": "f-02",
+            "points": [
+              [
+                520,
+                140
+              ],
+              [
+                780,
+                140
+              ],
+              [
+                780,
+                700
+              ],
+              [
+                460,
+                700
+              ],
+              [
+                460,
+                300
+              ],
+              [
+                520,
+                300
+              ]
+            ],
+            "target": {
+              "unit": "F-02"
+            }
+          }
+        ]
+      },
+      {
+        "id": "roof",
+        "kind": "floor",
+        "title": {
+          "ar": "السطح",
+          "en": "Roof"
+        },
+        "image": {
+          "path": "images/floor-roof.svg",
+          "width": 920,
+          "height": 1340
+        },
+        "hotspots": [
+          {
+            "id": "r-01",
+            "points": [
+              [
+                140,
+                140
+              ],
+              [
+                400,
+                140
+              ],
+              [
+                400,
+                300
+              ],
+              [
+                520,
+                300
+              ],
+              [
+                520,
+                140
+              ],
+              [
+                780,
+                140
+              ],
+              [
+                780,
+                700
+              ],
+              [
+                140,
+                700
+              ]
+            ],
+            "target": {
+              "unit": "R-01"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -2,7 +2,7 @@
 
 Ordered work units. The hourly agent takes the **first** unit whose status is
 `todo`, whose dependencies are all `done`, and that has no open `[agent]` PR.
-Only Phases 1 and 2 are broken down; later phases stay as headlines until the
+Phases 1 to 4 are broken down; later phases stay as headlines until the
 agent writes their breakdown in a planning unit.
 
 **Statuses** (as they read on `develop`): `todo` · `done` · `blocked` (question
@@ -29,7 +29,7 @@ verification commands. `npm run check` must pass for every unit.
 | 0 | Foundation | App skeleton, rules, CI, this backlog. **done** |
 | 1 | Data shape | Project and sheet formats, validator, collection guide. |
 | 2 | Demo villa | Generator for a 3-storey villa with courtyard and its units sheet. |
-| 3 | Viewer | Image + coloured shapes, hover cards, side panel, villa → floor → unit navigation. |
+| 3 | Viewer | Image + coloured shapes, hover cards, side panel, villa → floor → unit navigation. **done** |
 | 4 | Sales tools | Units table with filters, WhatsApp button with unit code, Arabic/English, mobile. |
 | 5 | Live status | Site re-reads the sheet continuously (Google Sheets for clients). |
 | 6 | Drawing tool | Polygon editor for real client images. |
@@ -116,7 +116,7 @@ If a real client arrives early, Phase 6 may move ahead of Phase 4.
 - Verify: `npm test`, run the CLI on a fixture.
 
 ### U-107 Collection guide (Arabic and English)
-- Phase 1 · Docs · Depends on: U-101, U-102 · **Gated: yes** · Status: `todo`
+- Phase 1 · Docs · Depends on: U-101, U-102 · **Gated: yes** · Status: `done`
 - `docs/collection-guide/ar.md` and `en.md`: what the owner collects from a
   client and in what form: facade render, a plan per floor (image or PDF),
   a plan per unit type, the units sheet, logo and brand colours, WhatsApp
@@ -142,7 +142,7 @@ That is 5 units with mixed statuses (available, reserved, sold). Drawings are
 clean architectural SVG, not photos.
 
 ### U-201 Villa geometry model
-- Phase 2 · Module `tools` · Depends on: U-101 · Gated: no · Status: `todo`
+- Phase 2 · Module `tools` · Depends on: U-101 · Gated: no · Status: `done`
 - Deterministic geometry for the villa: plot, courtyard split, walls, rooms
   and unit outlines per floor, in a shared coordinate system. Output is plain
   data (no SVG yet).
@@ -151,21 +151,21 @@ clean architectural SVG, not photos.
 - Verify: `npm test`.
 
 ### U-202 Floor plan SVG renderer
-- Phase 2 · Module `tools` · Depends on: U-201 · Gated: no · Status: `todo`
+- Phase 2 · Module `tools` · Depends on: U-201 · Gated: no · Status: `done`
 - Render each floor (with courtyard on the ground floor) to SVG: walls, room
   labels, doors/windows as simple symbols, a north arrow and scale bar.
 - Acceptance: snapshot tests of the SVG; files open in a browser.
 - Verify: `npm test`.
 
 ### U-203 Facade SVG renderer
-- Phase 2 · Module `tools` · Depends on: U-201 · Gated: no · Status: `todo`
+- Phase 2 · Module `tools` · Depends on: U-201 · Gated: no · Status: `done`
 - Simple front elevation of the villa with one band per floor; the band
   outlines become the facade hotspots.
 - Acceptance: snapshot test; band polygons line up with the drawing.
 - Verify: `npm test`.
 
 ### U-204 Emit the demo-villa project
-- Phase 2 · Module `tools` · Depends on: U-202, U-203, U-105 · Gated: no · Status: `todo`
+- Phase 2 · Module `tools` · Depends on: U-202, U-203, U-105 · Gated: no · Status: `done`
 - `npm run generate:demo` writes `projects/demo-villa/`: config (facade →
   3 floors → units), SVG images, and `units.xlsx` with the 5 units and mixed
   statuses. Hotspot polygons come straight from the geometry.
@@ -174,14 +174,215 @@ clean architectural SVG, not photos.
 - Verify: `npm run generate:demo && npm run validate -- demo-villa && git diff --exit-code projects/demo-villa`.
 
 ### U-205 Demo villa in CI
-- Phase 2 · CI · Depends on: U-106, U-204 · Gated: no · Status: `todo`
+- Phase 2 · CI · Depends on: U-106, U-204 · Gated: no · Status: `done`
 - Add `npm run validate -- demo-villa` and the generator no-diff check to
   `npm run check` and CI.
 - Verify: `npm run check`.
 
 ### U-206 Plan Phase 3 (viewer)
-- Phase 2 · Docs · Depends on: U-205 · **Gated: yes** · Status: `todo`
+- Phase 2 · Docs · Depends on: U-205 · **Gated: yes** · Status: `done`
 - Break Phase 3 into units in this file, using what Phases 1 and 2 actually
   produced. Include the Strategy-based scene renderer and the first viewer
   layout (the first viewer layout unit is gated).
+- Verify: `npm run check`.
+
+---
+
+## Phase 3 · Viewer
+
+Written by U-206 from what Phases 1 and 2 produced: `parseProjectConfig` and
+`parseUnitsSheet` (`schema`), `createSceneTree`, scene stats and the unit
+filter (`domain`), `UnitSource` / `XlsxFileSource` (`data-sources`), the
+validator, and the generated `projects/demo-villa` (facade → 3 floors →
+5 units, SVG images). The viewer is server-rendered Next.js pages with small
+client components for interaction; project data is read on the server.
+
+### U-301 Project loader
+- Phase 3 · Module `data-sources` · Depends on: U-205 · Gated: no · Status: `done`
+- `ProjectSource` interface (Adapter) with `load(slug)` returning the parsed
+  config and unit rows; `FileProjectSource` reads `projects/<slug>/project.json`
+  and its units through a `UnitSource`. Unknown slug and invalid data give a
+  typed error, never a crash. Reused by the viewer pages and later by Google
+  Sheets (Phase 5).
+- Acceptance: tests on `projects/demo-villa` and on the `tools` fixtures
+  (valid, missing slug, invalid config, invalid sheet).
+- Verify: `npm test`.
+
+### U-302 Serve project images
+- Phase 3 · App route · Depends on: U-301 · Gated: no · Status: `done`
+- Route handler `src/app/files/[slug]/[...path]` (kept outside `/p/` so it
+  cannot clash with a scene id) that serves a project's
+  images (`svg`, `png`, `jpg`, `webp`) with the right content type and cache
+  headers. Rejects paths outside the project folder and other file types.
+  Read the route handler guide in `node_modules/next/dist/docs/` first.
+- Acceptance: tests for a served SVG, path traversal (`..`, encoded `%2e%2e`),
+  an unknown slug and a disallowed extension.
+- Verify: `npm test`, `npm run build`.
+
+### U-303 Component test setup
+- Phase 3 · Tooling · Depends on: none · **Gated: yes** · Status: `done`
+- Add the minimum for React component tests (e.g. `@testing-library/react`
+  with `jsdom` or `happy-dom`, justified in the PR) in `vitest.config.ts`,
+  scoped so domain tests keep running in Node. One sample test in `viewer`.
+- Acceptance: `npm test` runs both Node and DOM tests; CI time stays about the
+  same.
+- Verify: `npm run check`.
+
+### U-304 Scene renderer Strategy and Image2DScene
+- Phase 3 · Module `viewer` · Depends on: U-303 · **Gated: yes** · Status: `done`
+- `SceneRenderer` interface and a registry keyed by the scene's `type`
+  (`image-2d` now; `360` and `3d` plug in later without touching callers).
+  `Image2DScene` draws the scene image with an SVG overlay in the image's
+  pixel coordinates (`viewBox` = image size), so hotspots scale with the
+  image. Unit hotspots are filled by status, scene hotspots by a neutral
+  colour; both are focusable and expose `onSelect`.
+- Acceptance: component tests: polygons match the config points, colour per
+  status, unknown renderer type shows a clear fallback.
+- Verify: `npm test`.
+
+### U-305 First viewer layout
+- Phase 3 · App + `viewer` · Depends on: U-301, U-302, U-304 · **Gated: yes** · Status: `done`
+- Route `/p/[slug]` (root scene) and `/p/[slug]/[sceneId]`: header with logo
+  and project name, the scene in the main area, a side panel area, a status
+  legend. Arabic first (RTL) per `project.defaultLocale`. The home page links
+  to `/p/demo-villa`. Desktop layout only; mobile comes in Phase 4.
+- Acceptance: the demo villa facade renders with three floor hotspots in a
+  production build; component tests for the layout pieces.
+- Verify: `npm run check`, open the Vercel preview at `/p/demo-villa`.
+
+### U-306 Status colours and legend
+- Phase 3 · Module `viewer` · Depends on: U-304 · Gated: no · Status: `done`
+- One palette for available / reserved / sold, readable on light images,
+  with a legend that shows counts (from the U-104 stats) and does not rely on
+  colour alone (labels and patterns or outlines).
+- Acceptance: component tests for the legend counts; colour contrast noted in
+  the PR.
+- Verify: `npm test`.
+
+### U-307 Hover card
+- Phase 3 · Module `viewer` · Depends on: U-305 · Gated: no · Status: `done`
+- On hover or keyboard focus: a unit hotspot shows code, type, bedrooms, area,
+  price (project currency) and status; a scene hotspot shows the scene title
+  and its available/reserved/sold counts.
+- Acceptance: component tests for both card kinds and keyboard focus.
+- Verify: `npm test`.
+
+### U-308 Unit side panel
+- Phase 3 · Module `viewer` · Depends on: U-305 · Gated: no · Status: `done`
+- Clicking a unit opens its details in the side panel; the selection is in
+  the URL (`?unit=G-01`) so it can be shared. Shows the plan image when the
+  sheet has `plan_image`. With nothing selected, the panel shows the scene's
+  summary (counts, price and area ranges).
+- Acceptance: component tests; selecting and closing updates the URL.
+- Verify: `npm test`.
+
+### U-309 Scene navigation and breadcrumbs
+- Phase 3 · App + `viewer` · Depends on: U-305 · Gated: no · Status: `done`
+- Clicking a scene hotspot opens that scene; breadcrumbs (from
+  `SceneTree.breadcrumbs`) lead back up. Unknown scene ids give a 404 page.
+- Acceptance: facade → floor → unit and back works on the demo villa;
+  component tests for breadcrumbs.
+- Verify: `npm run check`, Vercel preview.
+
+### U-310 Typical floor picker
+- Phase 3 · Module `viewer` · Depends on: U-309 · Gated: no · Status: `done`
+- For a typical floor scene, a floor selector (from the expanded floors) sets
+  the concrete floor; unit codes and statuses follow the selected floor.
+  Needs a small fixture project with a typical floor (not the demo villa).
+- Acceptance: component tests on the fixture.
+- Verify: `npm test`.
+
+### U-311 Plan Phase 4 (sales tools)
+- Phase 3 · Docs · Depends on: U-310 · **Gated: yes** · Status: `done`
+- Break Phase 4 into units in this file, using what Phase 3 produced.
+- Verify: `npm run check`.
+
+---
+
+## Phase 4 · Sales tools
+
+Written by U-311 from what Phase 3 produced: routes `/p/<slug>` and
+`/p/<slug>/<sceneId>` (`src/app/p/project-view.tsx`) that load a project
+through `ProjectSource` and compose `ViewerLayout` slots (header, nav, scene,
+legend, panel); `SceneStage` (client) with hover cards, unit selection in the
+URL (`?unit=`) and the typical floor picker (`?floor=`) through
+`useUrlParam`; `SidePanel` with unit details and the scene summary;
+`computeSceneStats` and the pure `filterUnits` (`domain`); fixed ar/en wording
+in `viewer/layout/viewer-text.ts`; `project.contact.whatsapp` in the config.
+The viewer is desktop-only and uses the project's default locale.
+
+### U-401 Locale switch (Arabic / English)
+- Phase 4 · App + `viewer` · Depends on: U-310 · **Gated: yes** · Status: `done`
+- A language toggle in the header. Pick how the locale is carried (e.g.
+  `?lang=en` through `useUrlParam`, or a `/p/<slug>/en/...` segment) and say
+  why in the PR. Default stays `project.defaultLocale`; `lang`/`dir` and every
+  label, scene title and number format follow the chosen locale.
+- Acceptance: component tests for both directions; switching keeps the
+  current scene, floor and unit.
+- Verify: `npm run check`, Vercel preview.
+
+### U-402 WhatsApp enquiry button
+- Phase 4 · Module `viewer` · Depends on: U-310 · Gated: no · Status: `todo`
+- In the unit details panel, a button that opens
+  `https://wa.me/<number>?text=<message>` with `project.contact.whatsapp`
+  (digits only) and a prefilled message in the current locale that names the
+  project and the unit code (and floor for typical floors). A general
+  "contact us" button in the header uses the same builder without a unit.
+- Acceptance: unit tests for the link builder (encoding, Arabic text, number
+  normalisation); component test that the panel button carries the unit code.
+- Verify: `npm test`.
+
+### U-403 Units table
+- Phase 4 · App + `viewer` · Depends on: U-401 · Gated: no · Status: `todo`
+- Route `/p/<slug>/units`: every unit of the project in a sortable table
+  (code, floor, type, bedrooms, area, price, status), with status shown as in
+  the legend. A row links to the unit on its scene (`/p/<slug>/<sceneId>?unit=`
+  plus `?floor=` for typical floors). Link to the table from the header.
+- Acceptance: component tests for sorting and row links; works on the demo
+  villa and the U-310 tower fixture.
+- Verify: `npm run check`, Vercel preview.
+
+### U-404 Table filters
+- Phase 4 · Module `viewer` · Depends on: U-403 · Gated: no · Status: `todo`
+- Filter bar over the table using the `domain` `filterUnits` (status, type,
+  bedrooms, price range, area range, floor). Filters live in the URL so a
+  filtered list can be shared; "clear filters" resets them; an empty result
+  says so.
+- Acceptance: component tests for each filter and the URL round trip.
+- Verify: `npm test`.
+
+### U-405 Highlight filtered units on the scene
+- Phase 4 · Module `viewer` · Depends on: U-404 · Gated: no · Status: `todo`
+- The same filters can be applied from the scene view: matching hotspots stay
+  coloured, others are dimmed, and scene hotspots show how many matching
+  units lie below them.
+- Acceptance: component tests on the demo villa data.
+- Verify: `npm test`.
+
+### U-406 Mobile layout
+- Phase 4 · App + `viewer` · Depends on: U-401 · **Gated: yes** · Status: `todo`
+- Below a breakpoint the side panel becomes a bottom sheet, the header
+  compacts, hover cards become tap-to-show (first tap shows the card, second
+  opens), and the scene can be pinch-zoomed or scrolled. Pick the breakpoint
+  and interaction rules and list them in the PR.
+- Acceptance: component tests for the tap behaviour; Playwright screenshots
+  at phone width attached to the PR (not committed); no horizontal page
+  scroll.
+- Verify: `npm run check`, Vercel preview on a phone.
+
+### U-407 Accessibility and keyboard pass
+- Phase 4 · App + `viewer` · Depends on: U-406 · Gated: no · Status: `todo`
+- Keyboard order header → nav → scene → panel; visible focus on hotspots;
+  Escape closes the unit panel; the hover card is announced; contrast of all
+  text in both themes.
+- Acceptance: component tests for Escape and focus order; findings and fixes
+  listed in the PR.
+- Verify: `npm test`.
+
+### U-408 Plan Phase 5 (live status)
+- Phase 4 · Docs · Depends on: U-407 · **Gated: yes** · Status: `todo`
+- Break Phase 5 into units in this file, using what Phase 4 produced. Phase 5
+  needs a Google Sheets `UnitSource` and credentials; list in
+  `docs/QUESTIONS.md` what the owner must provide (service account or
+  published sheet, refresh interval).
 - Verify: `npm run check`.
