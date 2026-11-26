@@ -421,7 +421,7 @@ The viewer is desktop-only and uses the project's default locale.
 - Verify: `npm run check`, Vercel preview on a phone.
 
 ### U-412 Tap-to-show cards on touch screens
-- Phase 4 · `viewer` · Depends on: U-406 · Gated: no · Status: `todo`
+- Phase 4 · `viewer` · Depends on: U-406 · Gated: no · Status: `done`
 - On touch input (pointer type `touch`), the first tap on a hotspot shows its
   card and marks it active; a second tap on the same hotspot opens it (scene
   or unit); a tap elsewhere hides the card. Mouse and keyboard keep today's
