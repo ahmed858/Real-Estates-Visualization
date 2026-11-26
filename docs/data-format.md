@@ -7,6 +7,9 @@ Every client project lives in `projects/<slug>/` and has:
 - Images referenced by the config (paths are relative to the project folder).
 - A units sheet, described under [Units sheet](#units-sheet).
 
+To draw the hotspots on real client images instead of typing points, use the
+editor: see [editor.md](editor.md).
+
 Unknown fields are rejected, so a typo such as `hotspot` instead of `hotspots`
 is reported instead of silently ignored. Every error has a **path** from the
 config root (for example `root.children[0].hotspots[1].target.scene`) and a

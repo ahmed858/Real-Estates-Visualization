@@ -650,7 +650,7 @@ editor never writes to the server's disk and is off unless enabled.
 - Verify: `npm run check`.
 
 ### U-608 Owner guide for the editor
-- Phase 6 · Docs · Depends on: U-611 · Gated: no · Status: `todo`
+- Phase 6 · Docs · Depends on: U-611 · Gated: no · Status: `done`
 - `docs/editor.md`: from a client's images to a committed project with the
   editor (enable it, draw, pick targets, validate, download, commit).
 - Verify: `npm test`.
