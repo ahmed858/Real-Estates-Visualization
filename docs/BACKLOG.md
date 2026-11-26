@@ -312,7 +312,7 @@ in `viewer/layout/viewer-text.ts`; `project.contact.whatsapp` in the config.
 The viewer is desktop-only and uses the project's default locale.
 
 ### U-401 Locale switch (Arabic / English)
-- Phase 4 · App + `viewer` · Depends on: U-310 · **Gated: yes** · Status: `todo`
+- Phase 4 · App + `viewer` · Depends on: U-310 · **Gated: yes** · Status: `done`
 - A language toggle in the header. Pick how the locale is carried (e.g.
   `?lang=en` through `useUrlParam`, or a `/p/<slug>/en/...` segment) and say
   why in the PR. Default stays `project.defaultLocale`; `lang`/`dir` and every

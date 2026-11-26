@@ -32,3 +32,6 @@ export { Breadcrumbs } from "./navigation/breadcrumbs";
 export type { BreadcrumbsProps, Crumb } from "./navigation/breadcrumbs";
 export { FloorPicker } from "./navigation/floor-picker";
 export type { FloorPickerProps } from "./navigation/floor-picker";
+export { LANG_PARAM, otherLocale, resolveLocale, withLocale } from "./layout/locale";
+export { LocaleSwitch } from "./navigation/locale-switch";
+export type { LocaleSwitchProps } from "./navigation/locale-switch";

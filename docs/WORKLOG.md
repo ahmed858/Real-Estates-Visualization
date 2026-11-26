@@ -28,4 +28,4 @@ One line per agent run, newest last:
 2026-11-26 10:43 UTC | U-309 | Scene hotspots navigate, breadcrumbs back up, bilingual not-found page for unknown project/scene | https://github.com/ahmed858/Real-Estates-Visualization/pull/29
 2026-11-26 10:46 UTC | U-310 | Typical floor picker: ?floor= in the URL, unit codes/statuses/cards/selection follow the floor; tower fixture | https://github.com/ahmed858/Real-Estates-Visualization/pull/30
 2026-11-26 10:48 UTC | U-311 | Phase 4 broken into U-401..U-408 (locale switch, WhatsApp, units table, filters, scene highlight, mobile, a11y, plan Phase 5); Phase 3 finished; gated | https://github.com/ahmed858/Real-Estates-Visualization/pull/31
-2026-11-26 10:50 UTC | U-401 | in progress | -
+2026-11-26 10:50 UTC | U-401 | Locale switch: ?lang= read on the server, header toggle keeps scene/floor/unit, scene links carry lang; gated | https://github.com/ahmed858/Real-Estates-Visualization/pull/32

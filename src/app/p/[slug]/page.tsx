@@ -3,10 +3,10 @@
 import { Suspense } from "react";
 import { ProjectView } from "../project-view";
 
-export default function ProjectRootPage({ params }: PageProps<"/p/[slug]">) {
+export default function ProjectRootPage({ params, searchParams }: PageProps<"/p/[slug]">) {
   return (
     <Suspense fallback={null}>
-      <ProjectView params={params} />
+      <ProjectView params={params} searchParams={searchParams} />
     </Suspense>
   );
 }
