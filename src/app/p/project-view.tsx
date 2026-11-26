@@ -5,7 +5,7 @@ import { join } from "node:path";
 import { notFound } from "next/navigation";
 import { FileProjectSource, ProjectSourceError, type LoadedProject } from "@/modules/data-sources";
 import { computeBedroomMix, computeSceneStats, createSceneTree } from "@/modules/domain";
-import { Breadcrumbs, FloorPicker, LANG_PARAM, LocaleSwitch, ProjectHeader, resolveLocale, withLocale, SceneStage, type SceneSummary, type UnitSummary, SidePanel, StatusLegend, ViewerLayout, ViewerMessage, viewerText } from "@/modules/viewer";
+import { Breadcrumbs, FloorPicker, LANG_PARAM, LocaleSwitch, ProjectHeader, resolveLocale, withLocale, SceneStage, type SceneSummary, type UnitSummary, SidePanel, StatusLegend, ViewerLayout, ViewerMessage, viewerText, WhatsAppButton, enquiryMessage, whatsappLink } from "@/modules/viewer";
 
 const projects = new FileProjectSource(join(process.cwd(), "projects"));
 
@@ -72,7 +72,12 @@ export async function ProjectView({ params, searchParams }: ProjectViewProps) {
     <ViewerLayout
       locale={locale}
       brand={{ primary: config.project.branding.primaryColor, accent: config.project.branding.accentColor }}
-      header={<ProjectHeader name={name} logoUrl={projectFileUrl(slug, config.project.branding.logo)} text={text} actions={<LocaleSwitch locale={locale} defaultLocale={defaultLocale} />} />}
+      header={<ProjectHeader name={name} logoUrl={projectFileUrl(slug, config.project.branding.logo)} text={text} actions={
+            <>
+              <WhatsAppButton href={whatsappLink(config.project.contact.whatsapp, enquiryMessage(text, { projectName: name }))} label={text.contact.button} variant="outline" />
+              <LocaleSwitch locale={locale} defaultLocale={defaultLocale} />
+            </>
+          } />}
       nav={
         <div className="flex flex-wrap items-center justify-between gap-4">
           <Breadcrumbs items={crumbs} label={text.breadcrumbs} />
@@ -81,7 +86,7 @@ export async function ProjectView({ params, searchParams }: ProjectViewProps) {
       }
       scene={<SceneStage scene={scene} imageUrl={projectFileUrl(slug, scene.image.path)} units={sceneUnits} sceneTitles={sceneTitles} sceneSummaries={sceneSummaries} sceneHrefs={sceneHrefs} floors={floors} currency={config.project.currency} locale={locale} />}
       legend={<StatusLegend text={text} counts={stats?.byStatus} />}
-      panel={<SidePanel sceneTitle={scene.title[locale]} stats={stats} units={sceneUnits} currency={config.project.currency} locale={locale} />}
+      panel={<SidePanel sceneTitle={scene.title[locale]} stats={stats} units={sceneUnits} currency={config.project.currency} locale={locale} enquiry={{ whatsapp: config.project.contact.whatsapp, projectName: name, typicalFloor: floors.length > 0 }} />}
     />
   );
 }

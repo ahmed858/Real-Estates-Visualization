@@ -104,4 +104,32 @@ describe("selecting a unit", () => {
     });
     expect(screen.getByRole("region", { name: "Details" })).toBeTruthy();
   });
+
+  it("offers a WhatsApp enquiry that names the project and the unit code", () => {
+    window.history.replaceState(null, "", "/p/demo/ground?unit=G-01");
+    render(<SidePanel sceneTitle="Ground floor" stats={stats} units={units} currency="EGP" locale="en" enquiry={{ whatsapp: "+20 100 123 4567", projectName: "Courtyard Villa" }} />);
+    const link = within(screen.getByRole("region", { name: "Unit G-01" })).getByRole("link", { name: "Ask on WhatsApp" });
+    const url = new URL(link.getAttribute("href") ?? "");
+    expect(url.origin + url.pathname).toBe("https://wa.me/201001234567");
+    expect(url.searchParams.get("text")).toBe("Hello, I would like to ask about unit G-01 in Courtyard Villa.");
+    expect(link.getAttribute("target")).toBe("_blank");
+    expect(link.getAttribute("rel")).toContain("noopener");
+  });
+
+  it("names the unit's floor in the enquiry on a typical floor, in Arabic digits for Arabic", () => {
+    window.history.replaceState(null, "", "/p/demo/typical?unit=G-02");
+    render(<SidePanel sceneTitle="Typical" stats={stats} units={{ "G-02": { ...g02, floor: 12 } }} currency="EGP" locale="ar" enquiry={{ whatsapp: "+201001234567", projectName: "البرج", typicalFloor: true }} />);
+    const link = screen.getByRole("link", { name: "استفسر على واتساب" });
+    expect(new URL(link.getAttribute("href") ?? "").searchParams.get("text")).toBe("مرحبًا، أريد الاستفسار عن الوحدة G-02 في الدور ١٢ في مشروع البرج.");
+  });
+
+  it("shows no enquiry button without contact details or on the scene summary", () => {
+    window.history.replaceState(null, "", "/p/demo/ground?unit=G-01");
+    const { unmount } = render(<SidePanel sceneTitle="Ground floor" stats={stats} units={units} currency="EGP" locale="en" />);
+    expect(screen.queryByTestId("whatsapp-link")).toBeNull();
+    unmount();
+    window.history.replaceState(null, "", "/p/demo/ground");
+    render(<SidePanel sceneTitle="Ground floor" stats={stats} units={units} currency="EGP" locale="en" enquiry={{ whatsapp: "+201001234567", projectName: "X" }} />);
+    expect(screen.queryByTestId("whatsapp-link")).toBeNull();
+  });
 });

@@ -27,6 +27,15 @@ export interface ViewerText {
     bedroomMix: string;
     openHint: string;
   };
+  contact: {
+    /** Header button label. */
+    button: string;
+    /** Unit panel button label. */
+    unitButton: string;
+    general: (project: string) => string;
+    unit: (project: string, code: string) => string;
+    unitOnFloor: (project: string, code: string, floor: string) => string;
+  };
   panel: { floor: string; bathrooms: string; notes: string; plan: (code: string) => string; close: string; units: string; priceRange: string; areaRange: string };
 }
 
@@ -51,6 +60,13 @@ const TEXT: Record<ViewerLocale, ViewerText> = {
       bedroomCount: (n, f) => (n === 0 ? "استوديو" : `${f} ${n >= 3 && n <= 10 ? "غرف نوم" : "غرفة نوم"}`),
       bedroomMix: "توزيع الغرف",
       openHint: "اضغط لعرض الوحدات",
+    },
+    contact: {
+      button: "تواصل معنا",
+      unitButton: "استفسر على واتساب",
+      general: (p) => `مرحبًا، أريد الاستفسار عن مشروع ${p}.`,
+      unit: (p, c) => `مرحبًا، أريد الاستفسار عن الوحدة ${c} في مشروع ${p}.`,
+      unitOnFloor: (p, c, f) => `مرحبًا، أريد الاستفسار عن الوحدة ${c} في الدور ${f} في مشروع ${p}.`,
     },
     panel: {
       floor: "الدور",
@@ -83,6 +99,13 @@ const TEXT: Record<ViewerLocale, ViewerText> = {
       bedroomCount: (n, f) => (n === 0 ? "Studio" : `${f} ${n === 1 ? "bedroom" : "bedrooms"}`),
       bedroomMix: "Bedroom mix",
       openHint: "Click to view units",
+    },
+    contact: {
+      button: "Contact us",
+      unitButton: "Ask on WhatsApp",
+      general: (p) => `Hello, I would like to ask about ${p}.`,
+      unit: (p, c) => `Hello, I would like to ask about unit ${c} in ${p}.`,
+      unitOnFloor: (p, c, f) => `Hello, I would like to ask about unit ${c} on floor ${f} in ${p}.`,
     },
     panel: {
       floor: "Floor",
