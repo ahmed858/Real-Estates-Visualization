@@ -618,7 +618,7 @@ editor never writes to the server's disk and is off unless enabled.
 - Verify: `npm run check`.
 
 ### U-610 Keep edits when switching scenes
-- Phase 6 · `editor` · Depends on: U-606 · Gated: no · Status: `todo`
+- Phase 6 · `editor` · Depends on: U-606 · Gated: no · Status: `done`
 - Added by U-606: today the scene list links reload `/editor/<slug>?scene=`
   and the workspace starts over from the saved config, so edits on one scene
   (and scenes added with U-606) are lost when the owner opens another. Keep

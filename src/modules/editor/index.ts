@@ -12,8 +12,8 @@ export { canRedo, canUndo, createEditorState, editorReducer } from "./state/edit
 export type { EditorAction, EditorState } from "./state/editor-state";
 export { DrawingCanvas, UNSET_TARGET } from "./canvas/drawing-canvas";
 export type { DrawingCanvasProps } from "./canvas/drawing-canvas";
-export { EditorWorkspace } from "./canvas/editor-workspace";
-export type { EditorWorkspaceProps } from "./canvas/editor-workspace";
+export { EditorWorkspace, SceneWorkspace } from "./canvas/editor-workspace";
+export type { EditorWorkspaceProps, SceneWorkspaceProps } from "./canvas/editor-workspace";
 export { imagePixels, nextHotspotId, toImagePoint } from "./canvas/image-point";
 export type { ScreenBox } from "./canvas/image-point";
 export { TargetPicker } from "./targets/target-picker";
@@ -24,3 +24,6 @@ export { AddSceneForm } from "./scenes/add-scene-form";
 export type { AddSceneFormProps } from "./scenes/add-scene-form";
 export { buildScene } from "./scenes/build-scene";
 export type { BuildSceneResult, SceneFormInput } from "./scenes/build-scene";
+export { EditorSession } from "./session/editor-session";
+export type { EditorSessionProps } from "./session/editor-session";
+export { editorSceneHref, editorSceneItems, SCENE_PARAM, sceneIdFromSearch } from "./session/scene-items";

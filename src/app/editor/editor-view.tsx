@@ -1,11 +1,12 @@
-// Server view of /editor/<slug>: the scene list and a read-only preview of the
-// selected scene (?scene=<id>, default the root) on the drawing canvas.
+// Server view of /editor/<slug>: loads the project, its unit codes and image
+// sizes, then hands them to the client editing session, which opens the scene
+// from ?scene=<id> (default the root) and keeps edits across scenes.
 // Internal tool, English only.
 import { join } from "node:path";
 import { notFound } from "next/navigation";
 import { listProjectImages } from "@/modules/data-sources";
 import { createSceneTree } from "@/modules/domain";
-import { EditorWorkspace, SceneList, type EditorSceneItem } from "@/modules/editor";
+import { EditorSession } from "@/modules/editor";
 import { ViewerMessage } from "@/modules/viewer";
 import { projectFileUrl, projects } from "../p/project-view";
 import { editorPageState } from "./editor-page-state";
@@ -24,27 +25,21 @@ export async function EditorView({ params, searchParams }: EditorViewProps) {
 
   const tree = createSceneTree(state.project.config);
   const images = await listProjectImages(join(process.cwd(), "projects"), slug);
-  const selectedId = typeof sceneParam === "string" && tree.has(sceneParam) ? sceneParam : tree.root.id;
-  const scene = tree.get(selectedId);
-  const items: EditorSceneItem[] = tree.scenes.map((s) => ({
-    id: s.id,
-    title: s.title.en,
-    depth: tree.breadcrumbs(s.id).length - 1,
-    href: `/editor/${slug}?scene=${encodeURIComponent(s.id)}`,
-    hotspotCount: s.hotspots.length,
-  }));
+  const initialSceneId = typeof sceneParam === "string" && tree.has(sceneParam) ? sceneParam : tree.root.id;
 
   return (
     <div className="flex min-h-screen flex-1 flex-col bg-zinc-950 text-zinc-100" lang="en" dir="ltr">
       <header className="border-b border-white/10 px-6 py-3">
         <h1 className="text-lg font-semibold">Editor · {state.project.config.project.name.en}</h1>
       </header>
-      <div className="grid flex-1 gap-6 p-6 md:grid-cols-[16rem_1fr]">
-        <SceneList scenes={items} selectedId={selectedId} />
-        <main>
-          <EditorWorkspace key={selectedId} config={state.project.config} sceneId={selectedId} imageUrl={projectFileUrl(slug, scene.image.path)} unitCodes={state.project.units.map((u) => u.code)} images={images} />
-        </main>
-      </div>
+      <EditorSession
+        config={state.project.config}
+        initialSceneId={initialSceneId}
+        editorPath={`/editor/${slug}`}
+        fileBaseUrl={projectFileUrl(slug, "")}
+        unitCodes={state.project.units.map((u) => u.code)}
+        images={images}
+      />
     </div>
   );
 }

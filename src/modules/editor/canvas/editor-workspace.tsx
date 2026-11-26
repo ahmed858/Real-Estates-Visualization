@@ -1,26 +1,36 @@
 "use client";
-// Container for one editing session: owns the editor state (U-603 reducer),
-// the selected hotspot and the keyboard shortcuts, and renders the drawing
-// canvas with a small toolbar. Edits live in the page until export (U-607).
-import { useEffect, useReducer, useState } from "react";
+// Editing one scene: the selected hotspot, the keyboard shortcuts, the drawing
+// canvas with a small toolbar, the target picker and the child scenes.
+// SceneWorkspace is controlled (the editor state comes from EditorSession, so
+// edits survive switching scenes); EditorWorkspace owns its own state for a
+// single scene. Edits live in the page until export (U-607).
+import { useEffect, useReducer, useState, type Dispatch } from "react";
 import { createSceneTree } from "@/modules/domain";
 import type { ProjectConfig, SceneImage } from "@/modules/schema";
 import { AddSceneForm } from "../scenes/add-scene-form";
 import type { EditorCommand } from "../state/commands";
-import { canRedo, canUndo, createEditorState, editorReducer } from "../state/editor-state";
+import { canRedo, canUndo, createEditorState, editorReducer, type EditorAction, type EditorState } from "../state/editor-state";
 import { DrawingCanvas } from "./drawing-canvas";
 import { nextHotspotId } from "./image-point";
 import { hotspotIds, targetOptions } from "../targets/target-options";
 import { TargetPicker } from "../targets/target-picker";
 
-export interface EditorWorkspaceProps {
-  config: ProjectConfig;
+interface SceneWorkspaceBaseProps {
   sceneId: string;
   imageUrl: string;
   /** Unit codes from the project's units source, for the target picker. */
   unitCodes?: readonly string[];
   /** Images of the project folder with their sizes, for adding a child scene. */
   images?: readonly SceneImage[];
+}
+
+export interface EditorWorkspaceProps extends SceneWorkspaceBaseProps {
+  config: ProjectConfig;
+}
+
+export interface SceneWorkspaceProps extends SceneWorkspaceBaseProps {
+  state: EditorState;
+  dispatch: Dispatch<EditorAction>;
 }
 
 const isTyping = (target: EventTarget | null) =>
@@ -31,8 +41,13 @@ const otherIds = (ids: Set<string>, own: string) => {
   return ids;
 };
 
-export function EditorWorkspace({ config, sceneId, imageUrl, unitCodes = [], images = [] }: EditorWorkspaceProps) {
+/** A single scene with its own editor state. */
+export function EditorWorkspace({ config, ...props }: EditorWorkspaceProps) {
   const [state, dispatch] = useReducer(editorReducer, config, createEditorState);
+  return <SceneWorkspace state={state} dispatch={dispatch} {...props} />;
+}
+
+export function SceneWorkspace({ state, dispatch, sceneId, imageUrl, unitCodes = [], images = [] }: SceneWorkspaceProps) {
   const [selected, setSelected] = useState<string>();
   const doc = state.present;
   const scene = createSceneTree(doc.config).get(sceneId);
@@ -68,7 +83,7 @@ export function EditorWorkspace({ config, sceneId, imageUrl, unitCodes = [], ima
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [draft, selectedId, sceneId]);
+  }, [draft, selectedId, sceneId, dispatch]);
 
   const button = "rounded border border-white/20 px-3 py-1 text-sm hover:bg-white/10 disabled:opacity-40 disabled:hover:bg-transparent";
   return (
