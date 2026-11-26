@@ -609,7 +609,7 @@ editor never writes to the server's disk and is off unless enabled.
 - Verify: `npm test`.
 
 ### U-606 Add a scene from a project image
-- Phase 6 · `editor` · Depends on: U-605 · Gated: no · Status: `todo`
+- Phase 6 · `editor` · Depends on: U-605 · Gated: no · Status: `done`
 - Add a child scene (kind, Arabic and English title, typical floor range)
   from an image already in `projects/<slug>/images/`; the editor reads the
   image width and height itself, so the owner never types them.
@@ -617,8 +617,20 @@ editor never writes to the server's disk and is off unless enabled.
   SVG); the new scene passes `parseProjectConfig`.
 - Verify: `npm run check`.
 
+### U-610 Keep edits when switching scenes
+- Phase 6 · `editor` · Depends on: U-606 · Gated: no · Status: `todo`
+- Added by U-606: today the scene list links reload `/editor/<slug>?scene=`
+  and the workspace starts over from the saved config, so edits on one scene
+  (and scenes added with U-606) are lost when the owner opens another. Keep
+  one editor state for the whole session: the scene list switches scenes in
+  the page (keeping `?scene=` in the URL), lists scenes from the edited
+  config (new scenes included), and undo/redo spans scenes.
+- Acceptance: component tests: draw on one scene, switch, come back, the
+  shape is still there; an added scene appears in the list and opens.
+- Verify: `npm run check`.
+
 ### U-607 Live validation and export
-- Phase 6 · `editor` · Depends on: U-606 · **Gated: yes** · Status: `todo`
+- Phase 6 · `editor` · Depends on: U-610 · **Gated: yes** · Status: `todo`
 - The editor shows the same problems `npm run validate` finds, as the owner
   edits (each linked to its scene and hotspot), and a "Download project.json"
   button that is enabled only when there are no errors. The file is

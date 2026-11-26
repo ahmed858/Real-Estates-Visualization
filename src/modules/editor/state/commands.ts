@@ -27,6 +27,8 @@ export type EditorCommand =
   | { type: "delete-vertex"; sceneId: string; hotspotId?: string; index: number }
   | { type: "close-polygon"; hotspotId: string; target: HotspotTarget }
   | { type: "delete-hotspot"; sceneId: string; hotspotId: string }
+  /** Adds a child scene under `parentId` (refused when the scene id is already used). */
+  | { type: "add-scene"; parentId: string; scene: Scene }
   /** Sets where a hotspot leads; `id` also renames it (refused when another hotspot of the scene has that id). */
   | { type: "set-target"; sceneId: string; hotspotId: string; target: HotspotTarget; id?: string };
 
@@ -121,6 +123,12 @@ export function applyCommand(doc: EditorDocument, command: EditorCommand): Edito
       const root = editScene(doc.config.root, command.sceneId, (scene) =>
         scene.hotspots.some((h) => h.id === command.hotspotId) ? { ...scene, hotspots: scene.hotspots.filter((h) => h.id !== command.hotspotId) } : null,
       );
+      return root && { ...doc, config: { ...doc.config, root } };
+    }
+
+    case "add-scene": {
+      if (findScene(doc.config.root, command.scene.id)) return null;
+      const root = editScene(doc.config.root, command.parentId, (scene) => ({ ...scene, children: [...scene.children, command.scene] }));
       return root && { ...doc, config: { ...doc.config, root } };
     }
 
