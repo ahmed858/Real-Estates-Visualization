@@ -4,7 +4,9 @@
 export { createSceneTree } from "./scene-tree/scene-tree";
 export type { ConcreteFloor, PlacedUnit, SceneTree } from "./scene-tree/scene-tree";
 export { buildUnitCode } from "./scene-tree/unit-code";
-export { computeSceneStats, sumStats } from "./units/scene-stats";
+export { computeSceneStats, sumStats, unitsBySubtree } from "./units/scene-stats";
+export { bedroomMixOf, computeBedroomMix } from "./units/bedroom-mix";
+export type { BedroomCount } from "./units/bedroom-mix";
 export type { SceneStats } from "./units/scene-stats";
 export { filterUnits, matchesFilter } from "./units/filter-units";
 export type { RangeFilter, UnitFilter } from "./units/filter-units";

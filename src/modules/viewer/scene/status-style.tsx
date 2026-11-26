@@ -22,6 +22,12 @@ export const STATUS_STYLE: Record<UnitStatus | "scene", HotspotStyle> = {
   scene: { color: "#1864ab" },
 };
 
+/**
+ * Paint of an active scene hotspot (e.g. a floor on the facade): the project's
+ * brand accent, set by the viewer layout, with the neutral scene colour as fallback.
+ */
+export const SCENE_HOTSPOT_PAINT = `var(--brand-accent, ${STATUS_STYLE.scene.color})`;
+
 /** Hotspot fill colours per kind (kept for callers that only need the colour). */
 export const HOTSPOT_FILL = Object.fromEntries(
   Object.entries(STATUS_STYLE).map(([kind, style]) => [kind, style.color]),

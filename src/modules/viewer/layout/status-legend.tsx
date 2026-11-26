@@ -37,7 +37,7 @@ export function StatusLegend({ text, counts }: StatusLegendProps) {
             <Swatch status={status} />
             <span>{text.status[status]}</span>
             {counts && (
-              <span data-count={status} className="rounded-full bg-zinc-100 px-2 font-semibold tabular-nums text-zinc-800 dark:bg-zinc-800 dark:text-zinc-100">
+              <span data-count={status} className="rounded-full bg-white/10 px-2 font-semibold tabular-nums text-zinc-100">
                 {counts[status]}
               </span>
             )}

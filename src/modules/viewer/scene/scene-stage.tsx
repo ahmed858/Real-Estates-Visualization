@@ -7,10 +7,10 @@
 // codes follow the floor chosen in the URL (?floor=). Server pages cannot
 // pass functions to client components.
 import { useRouter } from "next/navigation";
-import { useState } from "react";
-import type { Hotspot, Scene, UnitStatus } from "@/modules/schema";
+import { useState, type ReactNode } from "react";
+import type { Hotspot, Scene } from "@/modules/schema";
 import { viewerText, type ViewerLocale, type ViewerText } from "../layout/viewer-text";
-import { HoverCard, type HoverCardContent, type UnitSummary } from "./hover-card";
+import { HoverCard, type HoverCardContent, type SceneFigures, type UnitSummary } from "./hover-card";
 import { useSelectedFloor, useSelectedUnit } from "../selection/use-selected-unit";
 import { SceneView } from "./scene-view";
 
@@ -21,8 +21,8 @@ export interface SceneStageProps {
   units: Readonly<Record<string, UnitSummary>>;
   /** Localised title per scene id, used to name scene hotspots. */
   sceneTitles: Readonly<Record<string, string>>;
-  /** Units per status for each scene id (rolled up the tree), shown on scene hotspot cards. */
-  sceneCounts: Readonly<Record<string, Record<UnitStatus, number>>>;
+  /** Figures of each scene id (rolled up the tree), shown on the floor card of its hotspot. */
+  sceneFigures: Readonly<Record<string, SceneFigures>>;
   /** URL of each scene id; selecting a scene hotspot navigates there. */
   sceneHrefs: Readonly<Record<string, string>>;
   /** ISO 4217 code of the project currency, e.g. "EGP". */
@@ -62,18 +62,26 @@ export function hotspotLabeller(
 
 function cardContent(h: Hotspot, props: SceneStageProps, codeOf: (h: Hotspot) => string | undefined): HoverCardContent | null {
   const t = h.target;
-  if ("scene" in t) return { kind: "scene", title: props.sceneTitles[t.scene] ?? t.scene, counts: props.sceneCounts[t.scene] };
+  if ("scene" in t) return { kind: "scene", title: props.sceneTitles[t.scene] ?? t.scene, figures: props.sceneFigures[t.scene] };
   const code = codeOf(h);
   const unit = code ? props.units[code] : undefined;
   return unit ? { kind: "unit", unit } : null;
 }
 
-/** Top-centre of the hotspot's bounding box, as percentages of the image size. */
-function anchorOf(h: Hotspot, scene: Scene) {
+/** Hotspots whose top lies above this share of the image height get their card below the anchor. */
+const FLIP_BELOW = 0.35;
+
+/**
+ * Top-centre of the hotspot's bounding box, as percentages of the image size.
+ * Near the top of the image the card hangs below that point instead of above
+ * it, so it is not cut off by the stage edge or hidden by the top bar.
+ */
+export function anchorOf(h: Hotspot, scene: Scene) {
   const xs = h.points.map(([x]) => x);
   const ys = h.points.map(([, y]) => y);
   const cx = (Math.min(...xs) + Math.max(...xs)) / 2;
-  return { left: `${(cx / scene.image.width) * 100}%`, top: `${(Math.min(...ys) / scene.image.height) * 100}%` };
+  const top = Math.min(...ys) / scene.image.height;
+  return { left: `${(cx / scene.image.width) * 100}%`, top: `${top * 100}%`, below: top < FLIP_BELOW };
 }
 
 export function SceneStage(props: SceneStageProps) {
@@ -87,8 +95,11 @@ export function SceneStage(props: SceneStageProps) {
   const floorCodes = floors.find((f) => f.floor === selectedFloor);
   const codeOf = (h: Hotspot) => hotspotUnitCode(h, floorCodes);
   const content = hovered ? cardContent(hovered, props, codeOf) : null;
+  // The scene fits the stage: as wide as the stage allows, and never taller
+  // than --stage-height (set by the viewer layout; the viewport by default).
+  const ratio = scene.image.width / scene.image.height;
   return (
-    <div className="relative">
+    <div className="relative mx-auto w-full" style={{ maxWidth: `calc(var(--stage-height, 100dvh) * ${ratio})` }} data-testid="scene-stage">
       <SceneView
         scene={scene}
         imageUrl={imageUrl}
@@ -109,11 +120,17 @@ export function SceneStage(props: SceneStageProps) {
           if (code && units[code]) selectUnit(code);
         }}
       />
-      {hovered && content && (
-        <div className="pointer-events-none absolute z-10 -translate-x-1/2 -translate-y-full pb-2" style={anchorOf(hovered, scene)} data-testid="hover-card">
-          <HoverCard content={content} text={text} locale={locale} currency={currency} />
-        </div>
-      )}
+      {hovered && content && <CardAnchor anchor={anchorOf(hovered, scene)}><HoverCard content={content} text={text} locale={locale} currency={currency} /></CardAnchor>}
+    </div>
+  );
+}
+
+function CardAnchor({ anchor, children }: { anchor: ReturnType<typeof anchorOf>; children: ReactNode }) {
+  const { left, top, below } = anchor;
+  const place = below ? "translate-y-0 pt-12" : "-translate-y-full pb-2";
+  return (
+    <div className={`pointer-events-none absolute z-30 -translate-x-1/2 ${place}`} style={{ left, top }} data-testid="hover-card" data-placement={below ? "below" : "above"}>
+      {children}
     </div>
   );
 }

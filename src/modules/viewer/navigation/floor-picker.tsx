@@ -25,7 +25,7 @@ export function FloorPicker({ floors, locale }: FloorPickerProps) {
         id={id}
         value={selected}
         onChange={(e) => selectFloor(Number(e.target.value))}
-        className="rounded-md border border-zinc-300 bg-white px-2 py-1 dark:border-zinc-700 dark:bg-zinc-900"
+        className="rounded-md border border-white/20 bg-zinc-900/80 px-2 py-1 text-zinc-100"
       >
         {floors.map((f) => (
           <option key={f} value={f}>

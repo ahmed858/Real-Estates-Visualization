@@ -32,12 +32,12 @@ function addStats(into: SceneStats, from: SceneStats): void {
 }
 
 /**
- * Stats for every scene. A scene counts the units its own hotspots draw plus
- * everything below it, so the root holds the whole project. A unit drawn on two
- * scenes counts once per scene, and once for any ancestor shared by both.
+ * The sheet rows each scene stands for: the units its own hotspots draw plus
+ * everything below it, so the root holds the whole project. A unit drawn on
+ * two scenes counts once per scene, and once for any ancestor shared by both.
  * Sheet rows that no hotspot draws are ignored (the validator reports them).
  */
-export function computeSceneStats(tree: SceneTree, units: readonly UnitRow[]): Map<string, SceneStats> {
+export function unitsBySubtree(tree: SceneTree, units: readonly UnitRow[]): Map<string, UnitRow[]> {
   const byCode = new Map(units.map((u) => [u.code, u]));
   const codesOn = new Map<string, Set<string>>();
   for (const p of tree.placedUnits()) {
@@ -45,19 +45,25 @@ export function computeSceneStats(tree: SceneTree, units: readonly UnitRow[]): M
     codesOn.get(p.sceneId)?.add(p.code);
   }
 
-  const result = new Map<string, SceneStats>();
+  const result = new Map<string, UnitRow[]>();
   const subtreeCodes = (sceneId: string): Set<string> => {
     const codes = new Set(codesOn.get(sceneId) ?? []);
     for (const child of tree.children(sceneId)) for (const c of subtreeCodes(child.id)) codes.add(c);
-    const stats = emptyStats();
-    for (const code of codes) {
-      const unit = byCode.get(code);
-      if (unit) addUnit(stats, unit);
-    }
-    result.set(sceneId, stats);
+    result.set(sceneId, [...codes].flatMap((code) => byCode.get(code) ?? []));
     return codes;
   };
   subtreeCodes(tree.root.id);
+  return result;
+}
+
+/** Stats for every scene, rolled up the tree as described by `unitsBySubtree`. */
+export function computeSceneStats(tree: SceneTree, units: readonly UnitRow[]): Map<string, SceneStats> {
+  const result = new Map<string, SceneStats>();
+  for (const [sceneId, rows] of unitsBySubtree(tree, units)) {
+    const stats = emptyStats();
+    for (const unit of rows) addUnit(stats, unit);
+    result.set(sceneId, stats);
+  }
   return result;
 }
 

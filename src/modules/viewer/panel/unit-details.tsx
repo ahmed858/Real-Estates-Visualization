@@ -23,24 +23,24 @@ export function UnitDetails({ unit, text, locale, currency, onClose }: UnitDetai
   ];
   const title = `${text.unit} ${unit.code}`;
   return (
-    <section aria-label={title} className="flex flex-col gap-3 rounded-lg border border-zinc-200 p-4 dark:border-zinc-800">
+    <section aria-label={title} className="flex flex-col gap-3 rounded-lg border border-white/10 bg-white/5 p-4">
       <div className="flex items-start justify-between gap-2">
         <h2 className="text-lg font-semibold">{title}</h2>
-        <button type="button" onClick={onClose} className="rounded-md px-2 py-1 text-sm text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800">
+        <button type="button" onClick={onClose} className="rounded-md px-2 py-1 text-sm text-zinc-400 hover:bg-white/10">
           {text.panel.close}
         </button>
       </div>
       <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-sm">
         {rows.map(([label, value]) => (
           <div key={label} className="contents">
-            <dt className="text-zinc-600 dark:text-zinc-400">{label}</dt>
+            <dt className="text-zinc-400">{label}</dt>
             <dd className="font-medium tabular-nums">{value}</dd>
           </div>
         ))}
       </dl>
       {unit.planImageUrl && (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={unit.planImageUrl} alt={text.panel.plan(unit.code)} className="w-full rounded border border-zinc-200 bg-white dark:border-zinc-800" />
+        <img src={unit.planImageUrl} alt={text.panel.plan(unit.code)} className="w-full rounded border border-white/10 bg-white" />
       )}
       {unit.notes && (
         <p className="text-sm">

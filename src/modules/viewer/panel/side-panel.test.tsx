@@ -26,7 +26,7 @@ const scene: Scene = {
 
 const Viewer = () => (
   <>
-    <SceneStage scene={scene} imageUrl="/g.svg" units={units} sceneTitles={{ ground: "Ground floor" }} sceneCounts={{}} sceneHrefs={{}} currency="EGP" locale="en" />
+    <SceneStage scene={scene} imageUrl="/g.svg" units={units} sceneTitles={{ ground: "Ground floor" }} sceneFigures={{}} sceneHrefs={{}} currency="EGP" locale="en" />
     <SidePanel sceneTitle="Ground floor" stats={stats} units={units} currency="EGP" locale="en" />
   </>
 );

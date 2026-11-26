@@ -26,19 +26,19 @@ export function ScenePanel({ sceneTitle, text, stats, locale = "en", currency = 
     if (stats.area) rows.push([text.panel.areaRange, `${num.format(stats.area.min)} – ${num.format(stats.area.max)} ${text.card.squareMetres}`]);
   }
   return (
-    <section aria-label={text.details} className="flex flex-col gap-2 rounded-lg border border-zinc-200 p-4 dark:border-zinc-800">
+    <section aria-label={text.details} className="flex flex-col gap-2 rounded-lg border border-white/10 bg-white/5 p-4">
       <h2 className="text-lg font-semibold">{sceneTitle}</h2>
       {rows.length > 0 && (
         <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-sm">
           {rows.map(([label, value]) => (
             <div key={label} className="contents">
-              <dt className="text-zinc-600 dark:text-zinc-400">{label}</dt>
+              <dt className="text-zinc-400">{label}</dt>
               <dd className="font-medium tabular-nums">{value}</dd>
             </div>
           ))}
         </dl>
       )}
-      <p className="text-sm text-zinc-600 dark:text-zinc-400">{text.selectHint}</p>
+      <p className="text-sm text-zinc-400">{text.selectHint}</p>
     </section>
   );
 }

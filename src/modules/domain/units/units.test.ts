@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { parseProjectConfig, type SceneInput, type UnitRow, type UnitStatus } from "@/modules/schema";
-import { computeSceneStats, createSceneTree, filterUnits, sumStats } from "../index";
+import { bedroomMixOf, computeBedroomMix, computeSceneStats, createSceneTree, filterUnits, sumStats } from "../index";
 
 const square: [number, number][] = [
   [0, 0],
@@ -143,6 +143,58 @@ describe("sumStats", () => {
     const s = computeSceneStats(villa, villaUnits);
     const sum = sumStats([s.get("ground")!, s.get("first")!]);
     expect(sum).toEqual(s.get("facade"));
+  });
+});
+
+describe("computeBedroomMix", () => {
+  it("lists a floor's units per bedroom count, fewest bedrooms first", () => {
+    const mix = computeBedroomMix(villa, villaUnits);
+    expect(mix.get("ground")).toEqual([{ bedrooms: 3, units: 2 }]);
+    expect(mix.get("first")).toEqual([{ bedrooms: 2, units: 1 }]);
+  });
+
+  it("rolls the mix up from floors to the facade and ignores units no hotspot draws", () => {
+    expect(computeBedroomMix(villa, villaUnits).get("facade")).toEqual([
+      { bedrooms: 2, units: 1 },
+      { bedrooms: 3, units: 2 },
+    ]);
+  });
+
+  it("rolls expanded typical floors up through a compound, counting a shared unit once", () => {
+    const t = tree(
+      scene("masterplan", "masterplan", {
+        hotspots: [toScene("b1"), toScene("b2"), toUnit("B2-01")],
+        children: [
+          scene("b1", "building", {
+            hotspots: [toScene("typical")],
+            children: [
+              scene("typical", "floor", {
+                floors: { from: 1, to: 2, unitCode: "{floor}{suffix}" },
+                hotspots: [{ id: "a", points: square, target: { unitSuffix: "A" } }],
+              }),
+            ],
+          }),
+          scene("b2", "building", { hotspots: [toUnit("B2-01")] }),
+        ],
+      }),
+    );
+    const mix = computeBedroomMix(t, [
+      unit("1A", "sold", 100, 50, { bedrooms: 1 }),
+      unit("2A", "available", 200, 60, { bedrooms: 1 }),
+      unit("B2-01", "available", 300, 70, { bedrooms: 4 }),
+    ]);
+    expect(mix.get("typical")).toEqual([{ bedrooms: 1, units: 2 }]);
+    expect(mix.get("b2")).toEqual([{ bedrooms: 4, units: 1 }]);
+    expect(mix.get("masterplan")).toEqual([
+      { bedrooms: 1, units: 2 },
+      { bedrooms: 4, units: 1 },
+    ]);
+  });
+
+  it("is empty for a scene without units", () => {
+    const t = tree(scene("root", "facade", { hotspots: [toScene("empty")], children: [scene("empty", "floor")] }));
+    expect(computeBedroomMix(t, villaUnits).get("empty")).toEqual([]);
+    expect(bedroomMixOf([])).toEqual([]);
   });
 });
 

@@ -13,7 +13,20 @@ export interface ViewerText {
   selectHint: string;
   logoAlt: (projectName: string) => string;
   breadcrumbs: string;
-  card: { type: string; bedrooms: string; area: string; squareMetres: string; price: string; status: string };
+  card: {
+    type: string;
+    bedrooms: string;
+    area: string;
+    squareMetres: string;
+    price: string;
+    status: string;
+    /** `n` is the formatted number, `count` the raw one (for plurals). */
+    unitCount: (n: string, count: number) => string;
+    bedroomMix: string;
+    bedroomLine: (bedrooms: string, units: string, unitCount: number) => string;
+    openHint: string;
+    detailsHint: string;
+  };
   panel: { floor: string; bathrooms: string; notes: string; plan: (code: string) => string; close: string; units: string; priceRange: string; areaRange: string };
 }
 
@@ -27,7 +40,19 @@ const TEXT: Record<ViewerLocale, ViewerText> = {
     selectHint: "اختر دورًا أو وحدة من الصورة لعرض تفاصيلها.",
     logoAlt: (name) => `شعار ${name}`,
     breadcrumbs: "مسار التصفح",
-    card: { type: "النوع", bedrooms: "غرف النوم", area: "المساحة", squareMetres: "م²", price: "السعر", status: "الحالة" },
+    card: {
+      type: "النوع",
+      bedrooms: "غرف النوم",
+      area: "المساحة",
+      squareMetres: "م²",
+      price: "السعر",
+      status: "الحالة",
+      unitCount: (n) => `${n} وحدة`,
+      bedroomMix: "عدد الغرف",
+      bedroomLine: (b, u) => `${b} غرف نوم · ${u} وحدة`,
+      openHint: "اضغط لعرض الوحدات",
+      detailsHint: "اضغط لعرض التفاصيل",
+    },
     panel: {
       floor: "الدور",
       bathrooms: "الحمامات",
@@ -48,7 +73,19 @@ const TEXT: Record<ViewerLocale, ViewerText> = {
     selectHint: "Pick a floor or a unit on the image to see its details.",
     logoAlt: (name) => `${name} logo`,
     breadcrumbs: "Breadcrumbs",
-    card: { type: "Type", bedrooms: "Bedrooms", area: "Area", squareMetres: "m²", price: "Price", status: "Status" },
+    card: {
+      type: "Type",
+      bedrooms: "Bedrooms",
+      area: "Area",
+      squareMetres: "m²",
+      price: "Price",
+      status: "Status",
+      unitCount: (n, count) => `${n} ${count === 1 ? "unit" : "units"}`,
+      bedroomMix: "Bedroom mix",
+      bedroomLine: (b, u, count) => `${b} bedrooms · ${u} ${count === 1 ? "unit" : "units"}`,
+      openHint: "Click to view units",
+      detailsHint: "Click for details",
+    },
     panel: {
       floor: "Floor",
       bathrooms: "Bathrooms",

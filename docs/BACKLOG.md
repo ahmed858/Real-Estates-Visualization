@@ -322,7 +322,7 @@ The viewer is desktop-only and uses the project's default locale.
 - Verify: `npm run check`, Vercel preview.
 
 ### U-409 Showcase scene styling (floor glow and floor card)
-- Phase 4 · `viewer` · Depends on: U-310 · **Gated: yes** · Status: `todo`
+- Phase 4 · `viewer` · Depends on: U-310 · **Gated: yes** · Status: `done`
 - The owner reviewed the viewer (2026-11-26): the flat look reads as a
   child's drawing. Clients expect a photoreal render with a polished overlay,
   so the next demo uses a real building photo (see U-410). This unit makes
