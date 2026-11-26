@@ -12,3 +12,16 @@ export type { BedroomCount } from "./units/bedroom-mix";
 export { filterUnits, matchesFilter } from "./units/filter-units";
 export type { FilterableUnit, RangeFilter, UnitFilter } from "./units/filter-units";
 export type { NumberRange } from "./units/range";
+export {
+  clampToImage,
+  closesPolygon,
+  distance,
+  distanceToSegment,
+  isSelfIntersecting,
+  nearestEdge,
+  nearestVertex,
+  polygonArea,
+  roundPoint,
+  segmentsIntersect,
+} from "./geometry/polygon";
+export type { ImageSize, NearestEdge, NearestVertex } from "./geometry/polygon";
