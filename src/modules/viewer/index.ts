@@ -2,6 +2,8 @@
 // React UI for browsing a project: scene image, coloured unit shapes, cards, navigation.
 // Other modules may import ONLY from "@/modules/viewer" (this file), never from files inside it.
 export { ViewerMessage } from "./components/viewer-message";
+export { StaleDataNote } from "./components/stale-data-note";
+export type { StaleDataNoteProps } from "./components/stale-data-note";
 export type { ViewerMessageProps } from "./components/viewer-message";
 export { Image2DScene } from "./scene/image-2d-scene";
 export { ACTIVE_FILL_OPACITY, HOTSPOT_FILL, STATUS_STYLE, hotspotStyle } from "./scene/status-style";

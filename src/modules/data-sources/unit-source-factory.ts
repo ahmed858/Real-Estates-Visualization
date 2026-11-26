@@ -5,6 +5,7 @@ import { join } from "node:path";
 import type { UnitsSource } from "@/modules/schema";
 import { CachedUnitSource, type Clock } from "./cached-unit-source";
 import { GoogleSheetCsvSource, type FetchLike } from "./google-sheet-csv-source";
+import { LastGoodUnitSource, type ProblemLogger } from "./last-good-unit-source";
 import type { UnitSource } from "./unit-source";
 import { XlsxFileSource } from "./xlsx-file-source";
 
@@ -23,12 +24,14 @@ export class UnsupportedUnitSourceError extends Error {
 export interface UnitSourceFactoryOptions {
   now?: Clock;
   fetch?: FetchLike;
+  log?: ProblemLogger;
 }
 
 /**
- * Builds a factory that keeps one cached source per Google Sheet tab and
- * refresh interval for its whole lifetime, so the cache survives across page
- * requests. The local units.xlsx is read on every request (no network cost).
+ * Builds a factory that keeps one source per Google Sheet tab and refresh
+ * interval for its whole lifetime, so the cache and the last good rows
+ * survive across page requests. A sheet is read through
+ * LastGood(Cached(GoogleSheetCsv)). The local units.xlsx is read on every request (no network cost).
  */
 export function createUnitSourceFactory(options: UnitSourceFactoryOptions = {}): UnitSourceFactory {
   const sheets = new Map<string, UnitSource>();
@@ -40,7 +43,9 @@ export function createUnitSourceFactory(options: UnitSourceFactoryOptions = {}):
         const key = `${units.sheetId}#${units.gid}@${units.refreshSeconds}`;
         let source = sheets.get(key);
         if (!source) {
-          source = new CachedUnitSource(new GoogleSheetCsvSource(units.sheetId, units.gid, options.fetch), units.refreshSeconds * 1000, options.now);
+          const sheet = new GoogleSheetCsvSource(units.sheetId, units.gid, options.fetch);
+          const cached = new CachedUnitSource(sheet, units.refreshSeconds * 1000, options.now);
+          source = new LastGoodUnitSource(cached, `Google Sheet ${units.sheetId} (gid ${units.gid})`, options.now, options.log);
           sheets.set(key, source);
         }
         return source;

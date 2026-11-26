@@ -1,10 +1,13 @@
 // The Adapter target for whole projects: config plus unit rows. The viewer
 // depends on this interface, never on where or how a project is stored.
 import type { ProjectConfig, UnitRow } from "@/modules/schema";
+import type { StaleUnits } from "./unit-source";
 
 export interface LoadedProject {
   config: ProjectConfig;
   units: UnitRow[];
+  /** Present when the units are the last good copy because the latest read failed. */
+  unitsStale?: StaleUnits;
 }
 
 export interface ProjectSource {

@@ -42,8 +42,9 @@ export class FileProjectSource implements ProjectSource {
     }
 
     try {
-      const units = this.unitSource(parsed.value.units ?? DEFAULT_UNITS_SOURCE, dir);
-      return { config: parsed.value, units: await units.load() };
+      const source = this.unitSource(parsed.value.units ?? DEFAULT_UNITS_SOURCE, dir);
+      const { rows, stale } = source.loadWithStatus ? await source.loadWithStatus() : { rows: await source.load(), stale: undefined };
+      return { config: parsed.value, units: rows, ...(stale && { unitsStale: stale }) };
     } catch (e) {
       if (e instanceof UnitSourceReadError) throw new ProjectSourceError(slug, "invalid-units", [e.message]);
       if (e instanceof UnsupportedUnitSourceError) throw new ProjectSourceError(slug, "invalid-units", [`units.source: ${e.message}`]);

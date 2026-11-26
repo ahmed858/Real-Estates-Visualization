@@ -5,6 +5,24 @@ import type { SheetIssue, UnitRow } from "@/modules/schema";
 export interface UnitSource {
   /** Loads and validates every unit row. Rejects with UnitSourceError when the data is invalid. */
   load(): Promise<UnitRow[]>;
+  /**
+   * Optional: like load(), but may answer with older rows plus a notice when
+   * the latest read failed. Sources without a fallback leave it out.
+   */
+  loadWithStatus?(): Promise<LoadedUnits>;
+}
+
+/** The latest read failed; these rows are the last ones that passed validation. */
+export interface StaleUnits {
+  /** When the served rows were read (ms since the epoch). */
+  lastGoodAt: number;
+  /** Why the latest read failed, e.g. "row 4, price: must be a number". */
+  problems: readonly string[];
+}
+
+export interface LoadedUnits {
+  rows: UnitRow[];
+  stale?: StaleUnits;
 }
 
 /** The source was read, but its rows do not pass the units sheet schema. */

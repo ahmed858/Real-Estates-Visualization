@@ -523,7 +523,7 @@ Google Sheet and the site shows the new statuses shortly after.
 - Verify: `npm run check`, Vercel preview.
 
 ### U-505 Keep the last good data when the sheet breaks
-- Phase 5 · `data-sources` + `viewer` · Depends on: U-504 · Gated: no · Status: `todo`
+- Phase 5 · `data-sources` + `viewer` · Depends on: U-504 · Gated: no · Status: `done`
 - If the sheet cannot be read or a client edit makes it invalid, keep serving
   the last valid rows and show a small "status may be out of date" note in the
   viewer; log the problems for the owner. Without any earlier good data, show
