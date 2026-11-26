@@ -174,7 +174,7 @@ clean architectural SVG, not photos.
 - Verify: `npm run generate:demo && npm run validate -- demo-villa && git diff --exit-code projects/demo-villa`.
 
 ### U-205 Demo villa in CI
-- Phase 2 · CI · Depends on: U-106, U-204 · Gated: no · Status: `todo`
+- Phase 2 · CI · Depends on: U-106, U-204 · Gated: no · Status: `done`
 - Add `npm run validate -- demo-villa` and the generator no-diff check to
   `npm run check` and CI.
 - Verify: `npm run check`.
