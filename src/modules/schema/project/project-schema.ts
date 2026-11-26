@@ -9,6 +9,7 @@ import {
   pointSchema,
   projectFilePathSchema,
 } from "./primitives";
+import { unitsSourceSchema } from "./units-source";
 
 export const PROJECT_SCHEMA_VERSION = 1;
 
@@ -105,6 +106,8 @@ export const projectConfigShapeSchema = z
   .object({
     schemaVersion: z.literal(PROJECT_SCHEMA_VERSION),
     project: projectInfoSchema,
+    /** Where unit rows come from. Missing means the local units.xlsx. */
+    units: unitsSourceSchema.optional(),
     root: sceneSchema,
   })
   .strict();

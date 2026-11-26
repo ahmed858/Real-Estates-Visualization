@@ -470,7 +470,7 @@ where the rows come from, without touching the viewer: a client edits a
 Google Sheet and the site shows the new statuses shortly after.
 
 ### U-501 Units source in the project config
-- Phase 5 · `schema` + `data-sources` · Depends on: U-407 · **Gated: yes** · Status: `todo`
+- Phase 5 · `schema` + `data-sources` · Depends on: U-407 · **Gated: yes** · Status: `done`
 - Optional `units` block in `project.json`: `{ "source": "xlsx" }` (default,
   today's `units.xlsx`) or `{ "source": "google-sheet", "sheetId": "…",
   "gid": "0" }`. `FileProjectSource` picks the `UnitSource` from it through a

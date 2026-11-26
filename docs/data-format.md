@@ -18,6 +18,7 @@ config root (for example `root.children[0].hotspots[1].target.scene`) and a
 | --- | --- | --- | --- |
 | `schemaVersion` | `1` | yes | Format version. Always `1` for now. |
 | `project` | object | yes | Project information, see below. |
+| `units` | units source | no | Where unit rows come from, see [Units source](#units-source). Missing means the local `units.xlsx`. |
 | `root` | scene | yes | The top scene of the tree (usually the facade or masterplan). |
 
 ### `project`
@@ -32,6 +33,18 @@ config root (for example `root.children[0].hotspots[1].target.scene`) and a
 | `branding.logo` | file path | yes | Logo image, e.g. `images/logo.svg`. |
 | `branding.primaryColor` | hex colour | yes | 6-digit hex, e.g. `#1a6b4f`. |
 | `branding.accentColor` | hex colour | yes | 6-digit hex, e.g. `#c89b3c`. |
+
+### Units source
+
+The optional `units` block picks where unit rows are read from. Exactly one
+of these forms:
+
+| Form | Fields | Description |
+| --- | --- | --- |
+| `{ "source": "xlsx" }` | none | The `units.xlsx` in the project folder. Same as leaving `units` out. |
+| `{ "source": "google-sheet", "sheetId": "…", "gid": "0" }` | `sheetId` (required): the id from the sheet link `docs.google.com/spreadsheets/d/<sheetId>/edit`, letters, digits, `-` and `_`, at least 20 characters. `gid` (optional, default `"0"`): the tab number from the link's `#gid=<number>`, as a string. | A Google Sheet with the same columns as the [units sheet](#units-sheet). Reading it arrives with U-502; until then a project that uses it reports `units source "google-sheet" is not supported yet`. |
+
+Paste the id, not the whole link: a full URL in `sheetId` is rejected.
 
 ### Scene
 
