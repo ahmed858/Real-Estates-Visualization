@@ -1,7 +1,10 @@
-// Small card shown over the scene while a hotspot is hovered or focused:
-// unit facts for a unit hotspot, title and status counts for a scene hotspot.
+// Dark card shown over the scene while a hotspot is hovered or focused. For a
+// scene hotspot (e.g. a floor on the facade) it shows the floor card: title,
+// unit count, status chips, bedroom mix, area and price ranges and a hint to
+// open it. For a unit hotspot it shows the unit's own figures in the same style.
 import { UNIT_STATUSES, type UnitStatus } from "@/modules/schema";
 import type { ViewerLocale, ViewerText } from "../layout/viewer-text";
+import { STATUS_STYLE } from "./status-style";
 
 /** Unit facts shown by the hover card and the side panel (a sheet row without its bookkeeping). */
 export interface UnitSummary {
@@ -18,9 +21,22 @@ export interface UnitSummary {
   notes?: string;
 }
 
-export type HoverCardContent =
-  | { kind: "unit"; unit: UnitSummary }
-  | { kind: "scene"; title: string; counts?: Readonly<Record<UnitStatus, number>> };
+interface Range {
+  min: number;
+  max: number;
+}
+
+/** What a scene holds, rolled up the tree: shown on the floor card. Plain data, so a server page can pass it. */
+export interface SceneSummary {
+  total: number;
+  byStatus: Readonly<Record<UnitStatus, number>>;
+  /** Units per bedroom count, fewest bedrooms first. */
+  bedroomMix: readonly { bedrooms: number; units: number }[];
+  price: Range | null;
+  area: Range | null;
+}
+
+export type HoverCardContent = { kind: "unit"; unit: UnitSummary } | { kind: "scene"; title: string; summary?: SceneSummary };
 
 export interface HoverCardProps {
   content: HoverCardContent;
@@ -35,46 +51,91 @@ export function formatPrice(price: number, currency: string, locale: ViewerLocal
   return new Intl.NumberFormat(numberLocale(locale), { style: "currency", currency, maximumFractionDigits: 0 }).format(price);
 }
 
+/** "a – b", or a single value when both ends agree. */
+const formatRange = (r: Range, format: (n: number) => string) => (r.min === r.max ? format(r.min) : `${format(r.min)} – ${format(r.max)}`);
+
+const CARD = "min-w-56 max-w-72 rounded-xl bg-zinc-950/90 p-4 text-sm text-zinc-100 shadow-2xl ring-1 ring-white/10 backdrop-blur-md";
+
+function StatusChip({ status, label, value }: { status: UnitStatus; label: string; value?: string }) {
+  return (
+    <li data-chip={status} className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-2 py-0.5 text-xs">
+      <span aria-hidden="true" className="size-2 rounded-full" style={{ backgroundColor: STATUS_STYLE[status].color, boxShadow: `0 0 6px ${STATUS_STYLE[status].color}` }} />
+      <span>{label}</span>
+      {value !== undefined && <span className="font-semibold tabular-nums">{value}</span>}
+    </li>
+  );
+}
+
+function Facts({ rows }: { rows: [string, string][] }) {
+  return (
+    <dl className="mt-3 grid grid-cols-[auto_1fr] gap-x-4 gap-y-1">
+      {rows.map(([label, value]) => (
+        <div key={label} className="contents">
+          <dt className="text-zinc-400">{label}</dt>
+          <dd className="text-end font-medium tabular-nums">{value}</dd>
+        </div>
+      ))}
+    </dl>
+  );
+}
+
 export function HoverCard({ content, text, locale, currency }: HoverCardProps) {
   const num = new Intl.NumberFormat(numberLocale(locale));
+  const area = (n: number) => `${num.format(n)} ${text.card.squareMetres}`;
+  const price = (n: number) => formatPrice(n, currency, locale);
+
   if (content.kind === "scene") {
+    const { summary } = content;
+    const rows: [string, string][] = [];
+    if (summary?.area) rows.push([text.panel.areaRange, formatRange(summary.area, area)]);
+    if (summary?.price) rows.push([text.panel.priceRange, formatRange(summary.price, price)]);
     return (
-      <div role="tooltip" className="min-w-40 rounded-md bg-white p-3 text-sm text-zinc-900 shadow-lg ring-1 ring-zinc-200">
-        <p className="font-semibold">{content.title}</p>
-        {content.counts && (
-          <dl className="mt-1 grid grid-cols-[auto_auto] gap-x-3">
-            {UNIT_STATUSES.map((s) => (
-              <div key={s} className="contents" data-count={s}>
-                <dt>{text.status[s]}</dt>
-                <dd className="font-semibold tabular-nums">{num.format(content.counts?.[s] ?? 0)}</dd>
-              </div>
-            ))}
-          </dl>
+      <div role="tooltip" className={CARD}>
+        <p className="text-base font-semibold">{content.title}</p>
+        {summary && (
+          <>
+            <p className="text-zinc-400" data-testid="card-total">
+              {text.card.unitCount(summary.total, num.format(summary.total))}
+            </p>
+            <ul className="mt-3 flex flex-wrap gap-1.5" aria-label={text.statusLegend}>
+              {UNIT_STATUSES.map((s) => (
+                <StatusChip key={s} status={s} label={text.status[s]} value={num.format(summary.byStatus[s])} />
+              ))}
+            </ul>
+            {summary.bedroomMix.length > 0 && (
+              <ul className="mt-3 space-y-0.5" aria-label={text.card.bedroomMix} data-testid="bedroom-mix">
+                {summary.bedroomMix.map((m) => (
+                  <li key={m.bedrooms}>
+                    {text.card.bedroomCount(m.bedrooms, num.format(m.bedrooms))} · {text.card.unitCount(m.units, num.format(m.units))}
+                  </li>
+                ))}
+              </ul>
+            )}
+            {rows.length > 0 && <Facts rows={rows} />}
+          </>
         )}
+        <p className="mt-3 text-xs text-[color:var(--brand-accent,#e9c46a)]">{text.card.openHint}</p>
       </div>
     );
   }
+
   const { unit } = content;
-  const rows: [string, string][] = [
-    [text.card.type, unit.type],
-    [text.card.bedrooms, num.format(unit.bedrooms)],
-    [text.card.area, `${num.format(unit.areaM2)} ${text.card.squareMetres}`],
-    [text.card.price, formatPrice(unit.price, currency, locale)],
-    [text.card.status, text.status[unit.status]],
-  ];
   return (
-    <div role="tooltip" className="min-w-48 rounded-md bg-white p-3 text-sm text-zinc-900 shadow-lg ring-1 ring-zinc-200">
-      <p className="font-semibold">
+    <div role="tooltip" className={CARD}>
+      <p className="text-base font-semibold">
         {text.unit} {unit.code}
       </p>
-      <dl className="mt-1 grid grid-cols-[auto_auto] gap-x-3">
-        {rows.map(([label, value]) => (
-          <div key={label} className="contents">
-            <dt className="text-zinc-600">{label}</dt>
-            <dd className="font-medium">{value}</dd>
-          </div>
-        ))}
-      </dl>
+      <ul className="mt-2 flex">
+        <StatusChip status={unit.status} label={text.status[unit.status]} />
+      </ul>
+      <Facts
+        rows={[
+          [text.card.type, unit.type],
+          [text.card.bedrooms, num.format(unit.bedrooms)],
+          [text.card.area, area(unit.areaM2)],
+          [text.card.price, price(unit.price)],
+        ]}
+      />
     </div>
   );
 }

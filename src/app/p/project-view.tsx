@@ -4,8 +4,8 @@
 import { join } from "node:path";
 import { notFound } from "next/navigation";
 import { FileProjectSource, ProjectSourceError, type LoadedProject } from "@/modules/data-sources";
-import { computeSceneStats, createSceneTree } from "@/modules/domain";
-import { Breadcrumbs, FloorPicker, LANG_PARAM, LocaleSwitch, ProjectHeader, resolveLocale, withLocale, SceneStage, type UnitSummary, SidePanel, StatusLegend, ViewerLayout, ViewerMessage, viewerText } from "@/modules/viewer";
+import { computeBedroomMix, computeSceneStats, createSceneTree } from "@/modules/domain";
+import { Breadcrumbs, FloorPicker, LANG_PARAM, LocaleSwitch, ProjectHeader, resolveLocale, withLocale, SceneStage, type SceneSummary, type UnitSummary, SidePanel, StatusLegend, ViewerLayout, ViewerMessage, viewerText } from "@/modules/viewer";
 
 const projects = new FileProjectSource(join(process.cwd(), "projects"));
 
@@ -59,7 +59,10 @@ export async function ProjectView({ params, searchParams }: ProjectViewProps) {
         { code, type, floor, bedrooms, bathrooms, areaM2, price, status, ...(planImage && { planImageUrl: projectFileUrl(slug, planImage) }), ...(notes && { notes }) },
       ]),
   );
-  const sceneCounts = Object.fromEntries([...allStats].map(([id, s]) => [id, s.byStatus]));
+  const bedroomMix = computeBedroomMix(tree, units);
+  const sceneSummaries: Record<string, SceneSummary> = Object.fromEntries(
+    [...allStats].map(([id, s]) => [id, { total: s.total, byStatus: s.byStatus, bedroomMix: bedroomMix.get(id) ?? [], price: s.price, area: s.area }]),
+  );
   const sceneTitles = Object.fromEntries(tree.scenes.map((s) => [s.id, s.title[locale]]));
   const sceneHrefs = Object.fromEntries(tree.scenes.map((s) => [s.id, withLocale(sceneUrl(slug, s.id, tree.root.id), locale, defaultLocale)]));
   const crumbs = tree.breadcrumbs(scene.id).map((s) => ({ id: s.id, title: s.title[locale], href: sceneHrefs[s.id] }));
@@ -76,7 +79,7 @@ export async function ProjectView({ params, searchParams }: ProjectViewProps) {
           {floors.length > 0 && <FloorPicker floors={floors.map((f) => f.floor)} locale={locale} />}
         </div>
       }
-      scene={<SceneStage scene={scene} imageUrl={projectFileUrl(slug, scene.image.path)} units={sceneUnits} sceneTitles={sceneTitles} sceneCounts={sceneCounts} sceneHrefs={sceneHrefs} floors={floors} currency={config.project.currency} locale={locale} />}
+      scene={<SceneStage scene={scene} imageUrl={projectFileUrl(slug, scene.image.path)} units={sceneUnits} sceneTitles={sceneTitles} sceneSummaries={sceneSummaries} sceneHrefs={sceneHrefs} floors={floors} currency={config.project.currency} locale={locale} />}
       legend={<StatusLegend text={text} counts={stats?.byStatus} />}
       panel={<SidePanel sceneTitle={scene.title[locale]} stats={stats} units={sceneUnits} currency={config.project.currency} locale={locale} />}
     />

@@ -322,7 +322,7 @@ The viewer is desktop-only and uses the project's default locale.
 - Verify: `npm run check`, Vercel preview.
 
 ### U-409 Showcase scene styling (floor glow and floor card)
-- Phase 4 · `viewer` · Depends on: U-310 · **Gated: yes** · Status: `todo`
+- Phase 4 · `viewer` · Depends on: U-310 · **Gated: yes** · Status: `done`
 - The owner reviewed the viewer (2026-11-26): the flat look reads as a
   child's drawing. Clients expect a photoreal render with a polished overlay,
   so the next demo uses a real building photo (see U-410). This unit makes
@@ -339,6 +339,9 @@ The viewer is desktop-only and uses the project's default locale.
     The unit card uses the same style with the unit's own figures.
   - Bedroom mix comes from a pure `domain` function next to
     `computeSceneStats`, rolled up the tree like the status counts.
+- Split (2026-11-26): the first bullet (edge-to-edge dark stage under a
+  translucent bar) moved to U-411; this unit did the hotspots, the cards and
+  the bedroom mix.
 - Original styling only; take the idea from the reference, never its code.
   No new dependency unless the PR's Design section justifies it (plain
   SVG/CSS is expected to be enough; three.js is not needed for a 2D image).
@@ -367,6 +370,18 @@ The viewer is desktop-only and uses the project's default locale.
 - Acceptance: unit tests for the link builder (encoding, Arabic text, number
   normalisation); component test that the panel button carries the unit code.
 - Verify: `npm test`.
+
+### U-411 Edge-to-edge dark stage
+- Phase 4 · App + `viewer` · Depends on: U-409 · **Gated: yes** · Status: `todo`
+- Split from U-409. The scene image fills the stage edge to edge on a dark
+  page; the project header and the breadcrumbs (with the floor picker) sit
+  over the image on a translucent bar. The side panel and the status legend
+  stay readable on the dark page (dark surface, the same contrast rules).
+  `ViewerLayout` keeps its slots; only the frame and the styles change.
+- Acceptance: component tests that the stage renders the scene full width
+  with the header and nav inside the overlay bar, in RTL and LTR; the
+  existing layout tests keep passing.
+- Verify: `npm run check`, Vercel preview.
 
 ### U-403 Units table
 - Phase 4 · App + `viewer` · Depends on: U-401 · Gated: no · Status: `todo`

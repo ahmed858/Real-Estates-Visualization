@@ -8,9 +8,9 @@
 // pass functions to client components.
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import type { Hotspot, Scene, UnitStatus } from "@/modules/schema";
+import type { Hotspot, Scene } from "@/modules/schema";
 import { viewerText, type ViewerLocale, type ViewerText } from "../layout/viewer-text";
-import { HoverCard, type HoverCardContent, type UnitSummary } from "./hover-card";
+import { HoverCard, type HoverCardContent, type SceneSummary, type UnitSummary } from "./hover-card";
 import { useSelectedFloor, useSelectedUnit } from "../selection/use-selected-unit";
 import { SceneView } from "./scene-view";
 
@@ -21,8 +21,8 @@ export interface SceneStageProps {
   units: Readonly<Record<string, UnitSummary>>;
   /** Localised title per scene id, used to name scene hotspots. */
   sceneTitles: Readonly<Record<string, string>>;
-  /** Units per status for each scene id (rolled up the tree), shown on scene hotspot cards. */
-  sceneCounts: Readonly<Record<string, Record<UnitStatus, number>>>;
+  /** What each scene id holds (rolled up the tree), shown on the floor card of scene hotspots. */
+  sceneSummaries: Readonly<Record<string, SceneSummary>>;
   /** URL of each scene id; selecting a scene hotspot navigates there. */
   sceneHrefs: Readonly<Record<string, string>>;
   /** ISO 4217 code of the project currency, e.g. "EGP". */
@@ -62,7 +62,7 @@ export function hotspotLabeller(
 
 function cardContent(h: Hotspot, props: SceneStageProps, codeOf: (h: Hotspot) => string | undefined): HoverCardContent | null {
   const t = h.target;
-  if ("scene" in t) return { kind: "scene", title: props.sceneTitles[t.scene] ?? t.scene, counts: props.sceneCounts[t.scene] };
+  if ("scene" in t) return { kind: "scene", title: props.sceneTitles[t.scene] ?? t.scene, summary: props.sceneSummaries[t.scene] };
   const code = codeOf(h);
   const unit = code ? props.units[code] : undefined;
   return unit ? { kind: "unit", unit } : null;

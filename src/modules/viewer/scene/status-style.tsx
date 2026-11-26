@@ -4,6 +4,7 @@
 //
 // Contrast against white (WCAG 1.4.11 asks 3:1 for graphics):
 // available #2b8a3e 4.4:1 · reserved #b35c00 4.7:1 · sold #c92a2a 5.5:1 · scene #1864ab 6.1:1.
+import type { CSSProperties } from "react";
 import type { UnitStatus } from "@/modules/schema";
 
 export interface HotspotStyle {
@@ -34,4 +35,18 @@ export function HatchPattern({ id, size = 10 }: { id: string; size?: number }) {
       <line x1={0} y1={0} x2={0} y2={size} stroke="#ffffff" strokeWidth={size / 4} strokeOpacity={0.8} />
     </pattern>
   );
+}
+
+/** Fill opacity of the active hotspot; idle hotspots are fully transparent but still catch the pointer. */
+export const ACTIVE_FILL_OPACITY = 0.32;
+
+/** Inline style of a hotspot polygon; `color` may be a CSS colour or var(). */
+export function hotspotStyle(color: string, active: boolean): CSSProperties {
+  return {
+    fill: color,
+    fillOpacity: active ? ACTIVE_FILL_OPACITY : 0,
+    stroke: "#ffffff",
+    strokeOpacity: active ? 0.95 : 0,
+    filter: active ? `drop-shadow(0 0 6px ${color}) drop-shadow(0 0 14px ${color})` : "none",
+  };
 }

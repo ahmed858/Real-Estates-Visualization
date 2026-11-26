@@ -1,4 +1,4 @@
-import { render, screen, within } from "@testing-library/react";
+import { fireEvent, render, screen, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import type { Scene } from "@/modules/schema";
 import { SceneView, STATUS_STYLE, StatusLegend, viewerText } from "../index";
@@ -38,7 +38,7 @@ describe("status cues beyond colour", () => {
     expect(container.querySelector('[data-swatch="sold"] pattern')).not.toBeNull();
   });
 
-  it("hotspots use a dashed outline for reserved and a hatch overlay for sold", () => {
+  it("hotspots use a dashed outline for reserved and, while active, a hatch overlay for sold", () => {
     const scene: Scene = {
       id: "ground",
       kind: "floor",
@@ -55,6 +55,9 @@ describe("status cues beyond colour", () => {
     const poly = (id: string) => screen.getByRole("button", { name: id });
     expect(poly("a").getAttribute("stroke-dasharray")).toBeNull();
     expect(poly("r").getAttribute("stroke-dasharray")).toBe(STATUS_STYLE.reserved.dash);
+    // Hotspots are hidden until hover or focus, and the hatch shows with them.
+    expect(container.querySelector("[data-hatch]")).toBeNull();
+    fireEvent.focus(poly("s"));
     const hatch = container.querySelector('[data-hatch="s"]');
     expect(hatch?.getAttribute("fill")).toMatch(/^url\(#hatch-/);
     expect(hatch?.getAttribute("aria-hidden")).toBe("true");

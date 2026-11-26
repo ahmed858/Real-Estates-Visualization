@@ -4,7 +4,7 @@
 export { ViewerMessage } from "./components/viewer-message";
 export type { ViewerMessageProps } from "./components/viewer-message";
 export { Image2DScene } from "./scene/image-2d-scene";
-export { HOTSPOT_FILL, STATUS_STYLE } from "./scene/status-style";
+export { ACTIVE_FILL_OPACITY, HOTSPOT_FILL, STATUS_STYLE, hotspotStyle } from "./scene/status-style";
 export type { HotspotStyle } from "./scene/status-style";
 export { DEFAULT_SCENE_RENDERERS, SceneView } from "./scene/scene-view";
 export type { SceneViewProps } from "./scene/scene-view";
@@ -13,7 +13,7 @@ export { SceneStage } from "./scene/scene-stage";
 export { hotspotUnitCode } from "./scene/scene-stage";
 export type { ConcreteFloorCodes, SceneStageProps } from "./scene/scene-stage";
 export { HoverCard, formatPrice } from "./scene/hover-card";
-export type { HoverCardContent, HoverCardProps, UnitSummary } from "./scene/hover-card";
+export type { HoverCardContent, HoverCardProps, SceneSummary, UnitSummary } from "./scene/hover-card";
 export { ViewerLayout } from "./layout/viewer-layout";
 export type { ViewerLayoutProps } from "./layout/viewer-layout";
 export { ProjectHeader } from "./layout/project-header";
