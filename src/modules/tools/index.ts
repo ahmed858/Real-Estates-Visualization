@@ -29,3 +29,5 @@ export type { ProjectFiles } from "./demo-villa/project/demo-villa-project";
 export { DEMO_SLUG } from "./demo-villa/project/project-config";
 export { buildXlsx } from "./xlsx/write-xlsx";
 export type { XlsxCell } from "./xlsx/write-xlsx";
+export { createProject, NewProjectError, PLACEHOLDERS, runNewProjectCli, scaffoldProjectConfig } from "./new-project/create-project";
+export type { CreateProjectOptions } from "./new-project/create-project";
