@@ -562,7 +562,7 @@ empty `editor` module to draw them on a real client image and export a valid
 editor never writes to the server's disk and is off unless enabled.
 
 ### U-601 Editor route behind a switch
-- Phase 6 · App + `editor` · Depends on: U-507 · **Gated: yes** · Status: `todo`
+- Phase 6 · App + `editor` · Depends on: U-507 · **Gated: yes** · Status: `done`
 - `/editor/<slug>` loads the project through `ProjectSource` and shows its
   scene list and the selected scene image (read-only for now). It answers 404
   unless `EDITOR_ENABLED=true`, documented in `.env.example`; Vercel leaves it
