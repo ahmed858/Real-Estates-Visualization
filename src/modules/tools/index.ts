@@ -6,3 +6,13 @@ export type { ValidateOptions } from "./validate/validate-project";
 export { errorsOf, formatReport, warningsOf } from "./validate/report";
 export type { Finding, Severity, ValidationReport } from "./validate/report";
 export { runValidateCli } from "./validate/cli";
+export { buildVillaGeometry } from "./demo-villa/geometry/villa-geometry";
+export type {
+  CommonArea,
+  FloorGeometry,
+  Opening,
+  Room,
+  UnitGeometry,
+  VillaGeometry,
+  Wall,
+} from "./demo-villa/geometry/types";

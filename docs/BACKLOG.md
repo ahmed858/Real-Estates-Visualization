@@ -142,7 +142,7 @@ That is 5 units with mixed statuses (available, reserved, sold). Drawings are
 clean architectural SVG, not photos.
 
 ### U-201 Villa geometry model
-- Phase 2 · Module `tools` · Depends on: U-101 · Gated: no · Status: `todo`
+- Phase 2 · Module `tools` · Depends on: U-101 · Gated: no · Status: `done`
 - Deterministic geometry for the villa: plot, courtyard split, walls, rooms
   and unit outlines per floor, in a shared coordinate system. Output is plain
   data (no SVG yet).
