@@ -16,3 +16,7 @@ export { EditorWorkspace } from "./canvas/editor-workspace";
 export type { EditorWorkspaceProps } from "./canvas/editor-workspace";
 export { imagePixels, nextHotspotId, toImagePoint } from "./canvas/image-point";
 export type { ScreenBox } from "./canvas/image-point";
+export { TargetPicker } from "./targets/target-picker";
+export type { TargetPickerProps } from "./targets/target-picker";
+export { hotspotIds, makeTarget, suffixOf, suggestHotspotId, targetOptions, toId } from "./targets/target-options";
+export type { CodeOption, SceneOption, TargetKind, TargetOptions } from "./targets/target-options";

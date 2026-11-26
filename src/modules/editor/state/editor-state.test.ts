@@ -121,6 +121,20 @@ describe("editor commands", () => {
     expect(scene(deleted, "facade").hotspots).toEqual([]);
   });
 
+  it("renames a hotspot with its new target, but not to an id already used on the scene", () => {
+    const renamed = run([{ type: "set-target", sceneId: "facade", hotspotId: "band-ground", target: { scene: "ground" }, id: "ground" }]);
+    expect(scene(renamed, "facade").hotspots.map((h) => h.id)).toEqual(["ground"]);
+    const withTwo = run([
+      { type: "start-hotspot", sceneId: "facade" },
+      { type: "add-point", point: [0, 0] },
+      { type: "add-point", point: [9, 0] },
+      { type: "add-point", point: [9, 9] },
+      { type: "close-polygon", hotspotId: "shape-1", target: { unit: "" } },
+    ]);
+    const clash = { type: "set-target", sceneId: "facade", hotspotId: "shape-1", target: { unit: "V-01" }, id: "band-ground" } as const;
+    expect(editorReducer(withTwo, { type: "do", command: clash })).toBe(withTwo);
+  });
+
   it("never changes the config it started from", () => {
     const original = config();
     const snapshot = structuredClone(original);

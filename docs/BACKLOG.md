@@ -601,7 +601,7 @@ editor never writes to the server's disk and is off unless enabled.
 - Verify: `npm run check`.
 
 ### U-605 Hotspot target picker
-- Phase 6 · `editor` · Depends on: U-604 · Gated: no · Status: `todo`
+- Phase 6 · `editor` · Depends on: U-604 · Gated: no · Status: `done`
 - For the selected hotspot, choose its target: a child scene, a unit code
   from the units source (listing units not yet drawn first), or a unit suffix
   on a typical floor. The hotspot id is suggested from the target.

@@ -27,7 +27,8 @@ export type EditorCommand =
   | { type: "delete-vertex"; sceneId: string; hotspotId?: string; index: number }
   | { type: "close-polygon"; hotspotId: string; target: HotspotTarget }
   | { type: "delete-hotspot"; sceneId: string; hotspotId: string }
-  | { type: "set-target"; sceneId: string; hotspotId: string; target: HotspotTarget };
+  /** Sets where a hotspot leads; `id` also renames it (refused when another hotspot of the scene has that id). */
+  | { type: "set-target"; sceneId: string; hotspotId: string; target: HotspotTarget; id?: string };
 
 const MIN_POINTS = 3;
 
@@ -123,7 +124,11 @@ export function applyCommand(doc: EditorDocument, command: EditorCommand): Edito
       return root && { ...doc, config: { ...doc.config, root } };
     }
 
-    case "set-target":
-      return editHotspot(doc, command.sceneId, command.hotspotId, (h) => ({ ...h, target: command.target }));
+    case "set-target": {
+      const id = command.id ?? command.hotspotId;
+      const scene = findScene(doc.config.root, command.sceneId);
+      if (!id || (id !== command.hotspotId && scene?.hotspots.some((h) => h.id === id))) return null;
+      return editHotspot(doc, command.sceneId, command.hotspotId, (h) => ({ ...h, id, target: command.target }));
+    }
   }
 }

@@ -42,7 +42,7 @@ function collectIds(scene: Scene, ids: Set<string>) {
   scene.children.forEach((c) => collectIds(c, ids));
 }
 
-/** A hotspot id not used anywhere in the project: shape-1, shape-2, ... U-605 suggests a better one from the target. */
+/** A hotspot id not used anywhere in the project: shape-1, shape-2, ... The target picker (U-605) suggests a better one from the target. */
 export function nextHotspotId(config: ProjectConfig): string {
   const ids = new Set<string>();
   collectIds(config.root, ids);
