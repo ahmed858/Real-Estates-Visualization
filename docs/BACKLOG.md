@@ -591,7 +591,7 @@ editor never writes to the server's disk and is off unless enabled.
 - Verify: `npm test`.
 
 ### U-604 Drawing canvas
-- Phase 6 · `editor` · Depends on: U-601, U-603 · Gated: no · Status: `todo`
+- Phase 6 · `editor` · Depends on: U-601, U-603 · Gated: no · Status: `done`
 - An SVG layer over the scene image: click to add points, click the first
   point to close, drag a vertex to move it, select a hotspot to delete it,
   Escape cancels the shape in progress, Ctrl/Cmd+Z and Shift+Ctrl/Cmd+Z undo

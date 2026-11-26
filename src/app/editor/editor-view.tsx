@@ -1,8 +1,9 @@
 // Server view of /editor/<slug>: the scene list and a read-only preview of the
-// selected scene (?scene=<id>, default the root). Internal tool, English only.
+// selected scene (?scene=<id>, default the root) on the drawing canvas.
+// Internal tool, English only.
 import { notFound } from "next/navigation";
 import { createSceneTree } from "@/modules/domain";
-import { SceneList, ScenePreview, type EditorSceneItem } from "@/modules/editor";
+import { EditorWorkspace, SceneList, type EditorSceneItem } from "@/modules/editor";
 import { ViewerMessage } from "@/modules/viewer";
 import { projectFileUrl, projects } from "../p/project-view";
 import { editorPageState } from "./editor-page-state";
@@ -38,7 +39,7 @@ export async function EditorView({ params, searchParams }: EditorViewProps) {
       <div className="grid flex-1 gap-6 p-6 md:grid-cols-[16rem_1fr]">
         <SceneList scenes={items} selectedId={selectedId} />
         <main>
-          <ScenePreview scene={scene} imageUrl={projectFileUrl(slug, scene.image.path)} title={scene.title.en} />
+          <EditorWorkspace key={selectedId} config={state.project.config} sceneId={selectedId} imageUrl={projectFileUrl(slug, scene.image.path)} />
         </main>
       </div>
     </div>
