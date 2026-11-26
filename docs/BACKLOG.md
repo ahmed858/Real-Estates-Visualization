@@ -241,7 +241,7 @@ client components for interaction; project data is read on the server.
 - Verify: `npm test`.
 
 ### U-305 First viewer layout
-- Phase 3 · App + `viewer` · Depends on: U-301, U-302, U-304 · **Gated: yes** · Status: `todo`
+- Phase 3 · App + `viewer` · Depends on: U-301, U-302, U-304 · **Gated: yes** · Status: `done`
 - Route `/p/[slug]` (root scene) and `/p/[slug]/[sceneId]`: header with logo
   and project name, the scene in the main area, a side panel area, a status
   legend. Arabic first (RTL) per `project.defaultLocale`. The home page links

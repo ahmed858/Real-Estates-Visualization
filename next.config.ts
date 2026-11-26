@@ -7,6 +7,7 @@ const nextConfig: NextConfig = {
   // Project folders are read at request time; ship them with the server routes.
   outputFileTracingIncludes: {
     "/files/*": ["./projects/**/*"],
+    "/p/**": ["./projects/**/*"],
   },
   turbopack: {
     rules: {
