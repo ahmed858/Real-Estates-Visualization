@@ -36,6 +36,14 @@ export interface ViewerText {
     unit: (project: string, code: string) => string;
     unitOnFloor: (project: string, code: string, floor: string) => string;
   };
+  table: {
+    title: string;
+    /** Header link to the table. */
+    link: string;
+    /** Link from the table back to the scenes. */
+    back: string;
+    columns: Record<"code" | "floor" | "type" | "bedrooms" | "areaM2" | "price" | "status", string>;
+  };
   panel: { floor: string; bathrooms: string; notes: string; plan: (code: string) => string; close: string; units: string; priceRange: string; areaRange: string };
 }
 
@@ -67,6 +75,12 @@ const TEXT: Record<ViewerLocale, ViewerText> = {
       general: (p) => `مرحبًا، أريد الاستفسار عن مشروع ${p}.`,
       unit: (p, c) => `مرحبًا، أريد الاستفسار عن الوحدة ${c} في مشروع ${p}.`,
       unitOnFloor: (p, c, f) => `مرحبًا، أريد الاستفسار عن الوحدة ${c} في الدور ${f} في مشروع ${p}.`,
+    },
+    table: {
+      title: "كل الوحدات",
+      link: "كل الوحدات",
+      back: "العودة للمشروع",
+      columns: { code: "الوحدة", floor: "الدور", type: "النوع", bedrooms: "غرف النوم", areaM2: "المساحة", price: "السعر", status: "الحالة" },
     },
     panel: {
       floor: "الدور",
@@ -106,6 +120,12 @@ const TEXT: Record<ViewerLocale, ViewerText> = {
       general: (p) => `Hello, I would like to ask about ${p}.`,
       unit: (p, c) => `Hello, I would like to ask about unit ${c} in ${p}.`,
       unitOnFloor: (p, c, f) => `Hello, I would like to ask about unit ${c} on floor ${f} in ${p}.`,
+    },
+    table: {
+      title: "All units",
+      link: "All units",
+      back: "Back to the project",
+      columns: { code: "Unit", floor: "Floor", type: "Type", bedrooms: "Bedrooms", areaM2: "Area", price: "Price", status: "Status" },
     },
     panel: {
       floor: "Floor",

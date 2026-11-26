@@ -12,7 +12,8 @@ export interface StatusLegendProps {
   counts?: Readonly<Record<UnitStatus, number>>;
 }
 
-function Swatch({ status }: { status: UnitStatus }) {
+/** Small square drawn like a hotspot of that status (fill, outline, pattern). */
+export function StatusSwatch({ status }: { status: UnitStatus }) {
   const hatchId = `legend-hatch-${useId().replace(/:/g, "")}`;
   const style = STATUS_STYLE[status];
   return (
@@ -34,7 +35,7 @@ export function StatusLegend({ text, counts }: StatusLegendProps) {
       <ul className="flex flex-wrap gap-4 text-sm">
         {UNIT_STATUSES.map((status) => (
           <li key={status} data-status={status} className="flex items-center gap-2">
-            <Swatch status={status} />
+            <StatusSwatch status={status} />
             <span>{text.status[status]}</span>
             {counts && (
               <span data-count={status} className="rounded-full bg-white/10 px-2 font-semibold tabular-nums text-zinc-100">
