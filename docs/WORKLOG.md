@@ -37,4 +37,4 @@ One line per agent run, newest last:
 2026-11-26 18:13 UTC | U-405 | Scene filter toggle (shared UnitFilterBar + useUnitFilter): matching hotspots stay coloured, others dimmed, floor bands show matching unit counts; optional emphasis/badge on the renderer contract | https://github.com/ahmed858/Real-Estates-Visualization/pull/44
 2026-11-26 18:17 UTC | U-406 | Phone frame below 768px: sticky top bar above the scene, scene max 60dvh, legend after it, panel as bottom sheet, compact header, no sideways scroll; tap-to-show and pinch-zoom split to U-412/U-413; gated | https://github.com/ahmed858/Real-Estates-Visualization/pull/45
 2026-11-26 18:20 UTC | U-412 | Touch taps: first tap shows the hotspot and its card, second opens it, tap on the image hides it; mouse and keyboard unchanged | https://github.com/ahmed858/Real-Estates-Visualization/pull/46
-2026-11-26 18:23 UTC | U-413 | in progress | -
+2026-11-26 18:22 UTC | U-413 | Scene pinch-zoom 1×–3× and pan by native scrolling, zoom buttons and reset on phones; overlays follow the image; taps still work | https://github.com/ahmed858/Real-Estates-Visualization/pull/47

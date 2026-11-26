@@ -431,7 +431,7 @@ The viewer is desktop-only and uses the project's default locale.
 - Verify: `npm test`.
 
 ### U-413 Pinch-zoom and pan of the scene on phones
-- Phase 4 · `viewer` · Depends on: U-412 · Gated: no · Status: `todo`
+- Phase 4 · `viewer` · Depends on: U-412 · Gated: no · Status: `done`
 - Below the breakpoint the scene can be pinch-zoomed (1× to 3×) and panned,
   with hotspots and cards following the image; a reset button returns to 1×.
   No new dependency unless the PR's Design section justifies it.

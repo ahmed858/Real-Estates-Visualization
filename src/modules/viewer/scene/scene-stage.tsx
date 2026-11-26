@@ -16,6 +16,7 @@ import { viewerText, type ViewerLocale, type ViewerText } from "../layout/viewer
 import { HoverCard, type HoverCardContent, type SceneSummary, type UnitSummary } from "./hover-card";
 import { useSelectedFloor, useSelectedUnit } from "../selection/use-selected-unit";
 import { SceneView } from "./scene-view";
+import { Zoomable } from "./zoomable";
 
 export interface SceneStageProps {
   scene: Scene;
@@ -113,47 +114,49 @@ export function SceneStage(props: SceneStageProps) {
   const ratio = scene.image.width / scene.image.height;
   return (
     <div className="relative mx-auto w-full" style={{ maxWidth: `calc(var(--stage-height, 100dvh) * ${ratio})` }} data-testid="scene-stage">
-      <SceneView
-        scene={scene}
-        imageUrl={imageUrl}
-        unitStatusOf={(h) => {
-          const code = codeOf(h);
-          return code ? units[code]?.status : undefined;
-        }}
-        hotspotLabel={hotspotLabeller(units, sceneTitles, text, codeOf)}
-        onHover={setHovered}
-        hotspotEmphasis={
-          filtering
-            ? (h) => {
-                if ("scene" in h.target) return matchesBelow(h) > 0 ? "match" : "dim";
-                const code = codeOf(h);
-                const unit = code ? units[code] : undefined;
-                return unit && matchesFilter(unit, filter) ? "match" : "dim";
-              }
-            : undefined
-        }
-        hotspotBadge={filtering ? (h) => ("scene" in h.target ? num.format(matchesBelow(h)) : undefined) : undefined}
-        onSelect={(h) => {
-          const t = h.target;
-          if ("scene" in t) {
-            const href = props.sceneHrefs[t.scene];
-            if (href) router.push(href);
-            return;
+      <Zoomable text={text}>
+        <SceneView
+          scene={scene}
+          imageUrl={imageUrl}
+          unitStatusOf={(h) => {
+            const code = codeOf(h);
+            return code ? units[code]?.status : undefined;
+          }}
+          hotspotLabel={hotspotLabeller(units, sceneTitles, text, codeOf)}
+          onHover={setHovered}
+          hotspotEmphasis={
+            filtering
+              ? (h) => {
+                  if ("scene" in h.target) return matchesBelow(h) > 0 ? "match" : "dim";
+                  const code = codeOf(h);
+                  const unit = code ? units[code] : undefined;
+                  return unit && matchesFilter(unit, filter) ? "match" : "dim";
+                }
+              : undefined
           }
-          const code = codeOf(h);
-          if (code && units[code]) selectUnit(code);
-        }}
-      />
-      {anchor && content && (
-        <div
-          className={`pointer-events-none absolute z-30 -translate-x-1/2 ${anchor.below ? "translate-y-0 pt-12" : "-translate-y-full pb-2"}`}
-          style={{ left: anchor.left, top: anchor.top }}
-          data-testid="hover-card"
-          data-placement={anchor.below ? "below" : "above"}
-        >
-          <HoverCard content={content} text={text} locale={locale} currency={currency} />
-        </div>
-      )}
+          hotspotBadge={filtering ? (h) => ("scene" in h.target ? num.format(matchesBelow(h)) : undefined) : undefined}
+          onSelect={(h) => {
+            const t = h.target;
+            if ("scene" in t) {
+              const href = props.sceneHrefs[t.scene];
+              if (href) router.push(href);
+              return;
+            }
+            const code = codeOf(h);
+            if (code && units[code]) selectUnit(code);
+          }}
+        />
+        {anchor && content && (
+          <div
+            className={`pointer-events-none absolute z-30 -translate-x-1/2 ${anchor.below ? "translate-y-0 pt-12" : "-translate-y-full pb-2"}`}
+            style={{ left: anchor.left, top: anchor.top }}
+            data-testid="hover-card"
+            data-placement={anchor.below ? "below" : "above"}
+          >
+            <HoverCard content={content} text={text} locale={locale} currency={currency} />
+          </div>
+        )}
+      </Zoomable>
     </div>
   );
 }
