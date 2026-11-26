@@ -24,3 +24,8 @@ export { buildFacadeGeometry } from "./demo-villa/facade/facade-geometry";
 export type { ElevationOpening, FacadeBand, FacadeGeometry } from "./demo-villa/facade/facade-geometry";
 export { facadeBandPolygons, facadeFrame, renderFacadeSvg } from "./demo-villa/facade/facade-svg";
 export type { FacadeFrame } from "./demo-villa/facade/facade-svg";
+export { buildDemoVillaProject, writeProjectFiles } from "./demo-villa/project/demo-villa-project";
+export type { ProjectFiles } from "./demo-villa/project/demo-villa-project";
+export { DEMO_SLUG } from "./demo-villa/project/project-config";
+export { buildXlsx } from "./xlsx/write-xlsx";
+export type { XlsxCell } from "./xlsx/write-xlsx";

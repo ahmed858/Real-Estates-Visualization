@@ -165,7 +165,7 @@ clean architectural SVG, not photos.
 - Verify: `npm test`.
 
 ### U-204 Emit the demo-villa project
-- Phase 2 · Module `tools` · Depends on: U-202, U-203, U-105 · Gated: no · Status: `todo`
+- Phase 2 · Module `tools` · Depends on: U-202, U-203, U-105 · Gated: no · Status: `done`
 - `npm run generate:demo` writes `projects/demo-villa/`: config (facade →
   3 floors → units), SVG images, and `units.xlsx` with the 5 units and mixed
   statuses. Hotspot polygons come straight from the geometry.
