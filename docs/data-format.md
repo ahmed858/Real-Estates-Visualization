@@ -126,6 +126,19 @@ concrete floors and unit codes is done by the `domain` module (U-103).
 }
 ```
 
+## Checking a project
+
+`npm run validate -- <slug>` checks `projects/<slug>/` and prints every problem
+with its file and location:
+
+- `project.json` is valid (all rules above), and `units.xlsx` is valid (rules below).
+- Every unit drawn by a hotspot exists in the sheet, and every sheet unit is drawn on a scene.
+- Every referenced file exists: logo, scene images, `plan_image`.
+- Warnings (do not fail): a child scene that no hotspot opens; a sheet `scene`
+  that does not exist or differs from the scene the unit is drawn on.
+
+It exits with code 1 when there are errors and 0 when there are only warnings.
+
 ## Units sheet
 
 One spreadsheet (first sheet), one row per unit, validated by

@@ -106,7 +106,7 @@ If a real client arrives early, Phase 6 may move ahead of Phase 4.
 - Verify: `npm test`.
 
 ### U-106 Project validator CLI
-- Phase 1 · Module `tools` · Depends on: U-101, U-102, U-105 · Gated: no · Status: `todo`
+- Phase 1 · Module `tools` · Depends on: U-101, U-102, U-105 · Gated: no · Status: `done`
 - `npm run validate -- <slug>` checks `projects/<slug>/`: config valid, sheet
   valid, every hotspot unit code exists in the sheet and every sheet unit is
   placed on some scene, every referenced image exists, polygons lie inside
