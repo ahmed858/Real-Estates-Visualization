@@ -581,7 +581,7 @@ editor never writes to the server's disk and is off unless enabled.
 - Verify: `npm test`.
 
 ### U-603 Editor state with undo and redo
-- Phase 6 · `editor` · Depends on: U-602 · **Gated: yes** · Status: `todo`
+- Phase 6 · `editor` · Depends on: U-602 · **Gated: yes** · Status: `done`
 - A pure reducer over an editable copy of the project config, with commands
   (Command pattern) for: start a hotspot, add a point, move a vertex, delete
   a vertex, close the polygon, delete a hotspot, set a hotspot target. Undo and

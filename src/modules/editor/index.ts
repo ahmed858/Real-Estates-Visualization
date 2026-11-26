@@ -6,3 +6,7 @@ export { SceneList } from "./workspace/scene-list";
 export type { EditorSceneItem, SceneListProps } from "./workspace/scene-list";
 export { ScenePreview } from "./workspace/scene-preview";
 export type { ScenePreviewProps } from "./workspace/scene-preview";
+export { applyCommand } from "./state/commands";
+export type { DraftShape, EditorCommand, EditorDocument } from "./state/commands";
+export { canRedo, canUndo, createEditorState, editorReducer } from "./state/editor-state";
+export type { EditorAction, EditorState } from "./state/editor-state";
