@@ -44,7 +44,7 @@ If a real client arrives early, Phase 6 may move ahead of Phase 4.
 ## Phase 1 · Data shape
 
 ### U-101 Project config schema
-- Phase 1 · Module `schema` · Depends on: none · **Gated: yes** · Status: `todo`
+- Phase 1 · Module `schema` · Depends on: none · **Gated: yes** · Status: `done`
 - Define the project config format and its validator (pick a schema library,
   e.g. Zod, and justify it).
   - `project`: slug, name (ar/en), default locale, currency, contact
