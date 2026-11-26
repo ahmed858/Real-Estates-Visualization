@@ -9,11 +9,11 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { filterUnits, matchesFilter, type FilterableUnit } from "@/modules/domain";
-import type { Hotspot, Scene } from "@/modules/schema";
+import { UNIT_STATUSES, type Hotspot, type Scene } from "@/modules/schema";
 import { isEmptyFilter } from "../table/filter-params";
 import { useUnitFilter } from "../table/use-unit-filter";
 import { viewerText, type ViewerLocale, type ViewerText } from "../layout/viewer-text";
-import { HoverCard, type HoverCardContent, type SceneSummary, type UnitSummary } from "./hover-card";
+import { HoverCard, formatPrice, type HoverCardContent, type SceneSummary, type UnitSummary } from "./hover-card";
 import { useSelectedFloor, useSelectedUnit } from "../selection/use-selected-unit";
 import { SceneView } from "./scene-view";
 import { Zoomable } from "./zoomable";
@@ -93,6 +93,19 @@ function anchorOf(h: Hotspot, scene: Scene) {
   return { left: `${(cx / scene.image.width) * 100}%`, top: `${top * 100}%`, below: top < FLIP_BELOW };
 }
 
+/** The hover card as one sentence, for the live region. */
+export function cardAnnouncement(content: HoverCardContent, text: ViewerText, locale: ViewerLocale, currency: string): string {
+  const num = new Intl.NumberFormat(locale === "ar" ? "ar-EG" : "en-US");
+  if (content.kind === "unit") {
+    const u = content.unit;
+    return [`${text.unit} ${u.code}`, text.status[u.status], u.type, `${text.card.bedrooms} ${num.format(u.bedrooms)}`, `${num.format(u.areaM2)} ${text.card.squareMetres}`, formatPrice(u.price, currency, locale)].join(", ");
+  }
+  const s = content.summary;
+  if (!s) return content.title;
+  const counts = UNIT_STATUSES.map((st) => `${text.status[st]} ${num.format(s.byStatus[st])}`);
+  return [content.title, text.card.unitCount(s.total, num.format(s.total)), ...counts].join(", ");
+}
+
 export function SceneStage(props: SceneStageProps) {
   const { scene, imageUrl, units, sceneTitles, locale, currency } = props;
   const text = viewerText(locale);
@@ -157,6 +170,10 @@ export function SceneStage(props: SceneStageProps) {
           </div>
         )}
       </Zoomable>
+      {/* Screen readers hear the card of the hotspot under focus (the card itself is visual). */}
+      <p className="sr-only" aria-live="polite" data-testid="card-announcement">
+        {content ? cardAnnouncement(content, text, locale, currency) : ""}
+      </p>
     </div>
   );
 }

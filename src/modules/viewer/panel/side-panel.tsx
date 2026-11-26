@@ -5,8 +5,9 @@ import type { SceneStats } from "@/modules/domain";
 import { ScenePanel } from "../layout/scene-panel";
 import { viewerText, type ViewerLocale } from "../layout/viewer-text";
 import type { UnitSummary } from "../scene/hover-card";
-import { useSelectedUnit } from "../selection/use-selected-unit";
+import { selectUnit, useSelectedUnit } from "../selection/use-selected-unit";
 import { UnitDetails } from "./unit-details";
+import { useEffect } from "react";
 import { enquiryMessage, whatsappLink } from "../contact/whatsapp";
 
 export interface SidePanelProps {
@@ -26,10 +27,25 @@ export interface SidePanelProps {
   };
 }
 
+const closeUnit = () => selectUnit(null);
+
+/** Escape closes the unit details from anywhere on the page. */
+function useEscapeToClose(active: boolean, close: () => void) {
+  useEffect(() => {
+    if (!active) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && !e.defaultPrevented) close();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [active, close]);
+}
+
 export function SidePanel({ sceneTitle, stats, units, currency, locale, enquiry }: SidePanelProps) {
-  const [selected, select] = useSelectedUnit();
+  const [selected] = useSelectedUnit();
   const text = viewerText(locale);
   const unit = selected ? units[selected] : undefined;
+  useEscapeToClose(unit !== undefined, closeUnit);
   if (unit) {
     const enquiryHref =
       enquiry &&
@@ -41,7 +57,7 @@ export function SidePanel({ sceneTitle, stats, units, currency, locale, enquiry 
           ...(enquiry.typicalFloor && { floor: new Intl.NumberFormat(locale === "ar" ? "ar-EG" : "en-US").format(unit.floor) }),
         }),
       );
-    return <UnitDetails unit={unit} text={text} locale={locale} currency={currency} onClose={() => select(null)} enquiryHref={enquiryHref} />;
+    return <UnitDetails unit={unit} text={text} locale={locale} currency={currency} onClose={closeUnit} enquiryHref={enquiryHref} />;
   }
   return <ScenePanel sceneTitle={sceneTitle} text={text} stats={stats} locale={locale} currency={currency} />;
 }
