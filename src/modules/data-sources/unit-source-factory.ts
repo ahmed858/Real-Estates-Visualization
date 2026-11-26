@@ -1,8 +1,9 @@
 // Factory Method: turns the `units` block of project.json into the UnitSource
 // adapter that reads it. The only place that knows which sources exist, so
-// adding one (Google Sheet in U-502) never touches FileProjectSource or the viewer.
+// adding one never touches FileProjectSource or the viewer.
 import { join } from "node:path";
 import type { UnitsSource } from "@/modules/schema";
+import { GoogleSheetCsvSource } from "./google-sheet-csv-source";
 import type { UnitSource } from "./unit-source";
 import { XlsxFileSource } from "./xlsx-file-source";
 
@@ -23,7 +24,8 @@ export const createUnitSource: UnitSourceFactory = (units, projectDir) => {
     case "xlsx":
       return new XlsxFileSource(join(projectDir, PROJECT_UNITS_FILE));
     case "google-sheet":
-      // GoogleSheetCsvSource arrives in U-502.
-      throw new UnsupportedUnitSourceError(units.source);
+      return new GoogleSheetCsvSource(units.sheetId, units.gid);
+    default:
+      throw new UnsupportedUnitSourceError((units as { source: UnitsSource["source"] }).source);
   }
 };

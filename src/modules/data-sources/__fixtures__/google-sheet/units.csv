@@ -1,0 +1,5 @@
+﻿code,scene,floor,type,bedrooms,bathrooms,area_m2,price,status,plan_image,notes
+G-01,ground,0,شقة,2,1,120,"1,250,000",متاح,,"ركن، إطلالة على الحديقة"
+G-02,ground,0,Apartment,3,2,150.5,2000000,محجوز,,"two lines
+of notes"
+F-01,first,1,Duplex,4,3,٢١٠,٣٬٥٠٠٬٠٠٠,sold,,

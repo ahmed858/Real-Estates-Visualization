@@ -17,3 +17,16 @@ export class UnitSourceError extends Error {
     this.issues = issues;
   }
 }
+
+export type UnitSourceReadErrorKind = "not-shared" | "not-found" | "http" | "network";
+
+/** The source could not be read at all (e.g. a Google Sheet that is not shared, or a network error). */
+export class UnitSourceReadError extends Error {
+  readonly kind: UnitSourceReadErrorKind;
+
+  constructor(source: string, kind: UnitSourceReadErrorKind, detail: string) {
+    super(`${source}: ${detail}`);
+    this.name = "UnitSourceReadError";
+    this.kind = kind;
+  }
+}

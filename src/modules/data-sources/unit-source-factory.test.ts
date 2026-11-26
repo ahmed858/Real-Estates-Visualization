@@ -1,6 +1,6 @@
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
-import { createUnitSource, UnsupportedUnitSourceError, XlsxFileSource } from "./index";
+import { createUnitSource, GoogleSheetCsvSource, UnsupportedUnitSourceError, XlsxFileSource, type UnitSource } from "./index";
 
 const demoVilla = fileURLToPath(new URL("../../../projects/demo-villa", import.meta.url));
 
@@ -11,9 +11,13 @@ describe("createUnitSource", () => {
     expect((await source.load()).map((u) => u.code)).toEqual(["G-01", "G-02", "F-01", "F-02", "R-01"]);
   });
 
-  it("reports a Google Sheet as not supported yet", () => {
-    const create = () => createUnitSource({ source: "google-sheet", sheetId: "x".repeat(44), gid: "0" }, demoVilla);
+  it("reads a Google Sheet through its CSV export", () => {
+    expect(createUnitSource({ source: "google-sheet", sheetId: "x".repeat(44), gid: "0" }, demoVilla)).toBeInstanceOf(GoogleSheetCsvSource);
+  });
+
+  it("reports a source this build does not know", () => {
+    const create = (): UnitSource => createUnitSource({ source: "airtable" } as never, demoVilla);
     expect(create).toThrow(UnsupportedUnitSourceError);
-    expect(create).toThrow('units source "google-sheet" is not supported yet');
+    expect(create).toThrow('units source "airtable" is not supported yet');
   });
 });

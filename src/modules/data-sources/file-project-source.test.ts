@@ -3,7 +3,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
-import { FileProjectSource, ProjectSourceError, type ProjectSource } from "./index";
+import { FileProjectSource, ProjectSourceError, UnitSourceReadError, type ProjectSource } from "./index";
 
 const projectsDir = fileURLToPath(new URL("../../../projects", import.meta.url));
 
@@ -99,10 +99,14 @@ describe("FileProjectSource: units source from project.json", () => {
     expect(seen).toEqual([{ source: "xlsx" }, { ...sheet, gid: "0" }]);
   });
 
-  it("reports a source this build cannot read as invalid units", async () => {
-    const source = await withUnits({ source: "google-sheet", sheetId: "x".repeat(44) });
-    const error = await errorOf(source.load("demo-villa"));
-    expect(error).toMatchObject({ kind: "invalid-units", issues: ['units.source: units source "google-sheet" is not supported yet'] });
+  it("reports a sheet that cannot be read as invalid units", async () => {
+    const factory = () => ({
+      load: async () => {
+        throw new UnitSourceReadError("Google Sheet x", "not-shared", "the sheet is not shared");
+      },
+    });
+    const error = await errorOf(new FileProjectSource(projectsDir, factory).load("demo-villa"));
+    expect(error).toMatchObject({ kind: "invalid-units", issues: ["Google Sheet x: the sheet is not shared"] });
   });
 
   it("reports a bad units block as an invalid config", async () => {

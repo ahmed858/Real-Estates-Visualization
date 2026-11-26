@@ -480,14 +480,26 @@ Google Sheet and the site shows the new statuses shortly after.
 - Verify: `npm run check`.
 
 ### U-502 Google Sheet source (shared by link)
-- Phase 5 · `data-sources` · Depends on: U-501 · Gated: no · Status: `todo`
+- Phase 5 · `data-sources` · Depends on: U-501 · Gated: no · Status: `done`
 - `GoogleSheetCsvSource` reads the sheet's CSV export
   (`https://docs.google.com/spreadsheets/d/<id>/export?format=csv&gid=<gid>`)
   for a sheet shared as "anyone with the link can view", parses it with a
   small CSV reader (quotes, commas, newlines, UTF-8 Arabic) and validates the
   rows with the U-102 schema, reporting sheet row numbers like the xlsx source.
+  Registered in `createUnitSource` (U-501); the validator CLI part is U-508.
 - Acceptance: tests with a mocked `fetch` and CSV fixtures (Arabic statuses,
   quoted cells, an invalid row, HTTP error, a sheet that is not shared).
+- Verify: `npm test`.
+
+### U-508 Validator reads the configured units source
+- Phase 5 · `tools` · Depends on: U-502 · Gated: no · Status: `todo`
+- Split from U-502. `npm run validate` picks its `UnitSource` from the
+  config's `units` block through `createUnitSource` instead of always reading
+  `units.xlsx`, and names the source in its findings (the file name for xlsx,
+  "Google Sheet" for a sheet) instead of the fixed `units.xlsx` label.
+  Read errors (`UnitSourceReadError`) become one finding.
+- Acceptance: validator tests for an xlsx project (unchanged output), a
+  Google Sheet project with an injected factory, and a sheet read error.
 - Verify: `npm test`.
 
 ### U-503 Google Sheet source for private sheets (service account)

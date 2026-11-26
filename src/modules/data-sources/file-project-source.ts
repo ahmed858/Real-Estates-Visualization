@@ -3,7 +3,7 @@ import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { DEFAULT_UNITS_SOURCE, formatSheetIssue, parseProjectConfig } from "@/modules/schema";
 import { ProjectSourceError, type LoadedProject, type ProjectSource } from "./project-source";
-import { UnitSourceError } from "./unit-source";
+import { UnitSourceError, UnitSourceReadError } from "./unit-source";
 import { createUnitSource, PROJECT_UNITS_FILE, UnsupportedUnitSourceError, type UnitSourceFactory } from "./unit-source-factory";
 
 export const PROJECT_CONFIG_FILE = "project.json";
@@ -45,6 +45,7 @@ export class FileProjectSource implements ProjectSource {
       const units = this.unitSource(parsed.value.units ?? DEFAULT_UNITS_SOURCE, dir);
       return { config: parsed.value, units: await units.load() };
     } catch (e) {
+      if (e instanceof UnitSourceReadError) throw new ProjectSourceError(slug, "invalid-units", [e.message]);
       if (e instanceof UnsupportedUnitSourceError) throw new ProjectSourceError(slug, "invalid-units", [`units.source: ${e.message}`]);
       if (e instanceof UnitSourceError) throw new ProjectSourceError(slug, "invalid-units", e.issues.map(formatSheetIssue));
       if (isMissing(e)) throw new ProjectSourceError(slug, "invalid-units", [`${PROJECT_UNITS_FILE} not found`]);
