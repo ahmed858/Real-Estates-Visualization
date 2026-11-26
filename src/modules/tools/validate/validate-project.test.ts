@@ -4,7 +4,7 @@ import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { ProjectConfig, UnitRow } from "@/modules/schema";
-import { UnitSourceError, type UnitSource } from "@/modules/data-sources";
+import { UnitSourceError, UnitSourceReadError, type UnitSource } from "@/modules/data-sources";
 import { errorsOf, formatReport, runValidateCli, validateProject, warningsOf } from "../index";
 
 const VALID = fileURLToPath(new URL("../__fixtures__/valid-project", import.meta.url));
@@ -191,5 +191,62 @@ describe("runValidateCli", () => {
   it("exits 2 without a slug", async () => {
     vi.spyOn(console, "error").mockImplementation(() => {});
     expect(await runValidateCli([], FIXTURES)).toBe(2);
+  });
+});
+
+describe("validateProject: units source from project.json", () => {
+  const SHEET = { source: "google-sheet", sheetId: "x".repeat(44), gid: "5" };
+
+  async function sheetProject(units: unknown = SHEET) {
+    const dir = await copyValid();
+    await editConfig(dir, (c) => Object.assign(c, { units }));
+    await rm(join(dir, "units.xlsx"));
+    return dir;
+  }
+
+  it("reads the Google Sheet the config names and names it in findings", async () => {
+    const dir = await sheetProject();
+    const seen: unknown[] = [];
+    const unitSource = (units: unknown): UnitSource => {
+      seen.push(units);
+      return { load: async () => VALID_ROWS.slice(0, 2) };
+    };
+    expect(summary(await validateProject(dir, { unitSource }))).toEqual([
+      'error project.json (scene "first", hotspot "f-01"): unit "F-01" is not in Google Sheet',
+    ]);
+    expect(seen).toEqual([{ ...SHEET, refreshSeconds: 60 }]);
+  });
+
+  it("reports Google Sheet row errors against the sheet", async () => {
+    const dir = await sheetProject();
+    const unitSource = (): UnitSource => ({
+      load: async () => {
+        throw new UnitSourceError("sheet", [{ row: 4, column: "status", message: "is required" }]);
+      },
+    });
+    expect(summary(await validateProject(dir, { unitSource }))).toEqual(["error Google Sheet (row 4, status): is required"]);
+  });
+
+  it("reports a sheet that cannot be read as one finding", async () => {
+    const dir = await sheetProject();
+    const unitSource = (): UnitSource => ({
+      load: async () => {
+        throw new UnitSourceReadError("Google Sheet x", "not-shared", "the sheet is not shared");
+      },
+    });
+    expect(summary(await validateProject(dir, { unitSource }))).toEqual(["error Google Sheet: Google Sheet x: the sheet is not shared"]);
+  });
+
+  it("does not read any units when the units block itself is invalid", async () => {
+    const dir = await sheetProject({ source: "google-sheet" });
+    const unitSource = vi.fn((): UnitSource => ({ load: async () => VALID_ROWS }));
+    expect(summary(await validateProject(dir, { unitSource }))).toEqual([expect.stringMatching(/^error project\.json \(units\.sheetId\): /)]);
+    expect(unitSource).not.toHaveBeenCalled();
+  });
+
+  it("keeps reading units.xlsx for an explicit xlsx source", async () => {
+    const dir = await copyValid();
+    await editConfig(dir, (c) => Object.assign(c, { units: { source: "xlsx" } }));
+    expect((await validateProject(dir)).findings).toEqual([]);
   });
 });

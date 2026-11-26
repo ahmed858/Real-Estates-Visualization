@@ -7,7 +7,7 @@ export const CONFIG_FILE = "project.json";
 export const UNITS_FILE = "units.xlsx";
 
 /** Every unit code drawn on a scene must exist in the sheet. */
-export function hotspotUnitsExistInSheet(tree: SceneTree, units: readonly UnitRow[]): Finding[] {
+export function hotspotUnitsExistInSheet(tree: SceneTree, units: readonly UnitRow[], sheet: string = UNITS_FILE): Finding[] {
   const codes = new Set(units.map((u) => u.code));
   return tree
     .placedUnits()
@@ -16,25 +16,25 @@ export function hotspotUnitsExistInSheet(tree: SceneTree, units: readonly UnitRo
       severity: "error" as const,
       file: CONFIG_FILE,
       location: `scene "${p.sceneId}", hotspot "${p.hotspotId}"`,
-      message: `unit "${p.code}" is not in ${UNITS_FILE}`,
+      message: `unit "${p.code}" is not in ${sheet}`,
     }));
 }
 
 /** Every unit in the sheet must be drawn on some scene. */
-export function sheetUnitsArePlaced(tree: SceneTree, units: readonly UnitRow[]): Finding[] {
+export function sheetUnitsArePlaced(tree: SceneTree, units: readonly UnitRow[], sheet: string = UNITS_FILE): Finding[] {
   const placed = new Set(tree.unitCodes());
   return units
     .filter((u) => !placed.has(u.code))
     .map((u) => ({
       severity: "error" as const,
-      file: UNITS_FILE,
+      file: sheet,
       location: `row ${u.sheetRow}, code`,
       message: `unit "${u.code}" is not drawn on any scene`,
     }));
 }
 
 /** A unit's `scene` column should name a scene that exists and that draws it. Warning only. */
-export function sheetScenesMatch(tree: SceneTree, units: readonly UnitRow[]): Finding[] {
+export function sheetScenesMatch(tree: SceneTree, units: readonly UnitRow[], sheet: string = UNITS_FILE): Finding[] {
   const drawnOn = new Map<string, Set<string>>();
   for (const p of tree.placedUnits()) {
     if (!drawnOn.has(p.code)) drawnOn.set(p.code, new Set());
@@ -44,14 +44,14 @@ export function sheetScenesMatch(tree: SceneTree, units: readonly UnitRow[]): Fi
   for (const u of units) {
     const location = `row ${u.sheetRow}, scene`;
     if (!tree.has(u.scene)) {
-      findings.push({ severity: "warning", file: UNITS_FILE, location, message: `scene "${u.scene}" does not exist` });
+      findings.push({ severity: "warning", file: sheet, location, message: `scene "${u.scene}" does not exist` });
       continue;
     }
     const scenes = drawnOn.get(u.code);
     if (scenes && !scenes.has(u.scene)) {
       findings.push({
         severity: "warning",
-        file: UNITS_FILE,
+        file: sheet,
         location,
         message: `unit "${u.code}" is listed on scene "${u.scene}" but drawn on ${[...scenes].map((s) => `"${s}"`).join(", ")}`,
       });
@@ -80,12 +80,12 @@ export function scenesAreReachable(tree: SceneTree): Finding[] {
 }
 
 /** Every file the config and sheet refer to, with where it was referenced. */
-export function referencedFiles(config: ProjectConfig, tree: SceneTree, units: readonly UnitRow[]) {
+export function referencedFiles(config: ProjectConfig, tree: SceneTree, units: readonly UnitRow[], sheet: string = UNITS_FILE) {
   return [
     { path: config.project.branding.logo, file: CONFIG_FILE, location: "project.branding.logo" },
     ...tree.scenes.map((s) => ({ path: s.image.path, file: CONFIG_FILE, location: `scene "${s.id}", image.path` })),
     ...units.flatMap((u) =>
-      u.planImage ? [{ path: u.planImage, file: UNITS_FILE, location: `row ${u.sheetRow}, plan_image` }] : [],
+      u.planImage ? [{ path: u.planImage, file: sheet, location: `row ${u.sheetRow}, plan_image` }] : [],
     ),
   ];
 }
