@@ -78,6 +78,15 @@ describe("editor commands", () => {
     expect(run([{ type: "start-hotspot", sceneId: "nope" }], start)).toBe(start);
   });
 
+  it("cancels the shape in progress, and undo brings it back", () => {
+    const drawing = run([{ type: "start-hotspot", sceneId: "ground" }, { type: "add-point", point: [5, 5] }]);
+    const cancelled = run([{ type: "cancel-draft" }], drawing);
+    expect(cancelled.present.draft).toBeUndefined();
+    expect(editorReducer(cancelled, { type: "undo" }).present.draft?.points).toEqual([[5, 5]]);
+    const idle = createEditorState(config());
+    expect(run([{ type: "cancel-draft" }], idle)).toBe(idle);
+  });
+
   it("moves and deletes vertices of a saved hotspot, keeping at least 3", () => {
     const moved = run([{ type: "move-vertex", sceneId: "facade", hotspotId: "band-ground", index: 1, to: [60.2, 5] }]);
     expect(scene(moved, "facade").hotspots[0].points[1]).toEqual([60, 5]);

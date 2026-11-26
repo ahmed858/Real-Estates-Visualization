@@ -20,6 +20,8 @@ export interface EditorDocument {
 export type EditorCommand =
   | { type: "start-hotspot"; sceneId: string }
   | { type: "add-point"; point: Point }
+  /** Drops the shape in progress (Escape in the canvas). */
+  | { type: "cancel-draft" }
   /** Moves a vertex of a saved hotspot, or of the draft when hotspotId is left out. */
   | { type: "move-vertex"; sceneId: string; hotspotId?: string; index: number; to: Point }
   | { type: "delete-vertex"; sceneId: string; hotspotId?: string; index: number }
@@ -78,6 +80,9 @@ export function applyCommand(doc: EditorDocument, command: EditorCommand): Edito
       const point = placePoint(doc, doc.draft.sceneId, command.point);
       return point && { ...doc, draft: { ...doc.draft, points: [...doc.draft.points, point] } };
     }
+
+    case "cancel-draft":
+      return doc.draft ? { config: doc.config } : null;
 
     case "move-vertex": {
       const to = placePoint(doc, command.sceneId, command.to);
