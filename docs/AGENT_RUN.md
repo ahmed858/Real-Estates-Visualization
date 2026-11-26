@@ -15,6 +15,10 @@ task. When you change one, change the other in the same step.
 - A unit's PR sets its status to `done`, so `develop` only shows `done` after
   the merge. Units that depend on it wait until then.
 - CI fixes and merge conflicts on open agent PRs come before any new unit.
+- The task runs at minute 05 of every hour (UTC). Each run shows up as a thread in
+  the owner's Claude project. A run with nothing for the owner resolves its
+  own thread; a run that needs the owner leaves its thread open with one
+  short message.
 
 ## Prompt
 
@@ -51,8 +55,8 @@ Steps. Stop at the first step that says stop.
     - Gated: the unit says `Gated: yes`, or the PR changes CLAUDE.md, anything under .github/, or the module rules in scripts/check-boundaries.mjs. Do not enable auto-merge; the owner reviews and merges it.
 13. If this PR completes the last unit of a phase, that counts as "phase finished" (see Notifications). The next unit after a phase is the gated planning unit that breaks the following phase into units.
 
-Notifications
-The owner gets a phone notification when a run ends with something that needs them. Only four things count, and only when they happen in this run: you marked a gated PR ready for review, you added a question to docs/QUESTIONS.md, CI failed on two runs in a row, or a phase finished. A gated PR that was already waiting before this run does not count again. In those cases, begin your final message with "Action needed:" and say what is needed, with the PR link. In every other case, your final message is one line that starts with "No action needed:" followed by a few words on what happened (or "nothing to do"). Never send email.
+Reporting
+Each run happens in its own thread in the owner's project. The owner reads Arabic (Egyptian dialect), so write your messages to them in Arabic; everything in the repository stays English. Only four things need the owner, and only when they happen in this run: you marked a gated PR ready for review, you added a question to docs/QUESTIONS.md, CI failed on two runs in a row, or a phase finished. A gated PR that was already waiting before this run does not count again. In those cases, post one short message that says what the owner needs to do, with the PR link, and leave the thread open. In every other case, do not message the owner: resolve the thread and end. Never send email.
 ```
 
 ## Controls
