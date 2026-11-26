@@ -8,7 +8,7 @@
 // hotspots use the project's brand colour), a bright thin outline and a glow.
 // Reserved keeps its dashed outline and sold its hatch, so status never rests
 // on colour alone.
-import { useId, useState, type KeyboardEvent } from "react";
+import { useId, useRef, useState, type KeyboardEvent } from "react";
 import type { Hotspot } from "@/modules/schema";
 import type { SceneRendererProps } from "./scene-renderer";
 import { HatchPattern, STATUS_STYLE, hotspotStyle } from "./status-style";
@@ -37,12 +37,33 @@ export function Image2DScene({ scene, imageUrl, unitStatusOf, hotspotLabel, onSe
   const { width, height } = scene.image;
   const hatchId = `hatch-${useId().replace(/:/g, "")}`;
   const [activeId, setActiveId] = useState<string | null>(null);
+  // Touch has no hover: the first tap on a hotspot shows it (and its card),
+  // a second tap on the same hotspot opens it, a tap elsewhere hides it.
+  const [tappedId, setTappedId] = useState<string | null>(null);
+  const pointerType = useRef<string>("mouse");
   const activate = (h: Hotspot) => onSelect?.(h);
+  const click = (h: Hotspot) => {
+    if (pointerType.current === "touch" && tappedId !== h.id) {
+      setTappedId(h.id);
+      setActiveId(h.id);
+      onHover?.(h);
+      return;
+    }
+    setTappedId(null);
+    activate(h);
+  };
+  const clearTap = () => {
+    if (tappedId === null) return;
+    setTappedId(null);
+    setActiveId(null);
+    onHover?.(null);
+  };
   const enter = (h: Hotspot) => {
     setActiveId(h.id);
     onHover?.(h);
   };
   const leave = (h: Hotspot) => {
+    if (tappedId === h.id) return;
     setActiveId((id) => (id === h.id ? null : id));
     onHover?.(null);
   };
@@ -57,7 +78,18 @@ export function Image2DScene({ scene, imageUrl, unitStatusOf, hotspotLabel, onSe
       {/* A plain <img>: project images are served by our own route and are mostly SVG. */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src={imageUrl} alt={scene.title.en} width={width} height={height} className="absolute inset-0 h-full w-full select-none" draggable={false} />
-      <svg viewBox={`0 0 ${width} ${height}`} className="absolute inset-0 h-full w-full" role="group" aria-label={scene.title.en}>
+      <svg
+        viewBox={`0 0 ${width} ${height}`}
+        className="absolute inset-0 h-full w-full"
+        role="group"
+        aria-label={scene.title.en}
+        onPointerDown={(e) => {
+          pointerType.current = e.pointerType || "mouse";
+        }}
+        onClick={(e) => {
+          if (e.target === e.currentTarget) clearTap();
+        }}
+      >
         <defs>
           <HatchPattern id={hatchId} />
         </defs>
@@ -89,7 +121,7 @@ export function Image2DScene({ scene, imageUrl, unitStatusOf, hotspotLabel, onSe
                 aria-label={hotspotLabel(h)}
                 style={hotspotStyle(color, active, emphasis)}
                 className="cursor-pointer outline-none transition-[fill-opacity,stroke-opacity,filter] duration-200 ease-out motion-reduce:transition-none"
-                onClick={() => activate(h)}
+                onClick={() => click(h)}
                 onKeyDown={onKey(h)}
                 onMouseEnter={() => enter(h)}
                 onMouseLeave={() => leave(h)}
