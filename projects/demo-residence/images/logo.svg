@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+<title>Garden Residence</title>
+<rect x="0" y="0" width="256" height="256" rx="40" fill="#5b4636"/>
+<polygon points="48,120 128,56 208,120" fill="#c9a46a"/>
+<rect x="72" y="120" width="112" height="80" fill="#ffffff"/>
+<text x="128" y="178" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="44" font-weight="700" fill="#5b4636">CV</text>
+</svg>

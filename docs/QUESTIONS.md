@@ -10,7 +10,8 @@ Format:
 ## Q-<n> (<unit-id>) <short title>
 - Asked: <YYYY-MM-DD>
 - Question: ...
-- Answer: (owner fills this in)
+- Answer (2026-11-26): the owner sent a Pexels photo of a six-storey
+  residential building; it became `projects/demo-residence`. Closed.
 ```
 
 ## Q-1 (U-410) Photo for the demo villa facade
@@ -20,4 +21,5 @@ Format:
   residential building from the front with each storey visible. Upload it in
   the project thread, or commit it as `projects/demo-villa/images/facade.jpg`
   with its source link.
-- Answer: (owner fills this in)
+- Answer (2026-11-26): the owner sent a Pexels photo of a six-storey
+  residential building; it became `projects/demo-residence`. Closed.
