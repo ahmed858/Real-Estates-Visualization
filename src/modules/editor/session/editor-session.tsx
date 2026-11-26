@@ -8,6 +8,7 @@ import { createSceneTree } from "@/modules/domain";
 import type { ProjectConfig, SceneImage, UnitRow } from "@/modules/schema";
 import { liveFindings } from "../validation/live-findings";
 import { ProblemList } from "../validation/problem-list";
+import { DownloadButton } from "../export/download-button";
 import { SceneWorkspace } from "../canvas/editor-workspace";
 import { createEditorState, editorReducer } from "../state/editor-state";
 import { SceneList } from "../workspace/scene-list";
@@ -60,6 +61,7 @@ export function EditorSession({ config, initialSceneId, editorPath, fileBaseUrl,
       <div className="flex flex-col gap-6">
         <SceneList scenes={editorSceneItems(state.present.config, editorPath)} selectedId={sceneId} onSelect={(id) => open(id)} />
         <ProblemList findings={findings} onOpen={open} />
+        <DownloadButton config={checkedConfig} errorCount={findings.filter((f) => f.severity === "error").length} />
       </div>
       <main>
         <SceneWorkspace key={`${sceneId}#${focus.n}`} initialSelectedId={focus.hotspotId} state={state} dispatch={dispatch} sceneId={sceneId} imageUrl={`${fileBaseUrl}${scene.image.path}`} unitCodes={unitCodes} images={images} />

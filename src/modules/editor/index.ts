@@ -31,3 +31,6 @@ export { liveFindings, locatePath } from "./validation/live-findings";
 export type { LiveProject } from "./validation/live-findings";
 export { ProblemList } from "./validation/problem-list";
 export type { ProblemListProps } from "./validation/problem-list";
+export { PROJECT_JSON_FILE, serializeProjectConfig } from "./export/serialize-project";
+export { DownloadButton } from "./export/download-button";
+export type { DownloadButtonProps } from "./export/download-button";
