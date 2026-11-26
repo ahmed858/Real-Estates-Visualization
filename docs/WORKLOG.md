@@ -30,3 +30,4 @@ One line per agent run, newest last:
 2026-11-26 10:48 UTC | U-311 | Phase 4 broken into U-401..U-408 (locale switch, WhatsApp, units table, filters, scene highlight, mobile, a11y, plan Phase 5); Phase 3 finished; gated | https://github.com/ahmed858/Real-Estates-Visualization/pull/31
 2026-11-26 10:50 UTC | U-401 | Locale switch: ?lang= read on the server, header toggle keeps scene/floor/unit, scene links carry lang; gated | https://github.com/ahmed858/Real-Estates-Visualization/pull/32
 2026-11-26 17:55 UTC | U-409 | Hidden-until-hover hotspots with status/brand glow, dark floor card (count, status chips, bedroom mix, ranges, hint) and unit card; computeBedroomMix roll-up; stage split to U-411; gated | https://github.com/ahmed858/Real-Estates-Visualization/pull/36
+2026-11-26 18:01 UTC | U-402 | in progress | -
