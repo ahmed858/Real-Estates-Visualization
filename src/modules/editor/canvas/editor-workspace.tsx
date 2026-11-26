@@ -9,23 +9,33 @@ import type { EditorCommand } from "../state/commands";
 import { canRedo, canUndo, createEditorState, editorReducer } from "../state/editor-state";
 import { DrawingCanvas } from "./drawing-canvas";
 import { nextHotspotId } from "./image-point";
+import { hotspotIds, targetOptions } from "../targets/target-options";
+import { TargetPicker } from "../targets/target-picker";
 
 export interface EditorWorkspaceProps {
   config: ProjectConfig;
   sceneId: string;
   imageUrl: string;
+  /** Unit codes from the project's units source, for the target picker. */
+  unitCodes?: readonly string[];
 }
 
 const isTyping = (target: EventTarget | null) =>
   target instanceof HTMLElement && (target.isContentEditable || ["INPUT", "TEXTAREA", "SELECT"].includes(target.tagName));
 
-export function EditorWorkspace({ config, sceneId, imageUrl }: EditorWorkspaceProps) {
+const otherIds = (ids: Set<string>, own: string) => {
+  ids.delete(own);
+  return ids;
+};
+
+export function EditorWorkspace({ config, sceneId, imageUrl, unitCodes = [] }: EditorWorkspaceProps) {
   const [state, dispatch] = useReducer(editorReducer, config, createEditorState);
   const [selected, setSelected] = useState<string>();
   const doc = state.present;
   const scene = createSceneTree(doc.config).get(sceneId);
   const draft = doc.draft?.sceneId === sceneId ? doc.draft.points : undefined;
-  const selectedId = scene.hotspots.some((h) => h.id === selected) ? selected : undefined;
+  const selectedHotspot = scene.hotspots.find((h) => h.id === selected);
+  const selectedId = selectedHotspot?.id;
 
   const run = (command: EditorCommand) => {
     if (command.type === "close-polygon") setSelected(command.hotspotId);
@@ -88,6 +98,19 @@ export function EditorWorkspace({ config, sceneId, imageUrl }: EditorWorkspacePr
         onCommand={run}
         nextHotspotId={nextHotspotId(doc.config)}
       />
+      {selectedHotspot && !draft && (
+        <TargetPicker
+          key={selectedHotspot.id}
+          hotspotId={selectedHotspot.id}
+          target={selectedHotspot.target}
+          options={targetOptions(doc.config, sceneId, unitCodes)}
+          takenIds={otherIds(hotspotIds(doc.config), selectedHotspot.id)}
+          onApply={(target, id) => {
+            dispatch({ type: "do", command: { type: "set-target", sceneId, hotspotId: selectedHotspot.id, target, id } });
+            setSelected(id);
+          }}
+        />
+      )}
       <p className="text-sm text-zinc-400">
         {scene.id} · {scene.image.width}×{scene.image.height} px · {scene.hotspots.length} hotspots
       </p>

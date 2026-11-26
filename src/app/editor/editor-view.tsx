@@ -39,7 +39,7 @@ export async function EditorView({ params, searchParams }: EditorViewProps) {
       <div className="grid flex-1 gap-6 p-6 md:grid-cols-[16rem_1fr]">
         <SceneList scenes={items} selectedId={selectedId} />
         <main>
-          <EditorWorkspace key={selectedId} config={state.project.config} sceneId={selectedId} imageUrl={projectFileUrl(slug, scene.image.path)} />
+          <EditorWorkspace key={selectedId} config={state.project.config} sceneId={selectedId} imageUrl={projectFileUrl(slug, scene.image.path)} unitCodes={state.project.units.map((u) => u.code)} />
         </main>
       </div>
     </div>
