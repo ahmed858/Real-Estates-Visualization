@@ -3,6 +3,7 @@
 // Other modules may import ONLY from "@/modules/schema" (this file), never from files inside it.
 export {
   DEFAULT_SCENE_RENDERER_TYPE,
+  isProjectPublished,
   PROJECT_SCHEMA_VERSION,
   SCENE_KINDS,
   SCENE_RENDERER_TYPES,

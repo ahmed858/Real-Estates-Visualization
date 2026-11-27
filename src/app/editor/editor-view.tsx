@@ -9,7 +9,7 @@ import { listProjectImages } from "@/modules/data-sources";
 import { createSceneTree, referencedFiles } from "@/modules/domain";
 import { EditorSession } from "@/modules/editor";
 import { ViewerMessage } from "@/modules/viewer";
-import { projectFileUrl, projects } from "../p/project-view";
+import { allProjects, projectFileUrl } from "../p/project-view";
 import { editorPageState } from "./editor-page-state";
 
 export interface EditorViewProps {
@@ -20,7 +20,7 @@ export interface EditorViewProps {
 export async function EditorView({ params, searchParams }: EditorViewProps) {
   const { slug } = await params;
   const { scene: sceneParam } = await searchParams;
-  const state = await editorPageState(slug, process.env, projects);
+  const state = await editorPageState(slug, process.env, allProjects);
   if (state.kind === "not-found") notFound();
   if (state.kind === "invalid") return <ViewerMessage title={`Project "${slug}" has invalid data`} details={state.issues} />;
 

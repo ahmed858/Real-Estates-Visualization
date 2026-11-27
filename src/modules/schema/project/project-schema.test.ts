@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { parseProjectConfig, type ProjectConfig, type ProjectConfigInput, type SceneInput } from "../index";
+import { isProjectPublished, parseProjectConfig, type ProjectConfig, type ProjectConfigInput, type SceneInput } from "../index";
 
 const image = (w = 1000, h = 800) => ({ path: "images/plan.svg", width: w, height: h });
 const square = (x = 10, y = 10, s = 100): [number, number][] => [
@@ -311,5 +311,28 @@ describe("parseProjectConfig: error messages carry path and reason", () => {
     expect(errorsOf(input)).toEqual([
       { path: "root.floors.unitCode", message: "must contain {floor} and {suffix}, e.g. {floor}{suffix}" },
     ]);
+  });
+});
+
+describe("project.published", () => {
+  it("is optional and a project without it is published", () => {
+    const config = expectValid(minimal());
+    expect(config.project.published).toBeUndefined();
+    expect(isProjectPublished(config.project)).toBe(true);
+  });
+
+  it("hides the project only when it is false", () => {
+    const hidden = minimal();
+    (hidden.project as { published?: boolean }).published = false;
+    expect(isProjectPublished(expectValid(hidden).project)).toBe(false);
+    const shown = minimal();
+    (shown.project as { published?: boolean }).published = true;
+    expect(isProjectPublished(expectValid(shown).project)).toBe(true);
+  });
+
+  it("rejects anything but a boolean", () => {
+    const input = minimal();
+    (input.project as unknown as { published: unknown }).published = "no";
+    expect(errorsOf(input).map((e) => e.path)).toContain("project.published");
   });
 });

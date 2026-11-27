@@ -48,4 +48,11 @@ describe("serializeProjectConfig", () => {
     const back = parseProjectConfig(json);
     expect(back.ok && back.value).toEqual(edited);
   });
+
+  it("keeps published: false, so the editor never publishes a hidden project by accident", async () => {
+    const { config } = await load("projects/demo-villa/project.json");
+    const hidden = { ...config, project: { ...config.project, published: false } };
+    expect(JSON.parse(serializeProjectConfig(hidden)).project.published).toBe(false);
+    expect(JSON.parse(serializeProjectConfig(config)).project).not.toHaveProperty("published");
+  });
 });

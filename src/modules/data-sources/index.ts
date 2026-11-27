@@ -12,6 +12,8 @@ export { sheetTableFromRows } from "./sheet-table";
 export { ProjectSourceError } from "./project-source";
 export type { LoadedProject, ProjectSource, ProjectSourceErrorKind } from "./project-source";
 export { FileProjectSource, PROJECT_CONFIG_FILE } from "./file-project-source";
+export { isPreviewEnabled, PREVIEW_PROJECTS_ENV, PublishedProjectSource } from "./published-project-source";
+export type { PublishedProjectSourceOptions } from "./published-project-source";
 export { createUnitSource, createUnitSourceFactory, PROJECT_UNITS_FILE, UnsupportedUnitSourceError } from "./unit-source-factory";
 export type { UnitSourceFactory, UnitSourceFactoryOptions } from "./unit-source-factory";
 export { CachedUnitSource } from "./cached-unit-source";
