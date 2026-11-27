@@ -31,3 +31,22 @@ jobs:
         run: npm run check:demo
       - name: Build
         run: npm run build
+
+  e2e:
+    # Browser smoke tests (Playwright, Chromium) against the production build.
+    needs: check
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Install Chromium for Playwright
+        run: npx playwright install --with-deps chromium
+      - name: Build
+        run: npm run build
+      - name: Browser smoke tests
+        run: npm run e2e
