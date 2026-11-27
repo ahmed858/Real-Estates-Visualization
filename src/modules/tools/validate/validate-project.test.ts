@@ -177,6 +177,21 @@ describe("validateProject", () => {
     ]);
   });
 
+  it("reports a missing or oversized panorama, and does not ask for a hotspot to a premium scene", async () => {
+    const dir = await copyValid();
+    await editConfig(dir, (config) => {
+      Object.assign(config.root.children[0], { type: "panorama-360", panorama: { path: "panoramas/ground.jpg", width: 200, height: 100 } });
+      config.root.hotspots = config.root.hotspots.filter((h) => !("scene" in h.target) || h.target.scene !== config.root.children[0].id);
+    });
+    const { root } = JSON.parse(await readFile(join(dir, "project.json"), "utf8")) as ProjectConfig;
+    expect(summary(await validateProject(dir, rows(VALID_ROWS)))).toEqual([`error project.json (scene "${root.children[0].id}", panorama.path): file "panoramas/ground.jpg" does not exist`]);
+    await mkdir(join(dir, "panoramas"));
+    await writeFile(join(dir, "panoramas", "ground.jpg"), Buffer.alloc(9 * 1024 * 1024));
+    expect(summary(await validateProject(dir, rows(VALID_ROWS)))).toEqual([
+      `error project.json (scene "${root.children[0].id}", panorama.path): file "panoramas/ground.jpg" is 9 MB; 360° panoramas may be at most 8 MB`,
+    ]);
+  });
+
   it("warns, without failing, about unreachable scenes and mismatched sheet scenes", async () => {
     const dir = await copyValid();
     await editConfig(dir, (c) => {

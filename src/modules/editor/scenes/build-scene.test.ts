@@ -136,4 +136,11 @@ describe("buildScene for premium scenes", () => {
     expect(buildScene(config(), turntable, image, { type: "model-3d", modelPath: undefined })).toEqual({ ok: false, errors: [expect.stringContaining("pick a .glb file")] });
     expect(buildScene(config(), turntable, image, { type: "model-3d", modelPath: "images/tower.glb" })).toMatchObject({ ok: false, errors: [expect.stringMatching(/^model\.path: .*models\/ folder/)] });
   });
+
+  it("builds a panorama-360 scene from a listed panorama, and asks for one when none is picked", () => {
+    const panorama = { path: "panoramas/roof.jpg", width: 4096, height: 2048 };
+    expect(buildScene(config(), turntable, image, { type: "panorama-360", panorama })).toMatchObject({ ok: true, scene: { type: "panorama-360", image, panorama } });
+    expect(buildScene(config(), turntable, image, { type: "panorama-360", panorama: undefined })).toEqual({ ok: false, errors: [expect.stringContaining("pick a 2:1 picture")] });
+    expect(buildScene(config(), turntable, image, { type: "panorama-360", panorama: { ...panorama, height: 1000 } })).toMatchObject({ ok: false, errors: [expect.stringMatching(/^panorama\.width: .*twice as wide/)] });
+  });
 });

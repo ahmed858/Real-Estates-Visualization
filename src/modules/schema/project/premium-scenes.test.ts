@@ -102,3 +102,25 @@ describe("model-3d scenes", () => {
     expect(errors(scene({ hotspots: [unitHotspot({ mesh: "M" })] }))).toEqual([{ path: "root.hotspots[0].mesh", message: 'mesh is only allowed on a scene of type "model-3d"' }]);
   });
 });
+
+describe("panorama-360 scenes", () => {
+  const panorama = { path: "panoramas/living.jpg", width: 4096, height: 2048 };
+
+  it("accepts an equirectangular panorama", () => {
+    const result = parseProjectConfig(project(scene({ type: "panorama-360", panorama })));
+    expect(result.ok).toBe(true);
+    if (result.ok) expect(result.value.root.panorama).toEqual(panorama);
+  });
+
+  it("needs the panorama block, and only on its type", () => {
+    expect(errors(scene({ type: "panorama-360" }))).toEqual([{ path: "root.panorama", message: expect.stringContaining("needs a panorama block") }]);
+    expect(errors(scene({ panorama }))[0]).toMatchObject({ path: "root.panorama", message: expect.stringContaining('not "image-2d"') });
+    expect(errors(scene({ type: "model-3d", model: { path: "models/a.glb" }, panorama }))[0]).toMatchObject({ path: "root.panorama", message: expect.stringContaining('not "model-3d"') });
+  });
+
+  it("checks the folder, the image type and the 2:1 shape", () => {
+    expect(errors(scene({ type: "panorama-360", panorama: { ...panorama, path: "images/living.jpg" } }))[0]).toMatchObject({ path: "root.panorama.path", message: expect.stringContaining("panoramas/ folder") });
+    expect(errors(scene({ type: "panorama-360", panorama: { ...panorama, path: "panoramas/living.svg" } }))[0]).toMatchObject({ path: "root.panorama.path", message: expect.stringContaining(".jpg") });
+    expect(errors(scene({ type: "panorama-360", panorama: { ...panorama, height: 1500 } }))[0]).toMatchObject({ path: "root.panorama.width", message: expect.stringContaining("twice as wide") });
+  });
+});

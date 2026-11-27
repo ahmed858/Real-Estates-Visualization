@@ -79,7 +79,7 @@ describe("AddSceneForm", () => {
     render(<AddSceneForm config={config()} images={images} rotations={rotations} models={["models/a.glb", "models/b.glb"]} onAdd={onAdd} />);
     expect(form().queryByLabelText("Frames folder")).toBeNull();
     expect(form().queryByLabelText("Model")).toBeNull();
-    expect([...(form().getByLabelText("Shown as") as HTMLSelectElement).options].map((o) => o.textContent)).toEqual(["2D image", "360° rotation", "3D model"]);
+    expect([...(form().getByLabelText("Shown as") as HTMLSelectElement).options].map((o) => o.textContent)).toEqual(["2D image", "360° rotation", "3D model", "360° panorama"]);
 
     type("Shown as", "rotation-360");
     expect([...(form().getByLabelText("Frames folder") as HTMLSelectElement).options].map((o) => o.textContent)).toEqual(["rotations/tower (3 files)"]);
@@ -98,6 +98,20 @@ describe("AddSceneForm", () => {
     type("Arabic title", "نموذج");
     fireEvent.click(form().getByRole("button", { name: "Add scene" }));
     expect(onAdd).toHaveBeenLastCalledWith(expect.objectContaining({ id: "model", type: "model-3d", model: { path: "models/b.glb" } }));
+  });
+
+  it("adds a 360° panorama from the listed 2:1 pictures, keeping the image as poster", () => {
+    const onAdd = vi.fn();
+    const panoramas = [{ path: "panoramas/living.jpg", width: 4096, height: 2048 }];
+    render(<AddSceneForm config={config()} images={images} panoramas={panoramas} onAdd={onAdd} />);
+    expect(form().queryByLabelText("Panorama")).toBeNull();
+    type("Shown as", "panorama-360");
+    expect([...(form().getByLabelText("Panorama") as HTMLSelectElement).options].map((o) => o.textContent)).toEqual(["panoramas/living.jpg (4096×2048)"]);
+    type("Kind", "unit-plan");
+    type("English title", "Living room");
+    type("Arabic title", "الريسبشن");
+    fireEvent.click(form().getByRole("button", { name: "Add scene" }));
+    expect(onAdd).toHaveBeenLastCalledWith(expect.objectContaining({ id: "living-room", type: "panorama-360", image: images[0], panorama: panoramas[0] }));
   });
 
   it("explains when there is no frames folder or model to pick", () => {

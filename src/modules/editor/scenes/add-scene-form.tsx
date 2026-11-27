@@ -2,8 +2,9 @@
 // Form that adds a child scene under the current scene from an image already
 // in projects/<slug>/images/. The image size comes with the image list, so the
 // owner only picks the image, kind, titles and (for a typical floor) the floors.
-// A 360° rotation or 3D model scene also picks its frames folder or .glb file
-// from the lists the server read; the image is then the scene's poster.
+// A 360° rotation, 3D model or 360° panorama scene also picks its frames
+// folder, .glb file or panorama from the lists the server read; the image is
+// then the scene's poster.
 import { useState } from "react";
 import { SCENE_KINDS, type ProjectConfig, type Scene, type SceneImage, type SceneKind, type SceneRendererType } from "@/modules/schema";
 import { toId } from "../targets/target-options";
@@ -14,6 +15,7 @@ const RENDERER_LABELS: Readonly<Record<SceneRendererType, string>> = {
   "image-2d": "2D image",
   "rotation-360": "360° rotation",
   "model-3d": "3D model",
+  "panorama-360": "360° panorama",
 };
 
 export interface AddSceneFormProps {
@@ -24,14 +26,17 @@ export interface AddSceneFormProps {
   rotations?: readonly FramesFolder[];
   /** .glb files under models/, e.g. "models/tower.glb". */
   models?: readonly string[];
+  /** 2:1 pictures under panoramas/ with their sizes. */
+  panoramas?: readonly SceneImage[];
   onAdd: (scene: Scene) => void;
 }
 
-export function AddSceneForm({ config, images, rotations = [], models = [], onAdd }: AddSceneFormProps) {
+export function AddSceneForm({ config, images, rotations = [], models = [], panoramas = [], onAdd }: AddSceneFormProps) {
   const [imagePath, setImagePath] = useState(images[0]?.path ?? "");
   const [rendererType, setRendererType] = useState<SceneRendererType>("image-2d");
   const [folderPath, setFolderPath] = useState(rotations[0]?.folder ?? "");
   const [modelPath, setModelPath] = useState(models[0] ?? "");
+  const [panoramaPath, setPanoramaPath] = useState(panoramas[0]?.path ?? "");
   const [kind, setKind] = useState<SceneKind>("floor");
   const [titleEn, setTitleEn] = useState("");
   const [titleAr, setTitleAr] = useState("");
@@ -57,6 +62,7 @@ export function AddSceneForm({ config, images, rotations = [], models = [], onAd
   const renderer = (): SceneRendererChoice => {
     if (rendererType === "rotation-360") return { type: rendererType, folder: rotations.find((r) => r.folder === folderPath) };
     if (rendererType === "model-3d") return { type: rendererType, modelPath: models.includes(modelPath) ? modelPath : undefined };
+    if (rendererType === "panorama-360") return { type: rendererType, panorama: panoramas.find((p) => p.path === panoramaPath) };
     return { type: "image-2d" };
   };
 
@@ -111,6 +117,19 @@ export function AddSceneForm({ config, images, rotations = [], models = [], onAd
             {models.map((m) => (
               <option key={m} value={m}>
                 {m}
+              </option>
+            ))}
+          </select>
+        </label>
+      )}
+      {rendererType === "panorama-360" && (
+        <label className={label}>
+          Panorama
+          <select className={field} value={panoramaPath} onChange={(e) => setPanoramaPath(e.target.value)}>
+            {panoramas.length === 0 && <option value="">(no 2:1 pictures in panoramas/)</option>}
+            {panoramas.map((p) => (
+              <option key={p.path} value={p.path}>
+                {p.path} ({p.width}×{p.height})
               </option>
             ))}
           </select>

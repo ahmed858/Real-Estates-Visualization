@@ -30,6 +30,8 @@ interface SceneWorkspaceBaseProps {
   /** Frames folders under rotations/ and .glb files under models/, for adding a premium child scene. */
   rotations?: readonly FramesFolder[];
   models?: readonly string[];
+  /** 2:1 pictures under panoramas/, for adding a 360° panorama child scene. */
+  panoramas?: readonly SceneImage[];
   /** On a model-3d scene: node names read from its .glb, offered as meshes to link. */
   meshNames?: readonly string[];
 }
@@ -68,7 +70,7 @@ function onFrame(command: EditorCommand, frame: number | undefined): EditorComma
   return command;
 }
 
-export function SceneWorkspace({ state, dispatch, sceneId, imageUrl, unitCodes = [], images = [], rotations, models, meshNames, initialSelectedId }: SceneWorkspaceProps) {
+export function SceneWorkspace({ state, dispatch, sceneId, imageUrl, unitCodes = [], images = [], rotations, models, panoramas, meshNames, initialSelectedId }: SceneWorkspaceProps) {
   const [selected, setSelected] = useState<string | undefined>(initialSelectedId);
   const [shownFrame, setFrame] = useState<number>();
   const doc = state.present;
@@ -237,7 +239,7 @@ export function SceneWorkspace({ state, dispatch, sceneId, imageUrl, unitCodes =
         ) : (
           <p className="text-sm text-zinc-400">None yet.</p>
         )}
-        <AddSceneForm config={doc.config} images={images} rotations={rotations} models={models} onAdd={(child) => dispatch({ type: "do", command: { type: "add-scene", parentId: sceneId, scene: child } })} />
+        <AddSceneForm config={doc.config} images={images} rotations={rotations} models={models} panoramas={panoramas} onAdd={(child) => dispatch({ type: "do", command: { type: "add-scene", parentId: sceneId, scene: child } })} />
       </section>
     </section>
   );

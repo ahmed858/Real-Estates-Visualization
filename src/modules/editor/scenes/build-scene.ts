@@ -2,7 +2,7 @@
 // tree rules as project.json. The image size comes from the project image
 // list (read on the server), never from the owner. A premium scene keeps the
 // picked image as its poster and adds its rotation (from a listed frames
-// folder) or its model (a listed .glb).
+// folder), its model (a listed .glb) or its panorama (a listed 2:1 picture).
 import { createSceneTree } from "@/modules/domain";
 import { parseProjectConfig, type ProjectConfig, type Scene, type SceneImage, type SceneKind } from "@/modules/schema";
 import { rotationFromFolder, type FramesFolder } from "./rotation-folder";
@@ -16,11 +16,12 @@ export interface SceneFormInput {
   floors?: { from: number; to: number; unitCode: string };
 }
 
-/** How the new scene is shown: a plain image (default), a turntable of frames, or a 3D model. */
+/** How the new scene is shown: a plain image (default), a turntable of frames, a 3D model or a 360° panorama. */
 export type SceneRendererChoice =
   | { type: "image-2d" }
   | { type: "rotation-360"; folder: FramesFolder | undefined }
-  | { type: "model-3d"; modelPath: string | undefined };
+  | { type: "model-3d"; modelPath: string | undefined }
+  | { type: "panorama-360"; panorama: SceneImage | undefined };
 
 export type BuildSceneResult = { ok: true; scene: Scene } | { ok: false; errors: string[] };
 
@@ -43,7 +44,7 @@ export function buildScene(config: ProjectConfig, input: SceneFormInput, image: 
   return { ok: true, scene: parsed.value.root };
 }
 
-type PremiumFields = { ok: true; fields: Partial<Pick<Scene, "type" | "rotation" | "model">> } | { ok: false; errors: string[] };
+type PremiumFields = { ok: true; fields: Partial<Pick<Scene, "type" | "rotation" | "model" | "panorama">> } | { ok: false; errors: string[] };
 
 function premiumFields(renderer: SceneRendererChoice): PremiumFields {
   switch (renderer.type) {
@@ -57,5 +58,10 @@ function premiumFields(renderer: SceneRendererChoice): PremiumFields {
     case "model-3d":
       if (!renderer.modelPath) return { ok: false, errors: ["model: pick a .glb file from the project's models folder"] };
       return { ok: true, fields: { type: "model-3d", model: { path: renderer.modelPath } } };
+    case "panorama-360": {
+      if (!renderer.panorama) return { ok: false, errors: ["panorama: pick a 2:1 picture from the project's panoramas folder"] };
+      const { path, width, height } = renderer.panorama;
+      return { ok: true, fields: { type: "panorama-360", panorama: { path, width, height } } };
+    }
   }
 }

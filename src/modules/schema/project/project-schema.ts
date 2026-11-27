@@ -23,10 +23,11 @@ export const SCENE_KINDS = ["facade", "masterplan", "phase", "block", "cluster",
 
 /**
  * Scene renderer types (Strategy hook). `image-2d` is the core; the premium
- * types (`rotation-360`, a turntable of frames, and `model-3d`, a .glb model)
- * add their own optional blocks and keep `image` as the poster and fallback.
+ * types (`rotation-360`, a turntable of frames, `model-3d`, a .glb model, and
+ * `panorama-360`, an equirectangular photo the visitor looks around in) add
+ * their own optional blocks and keep `image` as the poster and fallback.
  */
-export const SCENE_RENDERER_TYPES = ["image-2d", "rotation-360", "model-3d"] as const;
+export const SCENE_RENDERER_TYPES = ["image-2d", "rotation-360", "model-3d", "panorama-360"] as const;
 /** The renderer a scene uses when project.json does not name one. */
 export const DEFAULT_SCENE_RENDERER_TYPE = "image-2d" satisfies (typeof SCENE_RENDERER_TYPES)[number];
 
@@ -114,6 +115,21 @@ export const sceneModelSchema = z
   })
   .strict();
 
+/** Image types a panorama may use (no SVG: a panorama is a photo or a render). */
+export const PANORAMA_EXTENSIONS = [".jpg", ".jpeg", ".png", ".webp"] as const;
+
+/** A 360° x 180° equirectangular picture: twice as wide as it is tall. */
+export const scenePanoramaSchema = z
+  .object({
+    path: projectFilePathSchema
+      .refine((p) => PANORAMA_EXTENSIONS.some((e) => p.toLowerCase().endsWith(e)), `must be a ${PANORAMA_EXTENSIONS.join(", ")} image`)
+      .refine((p) => p.startsWith("panoramas/"), "must be in the panoramas/ folder, e.g. panoramas/living-room.jpg"),
+    width: z.number().int().positive(),
+    height: z.number().int().positive(),
+  })
+  .strict()
+  .refine((p) => p.width === p.height * 2, { message: "an equirectangular panorama is exactly twice as wide as it is tall (e.g. 4096x2048)", path: ["width"] });
+
 const polygonSchema = z.array(pointSchema).min(3, "a polygon needs at least 3 points");
 
 export const hotspotSchema = z
@@ -150,6 +166,8 @@ const sceneBaseSchema = z.object({
   rotation: sceneRotationSchema.optional(),
   /** Required on, and only allowed on, a model-3d scene. */
   model: sceneModelSchema.optional(),
+  /** Required on, and only allowed on, a panorama-360 scene. */
+  panorama: scenePanoramaSchema.optional(),
   floors: typicalFloorsSchema.optional(),
   hotspots: z.array(hotspotSchema).default([]),
 });
@@ -180,6 +198,7 @@ export type ProjectConfigInput = z.input<typeof projectConfigShapeSchema>;
 export type ProjectInfo = z.infer<typeof projectInfoSchema>;
 export type SceneRotation = z.infer<typeof sceneRotationSchema>;
 export type SceneModel = z.infer<typeof sceneModelSchema>;
+export type ScenePanorama = z.infer<typeof scenePanoramaSchema>;
 export type SceneKind = (typeof SCENE_KINDS)[number];
 export type SceneRendererType = (typeof SCENE_RENDERER_TYPES)[number];
 export type SceneImage = z.infer<typeof sceneImageSchema>;

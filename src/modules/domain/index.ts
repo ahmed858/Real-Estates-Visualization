@@ -2,6 +2,7 @@
 // Pure business logic (scene tree, floor stats, filters). No React, no I/O.
 // Other modules may import ONLY from "@/modules/domain" (this file), never from files inside it.
 export { createSceneTree } from "./scene-tree/scene-tree";
+export { premiumViews } from "./scene-tree/premium-views";
 export type { ConcreteFloor, PlacedUnit, SceneTree } from "./scene-tree/scene-tree";
 export { buildUnitCode } from "./scene-tree/unit-code";
 export { computeSceneStats, sumStats } from "./units/scene-stats";
@@ -46,4 +47,4 @@ export type { Rgb } from "./colour/contrast";
 export { STAGE_COLOR, STATUS_COLORS } from "./colour/palette";
 export { rotationFramePath, rotationFramePaths } from "./premium/rotation-frames";
 export { GlbFormatError, glbNodeNames } from "./premium/glb-node-names";
-export { formatMegabytes, MAX_MODEL_BYTES, MAX_ROTATION_FRAME_BYTES, MODELS_DIR, projectFileSizeLimit, ROTATIONS_DIR } from "./premium/asset-limits";
+export { formatMegabytes, MAX_MODEL_BYTES, MAX_PANORAMA_BYTES, MAX_ROTATION_FRAME_BYTES, MODELS_DIR, PANORAMAS_DIR, projectFileSizeLimit, ROTATIONS_DIR } from "./premium/asset-limits";

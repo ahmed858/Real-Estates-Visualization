@@ -4,9 +4,12 @@
 
 export const ROTATIONS_DIR = "rotations";
 export const MODELS_DIR = "models";
+export const PANORAMAS_DIR = "panoramas";
 
 export const MAX_ROTATION_FRAME_BYTES = 2 * 1024 * 1024;
 export const MAX_MODEL_BYTES = 30 * 1024 * 1024;
+/** A 4096x2048 JPEG is usually 0.5-2 MB; 8 MB leaves room for 8K pictures without letting phones download huge files. */
+export const MAX_PANORAMA_BYTES = 8 * 1024 * 1024;
 
 const under = (path: string, dir: string) => path.split(/[\\/]/)[0] === dir;
 
@@ -14,6 +17,7 @@ const under = (path: string, dir: string) => path.split(/[\\/]/)[0] === dir;
 export function projectFileSizeLimit(path: string): { bytes: number; label: string } | undefined {
   if (path.toLowerCase().endsWith(".glb")) return { bytes: MAX_MODEL_BYTES, label: "3D models" };
   if (under(path, ROTATIONS_DIR)) return { bytes: MAX_ROTATION_FRAME_BYTES, label: "rotation frames" };
+  if (under(path, PANORAMAS_DIR)) return { bytes: MAX_PANORAMA_BYTES, label: "360° panoramas" };
   return undefined;
 }
 

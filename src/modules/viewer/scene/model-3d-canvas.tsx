@@ -3,10 +3,14 @@
 // Model3DScene. It loads the .glb, frames it, lets the visitor orbit (drag,
 // pinch, arrow keys when focused), tints every mesh named by a hotspot with
 // its status colour, and turns hover and click on those meshes into the same
-// onHover / onSelect calls as a 2D hotspot. Browser-only; not unit tested
+// onHover / onSelect calls as a 2D hotspot. A mesh that links to a scene (a
+// floor of a building model) keeps the model's own materials and glows in
+// the scene colour while hovered, so a textured model still looks like
+// itself. Browser-only; not unit tested
 // (no WebGL in tests): the logic it relies on lives in model-3d-mapping.ts.
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { AmbientLight, Box3, Color, DirectionalLight, Mesh, MeshStandardMaterial, PerspectiveCamera, Raycaster, Scene, Vector2, Vector3, WebGLRenderer, type Object3D } from "three";
+import { ACESFilmicToneMapping, AmbientLight, Box3, Color, DirectionalLight, HemisphereLight, Mesh, MeshStandardMaterial, PerspectiveCamera, PMREMGenerator, Raycaster, Scene, SRGBColorSpace, Vector2, Vector3, WebGLRenderer, type Material, type Object3D } from "three";
+import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import type { Hotspot } from "@/modules/schema";
@@ -22,14 +26,39 @@ export interface Model3DCanvasProps extends SceneRendererProps {
 /** A press that moves more than this many pixels is an orbit, not a click. */
 const CLICK_SLOP = 5;
 
-function tint(root: Object3D, byMesh: ReadonlyMap<string, Hotspot>, colourOf: (h: Hotspot) => string | undefined) {
+/** Materials that light up while their hotspot is hovered, by hotspot id. */
+type GlowMaterials = Map<string, MeshStandardMaterial[]>;
+
+/**
+ * Unit meshes get a material in their status colour; scene-link meshes keep
+ * their own materials (copied, so only they change). Either way the colour
+ * also becomes the material's emissive colour, off until hovered.
+ */
+function tint(root: Object3D, byMesh: ReadonlyMap<string, Hotspot>, colourOf: (h: Hotspot) => string | undefined): GlowMaterials {
+  const glow: GlowMaterials = new Map();
   root.traverse((o) => {
     if (!(o instanceof Mesh)) return;
     const hotspot = hotspotForObject(o, byMesh);
     const colour = hotspot && colourOf(hotspot);
-    if (!colour) return;
-    o.material = new MeshStandardMaterial({ color: new Color(colour), roughness: 0.6, metalness: 0, transparent: true, opacity: 0.92 });
+    if (!hotspot || !colour) return;
+    const own: Material[] =
+      "scene" in hotspot.target
+        ? ([o.material].flat() as Material[]).map((m) => m.clone())
+        : [new MeshStandardMaterial({ color: new Color(colour), roughness: 0.6, metalness: 0, transparent: true, opacity: 0.92 })];
+    o.material = own.length === 1 ? own[0] : own;
+    for (const m of own) {
+      if (!(m instanceof MeshStandardMaterial)) continue;
+      m.emissive = new Color(colour);
+      m.emissiveIntensity = 0;
+      glow.set(hotspot.id, [...(glow.get(hotspot.id) ?? []), m]);
+    }
   });
+  return glow;
+}
+
+/** The hovered hotspot's materials glow; the others go back to normal. */
+function highlight(glow: GlowMaterials, hovered: Hotspot | undefined) {
+  for (const [id, materials] of glow) for (const m of materials) m.emissiveIntensity = id === hovered?.id ? 0.45 : 0;
 }
 
 export default function Model3DCanvas({ scene, modelUrl, poster, unitStatusOf, hotspotLabel, onSelect, onHover }: Model3DCanvasProps) {
@@ -48,6 +77,8 @@ export default function Model3DCanvas({ scene, modelUrl, poster, unitStatusOf, h
     const byMesh = meshHotspots(scene);
     const renderer = new WebGLRenderer({ antialias: true, alpha: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.outputColorSpace = SRGBColorSpace;
+    renderer.toneMapping = ACESFilmicToneMapping;
     const width = () => el.clientWidth || 1;
     const height = () => Math.round((width() * scene.image.height) / scene.image.width) || 1;
     renderer.setSize(width(), height());
@@ -57,9 +88,15 @@ export default function Model3DCanvas({ scene, modelUrl, poster, unitStatusOf, h
     el.appendChild(renderer.domElement);
 
     const world = new Scene();
-    world.add(new AmbientLight(0xffffff, 1.2));
-    const sun = new DirectionalLight(0xffffff, 1.6);
-    sun.position.set(1, 2, 1.5);
+    // Soft light from a neutral room plus a sun, so every side of the model reads.
+    const pmrem = new PMREMGenerator(renderer);
+    world.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+    world.environmentIntensity = 0.55;
+    pmrem.dispose();
+    world.add(new AmbientLight(0xffffff, 0.3));
+    world.add(new HemisphereLight(0xdfeeff, 0x8a7a60, 0.6));
+    const sun = new DirectionalLight(0xfff1dd, 2.4);
+    sun.position.set(1, 2, -1.5);
     world.add(sun);
     const camera = new PerspectiveCamera(40, width() / height(), 0.1, 10000);
     const controls = new OrbitControls(camera, renderer.domElement);
@@ -68,12 +105,13 @@ export default function Model3DCanvas({ scene, modelUrl, poster, unitStatusOf, h
 
     let disposed = false;
     let model: Object3D | undefined;
+    let glow: GlowMaterials = new Map();
     new GLTFLoader().load(
       modelUrl,
       (gltf) => {
         if (disposed) return;
         model = gltf.scene;
-        tint(model, byMesh, (h) => meshTint(h, callbacks.current.unitStatusOf));
+        glow = tint(model, byMesh, (h) => meshTint(h, callbacks.current.unitStatusOf));
         world.add(model);
         const box = new Box3().setFromObject(model);
         const centre = box.getCenter(new Vector3());
@@ -105,6 +143,7 @@ export default function Model3DCanvas({ scene, modelUrl, poster, unitStatusOf, h
       const h = pick(e);
       if (h === current) return;
       current = h;
+      highlight(glow, h);
       setHovered(h ?? null);
       renderer.domElement.style.cursor = h ? "pointer" : "grab";
       callbacks.current.onHover?.(h ?? null);
@@ -116,6 +155,7 @@ export default function Model3DCanvas({ scene, modelUrl, poster, unitStatusOf, h
     };
     const onLeave = () => {
       current = undefined;
+      highlight(glow, undefined);
       setHovered(null);
       callbacks.current.onHover?.(null);
     };
@@ -144,6 +184,7 @@ export default function Model3DCanvas({ scene, modelUrl, poster, unitStatusOf, h
       renderer.domElement.removeEventListener("pointermove", onMove);
       renderer.domElement.removeEventListener("pointerup", onUp);
       renderer.domElement.removeEventListener("pointerleave", onLeave);
+      world.environment?.dispose();
       world.traverse((o) => {
         if (o instanceof Mesh) {
           o.geometry.dispose();

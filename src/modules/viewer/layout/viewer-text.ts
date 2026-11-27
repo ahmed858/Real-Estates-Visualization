@@ -13,6 +13,8 @@ export interface ViewerText {
   selectHint: string;
   logoAlt: (projectName: string) => string;
   breadcrumbs: string;
+  /** Shortcuts to the 3D and 360° views of the current scene. */
+  views: { label: string; badge: Record<"rotation-360" | "model-3d" | "panorama-360", string> };
   /** Shown when the unit statuses come from the last good copy of the sheet. */
   staleNote: string;
   /** Page description for link previews (WhatsApp, search results). */
@@ -95,6 +97,7 @@ const TEXT: Record<ViewerLocale, ViewerText> = {
     selectHint: "اختر دورًا أو وحدة من الصورة لعرض تفاصيلها.",
     logoAlt: (name) => `شعار ${name}`,
     breadcrumbs: "مسار التصفح",
+    views: { label: "عروض 3D و 360°", badge: { "model-3d": "3D", "rotation-360": "360°", "panorama-360": "360°" } },
     staleNote: "قد لا تكون حالة الوحدات محدّثة الآن.",
     metaDescription: (name) => `مخططات تفاعلية لمشروع ${name}: تصفّح الأدوار واعرف الوحدات المتاحة.`,
     card: {
@@ -167,6 +170,7 @@ const TEXT: Record<ViewerLocale, ViewerText> = {
     selectHint: "Pick a floor or a unit on the image to see its details.",
     logoAlt: (name) => `${name} logo`,
     breadcrumbs: "Breadcrumbs",
+    views: { label: "3D and 360° views", badge: { "model-3d": "3D", "rotation-360": "360°", "panorama-360": "360°" } },
     staleNote: "Unit status may be out of date.",
     metaDescription: (name) => `Interactive floor plans of ${name}: browse the floors and see which units are available.`,
     card: {

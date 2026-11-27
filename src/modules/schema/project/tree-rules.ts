@@ -80,7 +80,7 @@ function pointsInsideImage({ scene, path }: VisitedScene): RuleIssue[] {
   return issues;
 }
 
-/** The rotation and model blocks, per-frame polygons and mesh names belong to their renderer type only. */
+/** The rotation, model and panorama blocks, per-frame polygons and mesh names belong to their renderer type only. */
 function premiumBlocks({ scene, path }: VisitedScene): RuleIssue[] {
   const issues: RuleIssue[] = [];
   const isRotation = scene.type === "rotation-360";
@@ -89,6 +89,9 @@ function premiumBlocks({ scene, path }: VisitedScene): RuleIssue[] {
   if (!isRotation && scene.rotation) issues.push({ path: [...path, "rotation"], message: `rotation is only allowed on a scene of type "rotation-360", not "${scene.type}"` });
   if (isModel && !scene.model) issues.push({ path: [...path, "model"], message: 'a scene of type "model-3d" needs a model block (path to a .glb file)' });
   if (!isModel && scene.model) issues.push({ path: [...path, "model"], message: `model is only allowed on a scene of type "model-3d", not "${scene.type}"` });
+  const isPanorama = scene.type === "panorama-360";
+  if (isPanorama && !scene.panorama) issues.push({ path: [...path, "panorama"], message: 'a scene of type "panorama-360" needs a panorama block (path, width, height)' });
+  if (!isPanorama && scene.panorama) issues.push({ path: [...path, "panorama"], message: `panorama is only allowed on a scene of type "panorama-360", not "${scene.type}"` });
   if (scene.rotation?.start !== undefined && scene.rotation.start > scene.rotation.count) {
     issues.push({ path: [...path, "rotation", "start"], message: `start (${scene.rotation.start}) must be a frame between 1 and count (${scene.rotation.count})` });
   }

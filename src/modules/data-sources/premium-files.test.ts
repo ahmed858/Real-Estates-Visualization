@@ -3,7 +3,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
-import { listProjectModels, listRotationFolders } from "./index";
+import { listProjectModels, listProjectPanoramas, listRotationFolders } from "./index";
 
 const projectsDir = fileURLToPath(new URL("../../../projects", import.meta.url));
 
@@ -57,5 +57,22 @@ describe("listProjectModels", () => {
     expect(await listProjectModels(dir, "p")).toEqual(["models/a.GLB", "models/tower.glb"]);
     expect(await listProjectModels(dir, "demo-none")).toEqual([]);
     expect(await listProjectModels(dir, "Bad Slug")).toEqual([]);
+  });
+});
+
+describe("listProjectPanoramas", () => {
+  it("lists the demo residence panoramas with their sizes", async () => {
+    const panoramas = await listProjectPanoramas(projectsDir, "demo-residence");
+    expect(panoramas.map((p) => p.path)).toEqual(["panoramas/bedroom-b.jpg", "panoramas/living-a.jpg", "panoramas/rooftop.jpg"]);
+    expect(panoramas[0]).toMatchObject({ width: 4096, height: 2048 });
+  });
+
+  it("keeps only 2:1 pictures and gives nothing for a project without the folder", async () => {
+    const dir = await mkdtemp(join(tmpdir(), "panoramas-"));
+    await mkdir(join(dir, "p", "panoramas"), { recursive: true });
+    await writeFile(join(dir, "p", "panoramas", "wide.png"), png(2000, 1000));
+    await writeFile(join(dir, "p", "panoramas", "square.png"), png(1000, 1000));
+    expect(await listProjectPanoramas(dir, "p")).toEqual([{ path: "panoramas/wide.png", width: 2000, height: 1000 }]);
+    expect(await listProjectPanoramas(dir, "missing")).toEqual([]);
   });
 });
