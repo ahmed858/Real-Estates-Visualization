@@ -66,13 +66,18 @@ problems.
 
 A scene is an image with hotspots drawn on it. Scenes nest: a scene's
 `children` are the scenes its hotspots open (Composite pattern). The same shape
-covers a single villa (facade → floors), a tower (building → typical floor) and
-a compound (masterplan → buildings → floors → unit plans).
+covers a single villa (facade → floors), a tower (building → typical floor), a
+compound (masterplan → blocks → villas, or masterplan → phases → blocks →
+buildings → floors) and any mix: the tree has no fixed depth and branches may
+have different depths. To prepare a new project from a client's images and
+description, use the project intake skill in
+[`.claude/skills/project-intake/`](../.claude/skills/project-intake/SKILL.md);
+its `project.schema.json` is this format as a JSON Schema.
 
 | Field | Type | Required | Description |
 | --- | --- | --- | --- |
 | `id` | id | yes | Unique across the whole project. Not `units`, `compare` or `lead`: those are site pages. |
-| `kind` | enum | yes | `facade`, `masterplan`, `building`, `floor`, `unit-plan` or `other`. |
+| `kind` | enum | yes | `facade`, `masterplan`, `phase`, `block`, `cluster`, `building`, `floor`, `unit-plan` or `other`. A label for what the image shows; every kind renders the same, only `floor` may be a typical floor. |
 | `type` | enum | no | Renderer: `image-2d` (default), or the premium `rotation-360` and `model-3d` (see [Premium scenes](#premium-scenes)). |
 | `title` | localized text | yes | Shown in navigation and breadcrumbs. |
 | `image.path` | file path | yes | The scene image. On a premium scene it is the poster, shown while the view loads and where it cannot run. |
@@ -229,6 +234,12 @@ with its file and location:
 
 It exits with code 1 when there are errors and 0 when there are only warnings.
 
+`npm run units:from-csv -- <slug> <units.csv>` writes `projects/<slug>/units.xlsx`
+from a CSV with the columns below, after checking it with the same rules; an
+invalid CSV is refused with its row and column. `npm run generate:schema`
+regenerates the intake skill's `project.schema.json` after a schema change (a
+test fails while it is stale).
+
 ## Units sheet
 
 One spreadsheet (first sheet), one row per unit, validated by
@@ -243,7 +254,7 @@ Column names are fixed; their order and letter case do not matter.
 | Column | Type | Required | Description |
 | --- | --- | --- | --- |
 | `code` | text | yes | Unique unit code, e.g. `G-01` or `101`. Numbers are read as text. Used by hotspots and the WhatsApp message. |
-| `scene` | scene id | yes | Id of the floor scene the unit is drawn on, e.g. `ground`. |
+| `scene` | scene id | yes | Id of the scene the unit is drawn on, e.g. `ground`, or `block-a` for a villa drawn on a block. |
 | `floor` | whole number | yes | Floor number: `0` ground, negative for basements. |
 | `type` | text | yes | Unit type, e.g. `Apartment`, `Duplex`, `Annex`. |
 | `bedrooms` | whole number ≥ 0 | yes | Number of bedrooms. |

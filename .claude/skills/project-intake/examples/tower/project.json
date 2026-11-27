@@ -1,0 +1,164 @@
+{
+  "schemaVersion": 1,
+  "project": {
+    "slug": "example-tower",
+    "name": {
+      "ar": "برج النيل",
+      "en": "Nile Tower"
+    },
+    "defaultLocale": "ar",
+    "currency": "EGP",
+    "contact": {
+      "whatsapp": "+201001234567"
+    },
+    "branding": {
+      "logo": "images/logo.svg",
+      "primaryColor": "#1f4e79",
+      "accentColor": "#d4a84b"
+    }
+  },
+  "root": {
+    "id": "tower",
+    "kind": "building",
+    "title": {
+      "ar": "البرج",
+      "en": "Tower"
+    },
+    "image": {
+      "path": "images/facade.jpg",
+      "width": 1600,
+      "height": 2400
+    },
+    "hotspots": [
+      {
+        "id": "penthouse",
+        "points": [[420, 300], [1180, 300], [1180, 450], [420, 450]],
+        "target": {
+          "scene": "penthouse"
+        }
+      },
+      {
+        "id": "typical",
+        "points": [[400, 450], [1200, 450], [1200, 1950], [400, 1950]],
+        "target": {
+          "scene": "typical"
+        }
+      },
+      {
+        "id": "ground",
+        "points": [[380, 1950], [1220, 1950], [1220, 2250], [380, 2250]],
+        "target": {
+          "scene": "ground"
+        }
+      }
+    ],
+    "children": [
+      {
+        "id": "ground",
+        "kind": "floor",
+        "title": {
+          "ar": "الدور الأرضي - محلات",
+          "en": "Ground floor - shops"
+        },
+        "image": {
+          "path": "images/floor-0.png",
+          "width": 2000,
+          "height": 1400
+        },
+        "hotspots": [
+          {
+            "id": "s-01",
+            "points": [[100, 100], [980, 100], [980, 1300], [100, 1300]],
+            "target": {
+              "unit": "S-01"
+            }
+          },
+          {
+            "id": "s-02",
+            "points": [[1020, 100], [1900, 100], [1900, 1300], [1020, 1300]],
+            "target": {
+              "unit": "S-02"
+            }
+          }
+        ]
+      },
+      {
+        "id": "typical",
+        "kind": "floor",
+        "title": {
+          "ar": "الدور المتكرر",
+          "en": "Typical floor"
+        },
+        "image": {
+          "path": "images/typical.png",
+          "width": 2000,
+          "height": 1400
+        },
+        "floors": {
+          "from": 1,
+          "to": 10,
+          "unitCode": "{floor}{suffix}"
+        },
+        "hotspots": [
+          {
+            "id": "a",
+            "points": [[100, 100], [980, 100], [980, 650], [100, 650]],
+            "target": {
+              "unitSuffix": "01"
+            }
+          },
+          {
+            "id": "b",
+            "points": [[1020, 100], [1900, 100], [1900, 650], [1020, 650]],
+            "target": {
+              "unitSuffix": "02"
+            }
+          },
+          {
+            "id": "c",
+            "points": [[100, 750], [980, 750], [980, 1300], [400, 1300], [100, 1000]],
+            "target": {
+              "unitSuffix": "03"
+            }
+          },
+          {
+            "id": "d",
+            "points": [[1020, 750], [1900, 750], [1900, 1300], [1020, 1300]],
+            "target": {
+              "unitSuffix": "04"
+            }
+          }
+        ]
+      },
+      {
+        "id": "penthouse",
+        "kind": "floor",
+        "title": {
+          "ar": "البنتهاوس",
+          "en": "Penthouse floor"
+        },
+        "image": {
+          "path": "images/floor-11.png",
+          "width": 2000,
+          "height": 1400
+        },
+        "hotspots": [
+          {
+            "id": "ph-1",
+            "points": [[100, 100], [980, 100], [980, 1300], [100, 1300]],
+            "target": {
+              "unit": "PH-1"
+            }
+          },
+          {
+            "id": "ph-2",
+            "points": [[1020, 100], [1900, 100], [1900, 1300], [1020, 1300]],
+            "target": {
+              "unit": "PH-2"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

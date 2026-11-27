@@ -45,6 +45,11 @@ Last merge into `main`: PR #33 (up to U-401, the Arabic / English switch).
 
 ### What the owner gets
 
+- **Project intake skill** (`.claude/skills/project-intake/`): hand an AI
+  agent the client's images and description and it builds the project in any
+  shape (tower, compound of blocks and villas, phases), asks the client what
+  is missing, and validates the result. New scene kinds `phase`, `block`,
+  `cluster`; `npm run units:from-csv` turns a CSV into `units.xlsx` (U-1201).
 - **Editor** at `/editor/<slug>` (only with `EDITOR_ENABLED=true`, never on
   production): draw unit shapes, pick targets, add scenes (2D, 360° rotation
   or 3D model), live validation, undo and redo, download `project.json`

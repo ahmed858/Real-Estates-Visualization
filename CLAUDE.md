@@ -63,6 +63,8 @@ npm test          # vitest
 npm run build     # production build
 npm run generate:demo  # regenerate projects/demo-villa
 npm run check:demo     # regenerate, validate, fail if projects/demo-villa changed
+npm run units:from-csv -- <slug> <file.csv>  # units CSV -> projects/<slug>/units.xlsx
+npm run generate:schema  # rewrite the intake skill's project.schema.json
 npm run check     # all of the above, what CI runs
 npm run e2e       # browser smoke tests (Playwright) against the last build;
                   # CI runs them in a second job after `check`
@@ -77,4 +79,6 @@ npm run e2e       # browser smoke tests (Playwright) against the last build;
 - `docs/RELEASE.md`: what `develop` would ship to `main`. Every merged unit
   that a visitor, client or the owner would notice adds a line there.
 - `projects/<slug>/`: data for one client project (first: `demo-villa`).
+- `.claude/skills/project-intake/`: how an agent prepares a new client project
+  from images and a description (any shape: tower, compound, blocks).
 - `.agent/PAUSE`: if this file exists the hourly agent stops immediately.

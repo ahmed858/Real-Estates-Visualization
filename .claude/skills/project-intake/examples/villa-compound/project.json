@@ -1,0 +1,311 @@
+{
+  "schemaVersion": 1,
+  "project": {
+    "slug": "example-compound",
+    "name": {
+      "ar": "كمبوند الواحة",
+      "en": "Oasis Compound"
+    },
+    "defaultLocale": "ar",
+    "currency": "EGP",
+    "contact": {
+      "whatsapp": "+201001234567"
+    },
+    "branding": {
+      "logo": "images/logo.svg",
+      "primaryColor": "#2f5d3a",
+      "accentColor": "#c9a46a"
+    },
+    "location": {
+      "lat": 30.0131,
+      "lng": 31.4089,
+      "address": {
+        "ar": "التجمع الخامس، القاهرة الجديدة",
+        "en": "Fifth Settlement, New Cairo"
+      }
+    }
+  },
+  "root": {
+    "id": "masterplan",
+    "kind": "masterplan",
+    "title": {
+      "ar": "المخطط العام",
+      "en": "Masterplan"
+    },
+    "image": {
+      "path": "images/masterplan.jpg",
+      "width": 2400,
+      "height": 1600
+    },
+    "hotspots": [
+      {
+        "id": "block-a",
+        "points": [[200, 250], [1050, 200], [1100, 1300], [250, 1350]],
+        "target": {
+          "scene": "block-a"
+        }
+      },
+      {
+        "id": "block-b",
+        "points": [[1300, 250], [2200, 250], [2200, 1350], [1300, 1350]],
+        "target": {
+          "scene": "block-b"
+        }
+      }
+    ],
+    "children": [
+      {
+        "id": "block-a",
+        "kind": "block",
+        "title": {
+          "ar": "بلوك A - فيلات",
+          "en": "Block A - villas"
+        },
+        "image": {
+          "path": "images/block-a.jpg",
+          "width": 1500,
+          "height": 1600
+        },
+        "hotspots": [
+          {
+            "id": "v-a01",
+            "points": [[150, 200], [700, 200], [700, 750], [150, 750]],
+            "target": {
+              "unit": "A-01"
+            }
+          },
+          {
+            "id": "v-a02",
+            "points": [[800, 200], [1350, 200], [1350, 750], [800, 750]],
+            "target": {
+              "unit": "A-02"
+            }
+          },
+          {
+            "id": "v-a03",
+            "points": [[150, 850], [700, 850], [700, 1400], [150, 1400]],
+            "target": {
+              "unit": "A-03"
+            }
+          },
+          {
+            "id": "v-a04",
+            "points": [[800, 850], [1350, 850], [1350, 1400], [800, 1400]],
+            "target": {
+              "unit": "A-04"
+            }
+          }
+        ]
+      },
+      {
+        "id": "block-b",
+        "kind": "block",
+        "title": {
+          "ar": "بلوك B - عمارات",
+          "en": "Block B - apartment buildings"
+        },
+        "image": {
+          "path": "images/block-b.jpg",
+          "width": 1500,
+          "height": 1000
+        },
+        "hotspots": [
+          {
+            "id": "b1",
+            "points": [[150, 150], [700, 150], [700, 850], [150, 850]],
+            "target": {
+              "scene": "b1"
+            }
+          },
+          {
+            "id": "b2",
+            "points": [[800, 150], [1350, 150], [1350, 850], [800, 850]],
+            "target": {
+              "scene": "b2"
+            }
+          }
+        ],
+        "children": [
+          {
+            "id": "b1",
+            "kind": "building",
+            "title": {
+              "ar": "عمارة B1",
+              "en": "Building B1"
+            },
+            "image": {
+              "path": "images/b1-facade.jpg",
+              "width": 1200,
+              "height": 1500
+            },
+            "hotspots": [
+              {
+                "id": "first",
+                "points": [[150, 350], [1050, 350], [1050, 750], [150, 750]],
+                "target": {
+                  "scene": "b1-first"
+                }
+              },
+              {
+                "id": "ground",
+                "points": [[150, 750], [1050, 750], [1050, 1150], [150, 1150]],
+                "target": {
+                  "scene": "b1-ground"
+                }
+              }
+            ],
+            "children": [
+              {
+                "id": "b1-ground",
+                "kind": "floor",
+                "title": {
+                  "ar": "الدور الأرضي",
+                  "en": "Ground floor"
+                },
+                "image": {
+                  "path": "images/apartment-floor-0.png",
+                  "width": 1800,
+                  "height": 1200
+                },
+                "hotspots": [
+                  {
+                    "id": "apt-1",
+                    "points": [[100, 100], [880, 100], [880, 1100], [100, 1100]],
+                    "target": {
+                      "unit": "B1-01"
+                    }
+                  },
+                  {
+                    "id": "apt-2",
+                    "points": [[920, 100], [1700, 100], [1700, 1100], [920, 1100]],
+                    "target": {
+                      "unit": "B1-02"
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "b1-first",
+                "kind": "floor",
+                "title": {
+                  "ar": "الدور الأول",
+                  "en": "First floor"
+                },
+                "image": {
+                  "path": "images/apartment-floor-1.png",
+                  "width": 1800,
+                  "height": 1200
+                },
+                "hotspots": [
+                  {
+                    "id": "apt-1",
+                    "points": [[100, 100], [880, 100], [880, 1100], [100, 1100]],
+                    "target": {
+                      "unit": "B1-11"
+                    }
+                  },
+                  {
+                    "id": "apt-2",
+                    "points": [[920, 100], [1700, 100], [1700, 1100], [920, 1100]],
+                    "target": {
+                      "unit": "B1-12"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "b2",
+            "kind": "building",
+            "title": {
+              "ar": "عمارة B2",
+              "en": "Building B2"
+            },
+            "image": {
+              "path": "images/b2-facade.jpg",
+              "width": 1200,
+              "height": 1500
+            },
+            "hotspots": [
+              {
+                "id": "first",
+                "points": [[150, 350], [1050, 350], [1050, 750], [150, 750]],
+                "target": {
+                  "scene": "b2-first"
+                }
+              },
+              {
+                "id": "ground",
+                "points": [[150, 750], [1050, 750], [1050, 1150], [150, 1150]],
+                "target": {
+                  "scene": "b2-ground"
+                }
+              }
+            ],
+            "children": [
+              {
+                "id": "b2-ground",
+                "kind": "floor",
+                "title": {
+                  "ar": "الدور الأرضي",
+                  "en": "Ground floor"
+                },
+                "image": {
+                  "path": "images/apartment-floor-0.png",
+                  "width": 1800,
+                  "height": 1200
+                },
+                "hotspots": [
+                  {
+                    "id": "apt-1",
+                    "points": [[100, 100], [880, 100], [880, 1100], [100, 1100]],
+                    "target": {
+                      "unit": "B2-01"
+                    }
+                  },
+                  {
+                    "id": "apt-2",
+                    "points": [[920, 100], [1700, 100], [1700, 1100], [920, 1100]],
+                    "target": {
+                      "unit": "B2-02"
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "b2-first",
+                "kind": "floor",
+                "title": {
+                  "ar": "الدور الأول",
+                  "en": "First floor"
+                },
+                "image": {
+                  "path": "images/apartment-floor-1.png",
+                  "width": 1800,
+                  "height": 1200
+                },
+                "hotspots": [
+                  {
+                    "id": "apt-1",
+                    "points": [[100, 100], [880, 100], [880, 1100], [100, 1100]],
+                    "target": {
+                      "unit": "B2-11"
+                    }
+                  },
+                  {
+                    "id": "apt-2",
+                    "points": [[920, 100], [1700, 100], [1700, 1100], [920, 1100]],
+                    "target": {
+                      "unit": "B2-12"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
