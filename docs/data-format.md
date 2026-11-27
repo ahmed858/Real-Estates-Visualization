@@ -86,6 +86,7 @@ its `project.schema.json` is this format as a JSON Schema.
 | `rotation` | rotation | only `rotation-360` | Required on, and only allowed on, a `rotation-360` scene. |
 | `model` | model | only `model-3d` | Required on, and only allowed on, a `model-3d` scene. |
 | `panorama` | panorama | only `panorama-360` | Required on, and only allowed on, a `panorama-360` scene. |
+| `showsUnits` | string[] | no | Only on a premium scene. Unit codes this view shows, e.g. every unit of the type a 360° room tour belongs to. Each code once, and each must be in the units sheet. Their panel gets a **360° tour** button, and the scene's counts include them. |
 | `floors` | typical floors | no | Only on `kind: "floor"`. One plan that serves a range of floors, see below. |
 | `hotspots` | hotspot[] | no | Defaults to none. |
 | `children` | scene[] | no | Child scenes. Defaults to none. |
@@ -160,6 +161,11 @@ premium child of the current scene (and, on a premium scene, its premium
 siblings) as **3D / 360°** shortcuts next to the breadcrumbs, so a photo
 facade does not need drawn buttons. A hotspot that opens a premium scene
 still works, and that scene is then left out of the shortcuts.
+
+Counts on a premium scene (the status legend and summary) cover the units it
+lists in `showsUnits` plus everything below the scenes its hotspots open (a
+3D building's floors). A premium scene with neither, such as a rooftop view
+or a turntable of the whole villa, shows its parent's counts.
 
 Size limits: each rotation frame (any file under `rotations/`) at most 2 MB,
 each model at most 30 MB, each panorama (any file under `panoramas/`) at

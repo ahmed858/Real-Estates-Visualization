@@ -138,6 +138,42 @@ describe("computeSceneStats", () => {
   });
 });
 
+describe("counts on premium scenes", () => {
+  const model = { path: "models/b.glb" };
+  const panorama = { path: "panoramas/p.jpg", width: 200, height: 100 };
+  const building = tree(
+    scene("facade", "facade", {
+      hotspots: [toScene("ground"), toScene("first")],
+      children: [
+        scene("ground", "floor", { hotspots: [toUnit("G-01"), toUnit("G-02")] }),
+        scene("first", "floor", { hotspots: [toUnit("F-01")] }),
+        scene("model", "building", { type: "model-3d", model, hotspots: [{ ...toScene("ground"), mesh: "ground" }, { ...toScene("first"), mesh: "first" }] }),
+        scene("tour", "unit-plan", { type: "panorama-360", panorama, showsUnits: ["G-01", "F-01"] }),
+        scene("roof", "other", { type: "panorama-360", panorama }),
+      ],
+    }),
+  );
+  const stats = computeSceneStats(building, villaUnits);
+
+  it("counts the units below the scenes a 3D model's hotspots open", () => {
+    expect(stats.get("model")).toMatchObject({ total: 3, byStatus: { available: 1, reserved: 1, sold: 1 } });
+  });
+
+  it("counts the units a 360° scene lists in showsUnits", () => {
+    expect(stats.get("tour")).toMatchObject({ total: 2, byStatus: { available: 1, reserved: 1, sold: 0 } });
+  });
+
+  it("falls back to the parent's units when a premium scene names none", () => {
+    expect(stats.get("roof")).toEqual(stats.get("facade"));
+  });
+
+  it("leaves 2D scenes and the facade total as before", () => {
+    expect(stats.get("facade")?.total).toBe(3);
+    expect(stats.get("ground")?.total).toBe(2);
+    expect(computeBedroomMix(building, villaUnits).get("tour")).toEqual(computeBedroomMix(tree(scene("x", "floor", { hotspots: [toUnit("G-01"), toUnit("F-01")] })), villaUnits).get("x"));
+  });
+});
+
 describe("computeBedroomMix", () => {
   it("counts a floor's units per bedroom count, fewest bedrooms first", () => {
     const mix = computeBedroomMix(villa, villaUnits);

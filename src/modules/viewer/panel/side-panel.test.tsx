@@ -92,6 +92,20 @@ describe("SidePanel", () => {
     expect(within(screen.getByRole("region", { name: "Unit G-02" })).queryByRole("img")).toBeNull();
   });
 
+  it("links to the unit's 360° tours, named by the tour title", () => {
+    const toured = { ...units, "G-01": { ...g01, tours: [{ title: "Living room (360°)", href: "/p/demo/living-360" }] } };
+    window.history.replaceState(null, "", "/p/demo/ground?unit=G-01");
+    render(<SidePanel sceneTitle="Ground floor" stats={stats} units={toured} currency="EGP" locale="en" />);
+    const link = within(screen.getByRole("list", { name: "360° tour" })).getByRole("link", { name: "360° tour: Living room (360°)" });
+    expect(link.getAttribute("href")).toBe("/p/demo/living-360");
+  });
+
+  it("has no tour list for a unit without tours", () => {
+    window.history.replaceState(null, "", "/p/demo/ground?unit=G-02");
+    render(<SidePanel sceneTitle="Ground floor" stats={stats} units={units} currency="EGP" locale="ar" />);
+    expect(screen.queryByRole("list", { name: "جولة 360°" })).toBeNull();
+  });
+
   it("falls back to the summary for an unknown unit code", () => {
     window.history.replaceState(null, "", "/p/demo/ground?unit=Z-99");
     render(<SidePanel sceneTitle="Ground floor" stats={stats} units={units} currency="EGP" locale="en" />);

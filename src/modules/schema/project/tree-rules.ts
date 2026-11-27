@@ -89,6 +89,10 @@ function premiumBlocks({ scene, path }: VisitedScene): RuleIssue[] {
   if (!isRotation && scene.rotation) issues.push({ path: [...path, "rotation"], message: `rotation is only allowed on a scene of type "rotation-360", not "${scene.type}"` });
   if (isModel && !scene.model) issues.push({ path: [...path, "model"], message: 'a scene of type "model-3d" needs a model block (path to a .glb file)' });
   if (!isModel && scene.model) issues.push({ path: [...path, "model"], message: `model is only allowed on a scene of type "model-3d", not "${scene.type}"` });
+  if (scene.showsUnits && scene.type === "image-2d") issues.push({ path: [...path, "showsUnits"], message: 'showsUnits is only allowed on a premium scene (rotation-360, model-3d or panorama-360); a 2D scene draws its units as hotspots' });
+  scene.showsUnits?.forEach((code, i) => {
+    if (scene.showsUnits!.indexOf(code) !== i) issues.push({ path: [...path, "showsUnits", i], message: `unit "${code}" is listed twice` });
+  });
   const isPanorama = scene.type === "panorama-360";
   if (isPanorama && !scene.panorama) issues.push({ path: [...path, "panorama"], message: 'a scene of type "panorama-360" needs a panorama block (path, width, height)' });
   if (!isPanorama && scene.panorama) issues.push({ path: [...path, "panorama"], message: `panorama is only allowed on a scene of type "panorama-360", not "${scene.type}"` });

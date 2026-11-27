@@ -54,6 +54,8 @@ export async function ProjectView({ params, searchParams }: ProjectViewProps) {
     ...scene.hotspots.flatMap((h) => ("unit" in h.target ? [h.target.unit] : [])),
     ...floors.flatMap((f) => Object.values(f.codes)),
   ]);
+  const sceneHrefs = Object.fromEntries(tree.scenes.map((s) => [s.id, withLocale(sceneUrl(slug, s.id, tree.root.id), locale, defaultLocale)]));
+  const toursOf = (code: string) => tree.scenes.filter((s) => s.showsUnits?.includes(code)).map((s) => ({ title: s.title[locale], href: sceneHrefs[s.id] }));
   const sceneUnits: Record<string, UnitSummary> = Object.fromEntries(
     units
       .filter((u) => drawn.has(u.code))
@@ -64,6 +66,7 @@ export async function ProjectView({ params, searchParams }: ProjectViewProps) {
           ...(planImage && { planImageUrl: projectFileUrl(slug, planImage) }),
           ...(gallery && { galleryUrls: gallery.map((path) => projectFileUrl(slug, path)) }),
           ...(notes && { notes }),
+          ...(toursOf(code).length > 0 && { tours: toursOf(code) }),
         },
       ]),
   );
@@ -78,7 +81,6 @@ export async function ProjectView({ params, searchParams }: ProjectViewProps) {
     [...allStats].map(([id, s]) => [id, { total: s.total, byStatus: s.byStatus, bedroomMix: bedroomMix.get(id) ?? [], price: s.price, area: s.area }]),
   );
   const sceneTitles = Object.fromEntries(tree.scenes.map((s) => [s.id, s.title[locale]]));
-  const sceneHrefs = Object.fromEntries(tree.scenes.map((s) => [s.id, withLocale(sceneUrl(slug, s.id, tree.root.id), locale, defaultLocale)]));
   const views = premiumViews(tree, scene.id).flatMap((s): SceneViewLink[] => (s.type === "image-2d" ? [] : [{ id: s.id, title: s.title[locale], href: sceneHrefs[s.id], type: s.type }]));
   const crumbs = tree.breadcrumbs(scene.id).map((s) => ({ id: s.id, title: s.title[locale], href: sceneHrefs[s.id] }));
   const name = config.project.name[locale];

@@ -21,6 +21,8 @@ export interface UnitSummary {
   /** URLs of the unit's photos, from the sheet's gallery column. */
   galleryUrls?: string[];
   notes?: string;
+  /** 360° tours of this unit's type (premium scenes whose showsUnits lists it). */
+  tours?: { title: string; href: string }[];
 }
 
 interface Range {

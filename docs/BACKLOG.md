@@ -1175,3 +1175,16 @@ and no real assets exist, so generate them.
   polygons, and three panoramas with posters. Output is committed; CI does
   not regenerate it.
 - Verify: `npm run check`.
+
+### U-1302 Unit counts on premium scenes and a 360° tour button
+- Phase 13 · `schema` + `domain` + `viewer` + `projects` · Depends on: U-1301 · Gated: no · Status: `done`
+- Premium scenes showed 0 units in the legend and summary because counts
+  only rolled up the scene's own subtree. Now a premium scene counts the
+  units in its new optional `showsUnits` list plus the units below the
+  scenes its hotspots open; with neither it shows its parent's counts.
+  The validator reports `showsUnits` codes missing from the sheet.
+- A unit's panel links to every premium scene whose `showsUnits` lists it
+  ("360° tour" / "جولة 360°"). demo-residence lists the A/D (3-bedroom)
+  units on the living room tour and the B/C (2-bedroom) units on the
+  bedroom tour.
+- Verify: `npm run check`, `npm run e2e`.
