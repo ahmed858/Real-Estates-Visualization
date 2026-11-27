@@ -1000,7 +1000,7 @@ Rules that keep the 2D core unchanged:
 - Verify: `npm run check`.
 
 ### U-908 Owner guide for premium scenes
-- Phase 9 · Docs · Depends on: U-907 · Gated: no · Status: `todo`
+- Phase 9 · Docs · Depends on: U-907 · Gated: no · Status: `done`
 - `docs/premium.md`: what to ask the client or the 3D artist for (frame
   count, size, naming; `.glb` with one named mesh per unit, polygon budget,
   file size), how to add the scene in the editor and how to check it.

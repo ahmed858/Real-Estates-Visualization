@@ -63,6 +63,9 @@ The new scene appears in the scene list; open it to draw on it.
 
 ### Rotation (360°) scenes
 
+What to ask the client for and the whole order of work for premium scenes
+are in [premium.md](premium.md).
+
 A `rotation-360` scene shows a frame strip above the canvas: **Poster** (the
 scene image) and one button per frame. On a frame, the canvas shows that
 frame and the shapes drawn on it.
