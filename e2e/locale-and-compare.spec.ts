@@ -32,3 +32,11 @@ test("no lead form when the project has no webhook", async ({ page }) => {
   await expect(page.getByRole("heading", { name: "Unit G-01" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Request a call about this unit" })).toHaveCount(0);
 });
+
+test("the editor is not reachable on the visitor server", async ({ page }) => {
+  // The page streams (Suspense), so Next sends the not-found page with status 200; check what it shows.
+  await page.goto("/editor/demo-villa");
+  await expect(page.getByText("This page could not be found.")).toBeVisible();
+  await expect(page.getByRole("application")).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Download project.json" })).toHaveCount(0);
+});

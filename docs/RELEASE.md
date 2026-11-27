@@ -52,7 +52,9 @@ Last merge into `main`: PR #33 (up to U-401, the Arabic / English switch).
 - **`npm run new:project`** to start a client project (U-701), and a project
   directory on the home page (U-705).
 - **Checks:** browser smoke tests in CI on every PR (U-1003), covering both
-  demos, Arabic and English layouts and the compare page (U-1101).
+  demos, Arabic and English layouts and the compare page (U-1101), and the
+  editor end to end, plus a check that it stays hidden on visitor servers
+  (U-1102).
 
 ## Environment variables for production
 
