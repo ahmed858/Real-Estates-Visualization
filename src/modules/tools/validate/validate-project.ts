@@ -1,8 +1,8 @@
 // Validates one client project folder: config, units sheet, and how they fit together.
-import { access, readFile } from "node:fs/promises";
+import { readFile, stat } from "node:fs/promises";
 import { basename, join } from "node:path";
 import { DEFAULT_UNITS_SOURCE, parseProjectConfig, unitsSourceSchema, type UnitRow, type UnitsSource } from "@/modules/schema";
-import { checkProjectFit, CONFIG_FILE, createSceneTree, missingFile, referencedFiles, UNITS_FILE, unitsLabel, type Finding, type ValidationReport } from "@/modules/domain";
+import { checkProjectFit, CONFIG_FILE, createSceneTree, formatMegabytes, missingFile, projectFileSizeLimit, referencedFiles, UNITS_FILE, unitsLabel, type Finding, type ValidationReport } from "@/modules/domain";
 import {
   createUnitSourceFactory,
   UnitSourceError,
@@ -30,10 +30,11 @@ function configuredUnits(config: unknown): UnitsSource | undefined {
   return parsed.success ? parsed.data : undefined;
 }
 
-async function exists(path: string): Promise<boolean> {
-  return access(path).then(
-    () => true,
-    () => false,
+/** Size in bytes of a file, or undefined when it does not exist or is not a file. */
+async function fileSize(path: string): Promise<number | undefined> {
+  return stat(path).then(
+    (s) => (s.isFile() ? s.size : undefined),
+    () => undefined,
   );
 }
 
@@ -71,7 +72,7 @@ async function readUnits(dir: string, units: UnitsSource, factory: UnitSourceFac
     if (e instanceof UnitSourceReadError || e instanceof UnsupportedUnitSourceError) {
       return { findings: [{ severity: "error", file, message: e.message }] };
     }
-    const missing = units.source === "xlsx" && !(await exists(join(dir, UNITS_FILE)));
+    const missing = units.source === "xlsx" && (await fileSize(join(dir, UNITS_FILE))) === undefined;
     return {
       findings: [{ severity: "error", file, message: missing ? "file not found" : `cannot be read: ${(e as Error).message}` }],
     };
@@ -100,8 +101,14 @@ export async function validateProject(dir: string, options: ValidateOptions = {}
     findings.push(...checkProjectFit(tree, sheet.units, label, config.project.branding));
     const units = sheet.units ?? [];
     for (const ref of referencedFiles(config, tree, units, label)) {
-      if (!(await exists(join(dir, ref.path)))) {
+      const size = await fileSize(join(dir, ref.path));
+      if (size === undefined) {
         findings.push(missingFile(ref));
+        continue;
+      }
+      const limit = projectFileSizeLimit(ref.path);
+      if (limit && size > limit.bytes) {
+        findings.push({ severity: "error", file: ref.file, location: ref.location, message: `file "${ref.path}" is ${formatMegabytes(size)}; ${limit.label} may be at most ${formatMegabytes(limit.bytes)}` });
       }
     }
   }

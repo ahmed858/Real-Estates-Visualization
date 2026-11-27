@@ -88,7 +88,9 @@ export const ROTATION_MAX_FRAMES = 360;
 /** A turntable: `count` frames of the same size taken around the building, in order. */
 export const sceneRotationSchema = z
   .object({
-    frames: projectFilePathSchema.refine((p) => p.includes(ROTATION_FRAME_PLACEHOLDER), `must contain ${ROTATION_FRAME_PLACEHOLDER}, e.g. rotations/tower/frame-${ROTATION_FRAME_PLACEHOLDER}.jpg`),
+    frames: projectFilePathSchema
+      .refine((p) => p.includes(ROTATION_FRAME_PLACEHOLDER), `must contain ${ROTATION_FRAME_PLACEHOLDER}, e.g. rotations/tower/frame-${ROTATION_FRAME_PLACEHOLDER}.jpg`)
+      .refine((p) => p.startsWith("rotations/"), "must be in the rotations/ folder, e.g. rotations/tower/frame-{index}.jpg"),
     count: z.number().int().min(2, "a rotation needs at least 2 frames").max(ROTATION_MAX_FRAMES, `at most ${ROTATION_MAX_FRAMES} frames`),
     width: z.number().int().positive(),
     height: z.number().int().positive(),
@@ -100,7 +102,9 @@ export const sceneRotationSchema = z
 /** A 3D model in glTF binary format. */
 export const sceneModelSchema = z
   .object({
-    path: projectFilePathSchema.refine((p) => p.toLowerCase().endsWith(".glb"), "must be a .glb file (glTF binary)"),
+    path: projectFilePathSchema
+      .refine((p) => p.toLowerCase().endsWith(".glb"), "must be a .glb file (glTF binary)")
+      .refine((p) => p.startsWith("models/"), "must be in the models/ folder, e.g. models/tower.glb"),
   })
   .strict();
 

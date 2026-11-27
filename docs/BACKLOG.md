@@ -918,12 +918,13 @@ Rules that keep the 2D core unchanged:
 - Verify: `npm run check`.
 
 ### U-902 Serve premium assets
-- Phase 9 · `data-sources` + App · Depends on: U-901 · Gated: no · Status: `todo`
+- Phase 9 · `data-sources` + App · Depends on: U-901 · Gated: no · Status: `done`
 - `/files/<slug>/rotations/...` serves frames (same image types as now)
   and `/files/<slug>/models/*.glb` serves `model/gltf-binary`, with a size
-  cap per file (frames 2 MB, models 30 MB) checked by the validator too,
-  and long cache headers. Nothing outside `images/`, `rotations/` and
-  `models/` is served.
+  cap per file (frames 2 MB, models 30 MB) checked by the validator too.
+  Changed by the agent: images stay servable anywhere in the project folder
+  (logos and plan images may live outside `images/`), `.glb` only under
+  `models/`; cache headers stay as for images.
 - Acceptance: tests for the content types, size caps and refused paths.
 - Verify: `npm run check`.
 
