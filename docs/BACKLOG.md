@@ -710,7 +710,7 @@ project without touching code.
 - Verify: `npm run check`.
 
 ### U-704 Published and hidden projects
-- Phase 7 · `schema` + `data-sources` + App · Depends on: U-609 · **Gated: yes** · Status: `todo`
+- Phase 7 · `schema` + `data-sources` + App · Depends on: U-609 · **Gated: yes** · Status: `done`
 - An optional `project.published` flag (default `true`, so existing projects
   keep working). A project with `published: false` answers 404 on `/p/...`
   unless `PREVIEW_PROJECTS=true` (documented in `.env.example`), so the

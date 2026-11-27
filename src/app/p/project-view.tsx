@@ -4,11 +4,15 @@
 import { join } from "node:path";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { FileProjectSource, ProjectSourceError, type LoadedProject } from "@/modules/data-sources";
+import { FileProjectSource } from "@/modules/data-sources";
 import { computeBedroomMix, computeSceneStats, createSceneTree, rollUpUnits, type FilterableUnit } from "@/modules/domain";
+import { projectPageState, visitorProjectSource } from "./project-page-state";
 import { Breadcrumbs, FloorPicker, LANG_PARAM, LocaleSwitch, ProjectHeader, resolveLocale, withLocale, SceneFilter, SceneStage, type SceneSummary, type UnitSummary, SidePanel, StaleDataNote, StatusLegend, ViewerLayout, ViewerMessage, viewerText, WhatsAppButton, enquiryMessage, whatsappLink } from "@/modules/viewer";
 
-export const projects = new FileProjectSource(join(process.cwd(), "projects"));
+/** Every project on disk, hidden ones included (the editor reads this). */
+export const allProjects = new FileProjectSource(join(process.cwd(), "projects"));
+/** What visitors may open: hidden projects are not found unless PREVIEW_PROJECTS=true. */
+export const projects = visitorProjectSource(allProjects, process.env);
 
 export const projectFileUrl = (slug: string, path: string) => `/files/${slug}/${path}`;
 
@@ -28,14 +32,10 @@ export interface ProjectViewProps {
 export async function ProjectView({ params, searchParams }: ProjectViewProps) {
   const { slug, sceneId } = await params;
   const query = await searchParams;
-  let project: LoadedProject;
-  try {
-    project = await projects.load(slug);
-  } catch (e) {
-    if (!(e instanceof ProjectSourceError)) throw e;
-    if (e.kind === "not-found") notFound();
-    return <ViewerMessage title={`Project "${slug}" has invalid data`} details={e.issues} />;
-  }
+  const state = await projectPageState(slug, projects);
+  if (state.kind === "not-found") notFound();
+  if (state.kind === "invalid") return <ViewerMessage title={`Project "${slug}" has invalid data`} details={state.issues} />;
+  const project = state.project;
 
   const { config, units } = project;
   const defaultLocale = config.project.defaultLocale;

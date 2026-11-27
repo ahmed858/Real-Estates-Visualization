@@ -2,22 +2,18 @@
 // table with its filter bar, each row linking to the unit on its scene (with ?floor= on typical floors).
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ProjectSourceError, type LoadedProject } from "@/modules/data-sources";
 import { createSceneTree } from "@/modules/domain";
 import { brandStyle, FLOOR_PARAM, LANG_PARAM, LocaleSwitch, ProjectHeader, UNIT_PARAM, FilteredUnitsTable, StaleDataNote, ViewerMessage, resolveLocale, unitTableRows, viewerText, withLocale } from "@/modules/viewer";
+import { projectPageState } from "./project-page-state";
 import { projectFileUrl, projects, sceneUrl, type ProjectViewProps } from "./project-view";
 
 export async function UnitsView({ params, searchParams }: ProjectViewProps) {
   const { slug } = await params;
   const query = await searchParams;
-  let project: LoadedProject;
-  try {
-    project = await projects.load(slug);
-  } catch (e) {
-    if (!(e instanceof ProjectSourceError)) throw e;
-    if (e.kind === "not-found") notFound();
-    return <ViewerMessage title={`Project "${slug}" has invalid data`} details={e.issues} />;
-  }
+  const state = await projectPageState(slug, projects);
+  if (state.kind === "not-found") notFound();
+  if (state.kind === "invalid") return <ViewerMessage title={`Project "${slug}" has invalid data`} details={state.issues} />;
+  const project = state.project;
 
   const { config, units } = project;
   const defaultLocale = config.project.defaultLocale;

@@ -43,8 +43,13 @@ export const projectInfoSchema = z
         accentColor: hexColorSchema,
       })
       .strict(),
+    /** false hides the project from visitors (404) unless preview is on. Missing means published. */
+    published: z.boolean().optional(),
   })
   .strict();
+
+/** Whether visitors may open the project. A project is published unless it says `published: false`. */
+export const isProjectPublished = (project: { published?: boolean }): boolean => project.published !== false;
 
 export const sceneImageSchema = z
   .object({
