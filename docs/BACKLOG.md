@@ -730,7 +730,7 @@ project without touching code.
 - Verify: `npm run check`.
 
 ### U-706 A client's own domain opens their project
-- Phase 7 · App · Depends on: U-705 · **Gated: yes** · Status: `todo`
+- Phase 7 · App · Depends on: U-705 · **Gated: yes** · Status: `done`
 - An optional `PROJECT_DOMAINS` env var (`host=slug,host=slug`, documented in
   `.env.example`) maps a hostname to a project: on that host `/` shows the
   project and `/units` its table, and other projects are not reachable.
