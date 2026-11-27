@@ -2,20 +2,36 @@
 // Form that adds a child scene under the current scene from an image already
 // in projects/<slug>/images/. The image size comes with the image list, so the
 // owner only picks the image, kind, titles and (for a typical floor) the floors.
+// A 360° rotation or 3D model scene also picks its frames folder or .glb file
+// from the lists the server read; the image is then the scene's poster.
 import { useState } from "react";
-import { SCENE_KINDS, type ProjectConfig, type Scene, type SceneImage, type SceneKind } from "@/modules/schema";
+import { SCENE_KINDS, type ProjectConfig, type Scene, type SceneImage, type SceneKind, type SceneRendererType } from "@/modules/schema";
 import { toId } from "../targets/target-options";
-import { buildScene } from "./build-scene";
+import { buildScene, type SceneRendererChoice } from "./build-scene";
+import type { FramesFolder } from "./rotation-folder";
+
+const RENDERER_LABELS: Readonly<Record<SceneRendererType, string>> = {
+  "image-2d": "2D image",
+  "rotation-360": "360° rotation",
+  "model-3d": "3D model",
+};
 
 export interface AddSceneFormProps {
   config: ProjectConfig;
   /** Images of the project folder with their sizes. */
   images: readonly SceneImage[];
+  /** Frames folders under rotations/ with each frame's size. */
+  rotations?: readonly FramesFolder[];
+  /** .glb files under models/, e.g. "models/tower.glb". */
+  models?: readonly string[];
   onAdd: (scene: Scene) => void;
 }
 
-export function AddSceneForm({ config, images, onAdd }: AddSceneFormProps) {
+export function AddSceneForm({ config, images, rotations = [], models = [], onAdd }: AddSceneFormProps) {
   const [imagePath, setImagePath] = useState(images[0]?.path ?? "");
+  const [rendererType, setRendererType] = useState<SceneRendererType>("image-2d");
+  const [folderPath, setFolderPath] = useState(rotations[0]?.folder ?? "");
+  const [modelPath, setModelPath] = useState(models[0] ?? "");
   const [kind, setKind] = useState<SceneKind>("floor");
   const [titleEn, setTitleEn] = useState("");
   const [titleAr, setTitleAr] = useState("");
@@ -38,9 +54,15 @@ export function AddSceneForm({ config, images, onAdd }: AddSceneFormProps) {
     setErrors([]);
   };
 
+  const renderer = (): SceneRendererChoice => {
+    if (rendererType === "rotation-360") return { type: rendererType, folder: rotations.find((r) => r.folder === folderPath) };
+    if (rendererType === "model-3d") return { type: rendererType, modelPath: models.includes(modelPath) ? modelPath : undefined };
+    return { type: "image-2d" };
+  };
+
   const submit = () => {
     if (!image) return setErrors(["image: pick an image from the project's images folder"]);
-    const result = buildScene(config, { id, kind, titleAr, titleEn, floors: isTypical ? { from: Number(from), to: Number(to), unitCode } : undefined }, image);
+    const result = buildScene(config, { id, kind, titleAr, titleEn, floors: isTypical ? { from: Number(from), to: Number(to), unitCode } : undefined }, image, renderer());
     if (!result.ok) return setErrors(result.errors);
     onAdd(result.scene);
     reset();
@@ -59,7 +81,43 @@ export function AddSceneForm({ config, images, onAdd }: AddSceneFormProps) {
       }}
     >
       <label className={label}>
-        Image
+        Shown as
+        <select className={field} value={rendererType} onChange={(e) => setRendererType(e.target.value as SceneRendererType)}>
+          {Object.entries(RENDERER_LABELS).map(([type, text]) => (
+            <option key={type} value={type}>
+              {text}
+            </option>
+          ))}
+        </select>
+      </label>
+      {rendererType === "rotation-360" && (
+        <label className={label}>
+          Frames folder
+          <select className={field} value={folderPath} onChange={(e) => setFolderPath(e.target.value)}>
+            {rotations.length === 0 && <option value="">(no folders in rotations/)</option>}
+            {rotations.map((r) => (
+              <option key={r.folder} value={r.folder}>
+                {r.folder} ({r.files.length} files)
+              </option>
+            ))}
+          </select>
+        </label>
+      )}
+      {rendererType === "model-3d" && (
+        <label className={label}>
+          Model
+          <select className={field} value={modelPath} onChange={(e) => setModelPath(e.target.value)}>
+            {models.length === 0 && <option value="">(no .glb files in models/)</option>}
+            {models.map((m) => (
+              <option key={m} value={m}>
+                {m}
+              </option>
+            ))}
+          </select>
+        </label>
+      )}
+      <label className={label}>
+        {rendererType === "image-2d" ? "Image" : "Poster image"}
         <select className={field} value={imagePath} onChange={(e) => setImagePath(e.target.value)}>
           {images.map((i) => (
             <option key={i.path} value={i.path}>

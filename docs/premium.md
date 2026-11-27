@@ -60,17 +60,20 @@ projects/<slug>/
 
 ## 3. Add the scene
 
-The editor's **Add a child scene** form makes 2D scenes only. Add a premium
-scene in `project.json` by hand, under the scene it belongs to (copy the
-example from [data-format.md](data-format.md#premium-scenes)):
+Open the parent scene in the editor and use the **Child scenes** form
+([editor.md](editor.md#3-add-the-child-scenes)):
 
-- Rotation: `"type": "rotation-360"`, the poster as `image`, and
-  `"rotation": { "frames": "rotations/tower/frame-{index}.jpg", "count": 36,
-  "width": 1600, "height": 900 }` with the real frame count and size.
-- Model: `"type": "model-3d"`, the poster as `image`, and
-  `"model": { "path": "models/tower.glb" }`.
-- Give it `"hotspots": []` and a hotspot on the parent scene that opens it
-  (draw it in the editor, target the new scene).
+- **Shown as** `360° rotation`: pick the frames folder under `rotations/`.
+  The editor fills `frames`, `count` and the frame size from the files and
+  refuses a folder whose frames are not numbered 1 to n (zero-padded to the
+  digits of n: `frame-01` .. `frame-36`), use more than one name pattern, or
+  differ in size.
+- **Shown as** `3D model`: pick the `.glb` file under `models/`.
+- In both cases the picked image is the scene's poster.
+
+Then draw a hotspot on the parent scene that opens the new scene (target
+**Scene**). The hand-written form of these scenes is in
+[data-format.md](data-format.md#premium-scenes).
 
 Then open the scene in the editor
 (`EDITOR_ENABLED=true npm run dev`, `/editor/<slug>?scene=<id>`):
