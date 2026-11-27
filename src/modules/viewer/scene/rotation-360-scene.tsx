@@ -4,10 +4,11 @@
 // the building; each frame is drawn by the 2D renderer with that frame's
 // polygons, so hotspots, status colours and hover cards look the same as 2D.
 // The angle is kept in ?frame= so a shared link opens at the same view.
-import { useEffect, useMemo, useRef, useState, type PointerEvent } from "react";
+import { useEffect, useMemo, useRef, type PointerEvent } from "react";
 import { rotationFramePaths } from "@/modules/domain";
 import { Image2DScene } from "./image-2d-scene";
-import { fileBaseFrom, initialFrame, sceneOnFrame, withFrame, wrapFrame } from "./rotation-frame";
+import { setUrlParams, useUrlSearch } from "../selection/use-selected-unit";
+import { fileBaseFrom, FRAME_PARAM, initialFrame, sceneOnFrame, wrapFrame } from "./rotation-frame";
 import type { SceneRendererProps } from "./scene-renderer";
 
 /** Dragging this many CSS pixels moves one frame at most; wide views turn one full round per width. */
@@ -18,7 +19,10 @@ const DRAG_THRESHOLD = 6;
 export function Rotation360Scene(props: SceneRendererProps) {
   const { scene, imageUrl } = props;
   const rotation = scene.rotation;
-  const [frame, setFrame] = useState(() => (rotation ? initialFrame(rotation, typeof window === "undefined" ? "" : window.location.search) : 1));
+  // Read from the URL like ?unit= (empty on the server), so the server HTML and
+  // the first client render both show the start frame and hydrate cleanly.
+  const search = useUrlSearch();
+  const frame = rotation ? initialFrame(rotation, search) : 1;
   const drag = useRef<{ x: number; frame: number; moved: boolean } | null>(null);
   const box = useRef<HTMLDivElement>(null);
   const fileUrl = props.fileUrl ?? ((path: string) => `${fileBaseFrom(imageUrl, scene.image.path)}${path}`);
@@ -37,9 +41,7 @@ export function Rotation360Scene(props: SceneRendererProps) {
   const onFrame = sceneOnFrame(scene, rotation, frame);
 
   const show = (n: number) => {
-    const next = wrapFrame(n, count);
-    setFrame(next);
-    window.history.replaceState(window.history.state, "", `${window.location.pathname}${withFrame(window.location.search, next)}${window.location.hash}`);
+    setUrlParams({ [FRAME_PARAM]: String(wrapFrame(n, count)) });
   };
 
   const onPointerDown = (e: PointerEvent<HTMLDivElement>) => {

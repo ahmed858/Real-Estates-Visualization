@@ -1,4 +1,6 @@
 import { act, fireEvent, render, screen } from "@testing-library/react";
+import { hydrateRoot } from "react-dom/client";
+import { renderToString } from "react-dom/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { Hotspot, Scene } from "@/modules/schema";
 import { SceneView, type SceneRendererProps } from "../index";
@@ -58,6 +60,26 @@ describe("Rotation360Scene", () => {
     render(<SceneView {...props()} />);
     expect(img().getAttribute("src")).toBe("/files/tower/rotations/spin/f-2.jpg");
     expect(screen.getByRole("button", { name: "Unit A-1" }).getAttribute("points")).toBe("200,0 300,0 300,100 200,100");
+  });
+
+  it("hydrates server HTML on the frame in the URL", async () => {
+    // The server knows no URL query, so its HTML shows the start frame.
+    const html = renderToString(<SceneView {...props()} />);
+    expect(html).toContain("/files/tower/rotations/spin/f-1.jpg");
+    window.history.replaceState(null, "", "/p/tower/spin?frame=3");
+    const host = document.createElement("div");
+    host.innerHTML = html;
+    document.body.appendChild(host);
+    const errors = vi.spyOn(console, "error").mockImplementation(() => {});
+    const root = await act(async () => hydrateRoot(host, <SceneView {...props()} />));
+    expect(host.querySelector("img")?.getAttribute("src")).toBe("/files/tower/rotations/spin/f-3.jpg");
+    expect(screen.getByRole("button", { name: "Unit B-1" }).getAttribute("points")).toBe("300,0 400,0 400,100 300,100");
+    expect(screen.queryByRole("button", { name: "Unit A-1" })).toBeNull();
+    expect(slider().getAttribute("aria-valuetext")).toBe("3 / 4");
+    expect(errors).not.toHaveBeenCalled();
+    errors.mockRestore();
+    act(() => root.unmount());
+    host.remove();
   });
 
   it("turns by dragging, wrapping around, and a drag does not open a hotspot", () => {
