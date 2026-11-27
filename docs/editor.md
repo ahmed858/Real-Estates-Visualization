@@ -8,41 +8,27 @@ Vercel.
 
 ## 1. Prepare the project folder
 
-1. Create `projects/<slug>/` (the slug is lowercase letters, digits and
-   dashes, e.g. `palm-towers`).
-2. Put every image in `projects/<slug>/images/`: the facade or masterplan,
-   each floor plan, the logo, any unit plans. PNG, JPEG, SVG and WebP work.
-   You never type image sizes; the editor reads them.
-3. Add the units sheet: `units.xlsx` in the folder, or a `units` block that
-   points at the client's Google Sheet (see
-   [data-format.md](data-format.md#units-source) and the
-   [collection guide](collection-guide/)).
-4. Write a first `project.json` with the project block and only the root
-   scene (no hotspots yet). The editor opens a project only when this file
-   is valid:
+1. Start the folder from the root image (the facade or masterplan photo):
 
-   ```json
-   {
-     "schemaVersion": 1,
-     "project": {
-       "slug": "palm-towers",
-       "name": { "ar": "أبراج النخيل", "en": "Palm Towers" },
-       "defaultLocale": "ar",
-       "currency": "EGP",
-       "contact": { "whatsapp": "+201000000000" },
-       "branding": { "logo": "images/logo.svg", "primaryColor": "#1a6b4f", "accentColor": "#c89b3c" }
-     },
-     "root": {
-       "id": "facade",
-       "kind": "facade",
-       "title": { "ar": "الواجهة", "en": "Facade" },
-       "image": { "path": "images/facade.jpg", "width": 1600, "height": 1200 }
-     }
-   }
+   ```bash
+   npm run new:project -- palm-towers ~/Downloads/facade.jpg
    ```
 
-   For this first file only, read the root image size from your image
-   viewer; every later scene gets its size from the editor.
+   This creates `projects/palm-towers/` with the image copied into
+   `images/`, a `units.xlsx` copied from the collection guide's template and
+   a starter `project.json` whose root scene already has the image size. The
+   slug is lowercase letters, digits and dashes. It refuses a folder that
+   already exists.
+2. Replace the placeholders in `project.json`: the Arabic name
+   (`اسم المشروع`), the WhatsApp number (`+200000000000`), the currency and
+   the two brand colours; check the English name and titles.
+3. Put the logo at `images/logo.svg` and every other image in `images/`:
+   each floor plan, any unit plans. PNG, JPEG, SVG and WebP work. You never
+   type image sizes; the editor reads them.
+4. Replace the template rows in `units.xlsx` with the client's units, or
+   point the `units` block at the client's Google Sheet (see
+   [data-format.md](data-format.md#units-source) and the
+   [collection guide](collection-guide/)).
 
 ## 2. Start the editor
 

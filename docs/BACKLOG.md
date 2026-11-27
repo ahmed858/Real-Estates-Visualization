@@ -676,7 +676,7 @@ Phase 7 closes those gaps so the owner can onboard and hand over a client
 project without touching code.
 
 ### U-701 New project command
-- Phase 7 · `tools` · Depends on: U-609 · Gated: no · Status: `todo`
+- Phase 7 · `tools` · Depends on: U-609 · Gated: no · Status: `done`
 - `npm run new:project -- <slug> <root-image>` creates `projects/<slug>/`
   with `images/`, a copy of the units template sheet and a minimal
   `project.json` (project block with placeholders, root scene with the image
