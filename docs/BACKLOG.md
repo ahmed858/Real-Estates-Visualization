@@ -807,7 +807,7 @@ service or send visitor data anywhere are gated.
 - Verify: `npm run check`.
 
 ### U-809 Photo lightbox
-- Phase 8 · `viewer` · Depends on: U-803 · Gated: no · Status: `todo`
+- Phase 8 · `viewer` · Depends on: U-803 · Gated: no · Status: `done`
 - Clicking a gallery thumbnail opens a keyboard-friendly lightbox instead
   of a new tab: arrows move between photos, Escape closes, focus stays
   inside while open and returns to the thumbnail after; RTL flips the
