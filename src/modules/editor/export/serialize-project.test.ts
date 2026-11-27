@@ -27,13 +27,16 @@ describe("serializeProjectConfig", () => {
 
   it("leaves out schema defaults but keeps typical floors, the units block and empty hotspot lists", async () => {
     const { config } = await load("projects/demo-villa/project.json");
+    // Only the 2D scenes (default type), so no "type" key should be written; the demo's turntable keeps its type.
+    const twoD = config.root.children.filter((c) => c.type === "image-2d");
     const edited: ProjectConfig = {
       ...config,
       units: { source: "google-sheet", sheetId: "a".repeat(25), gid: "0", refreshSeconds: 60 },
       root: {
         ...config.root,
+        hotspots: config.root.hotspots.filter((h) => !("scene" in h.target) || twoD.some((c) => c.id === (h.target as { scene: string }).scene)),
         children: [
-          ...config.root.children,
+          ...twoD,
           { id: "typical", kind: "floor", type: "image-2d", title: { ar: "متكرر", en: "Typical" }, image: { path: "images/t.png", width: 10, height: 10 }, floors: { from: 2, to: 4, unitCode: "{floor}{suffix}" }, hotspots: [], children: [] },
         ],
       },

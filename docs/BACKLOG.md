@@ -946,7 +946,7 @@ Rules that keep the 2D core unchanged:
 - Verify: `npm run check`.
 
 ### U-904 Demo turntable
-- Phase 9 · `tools` + `projects` · Depends on: U-903 · Gated: no · Status: `todo`
+- Phase 9 · `tools` + `projects` · Depends on: U-903 · Gated: no · Status: `done`
 - `npm run generate:demo` also writes a small generated turntable (for
   example 24 SVG frames of the demo villa block from different angles,
   original drawings) and a `rotation-360` scene with a few unit hotspots,

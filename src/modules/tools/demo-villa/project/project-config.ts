@@ -2,14 +2,22 @@
 // polygons come straight from the geometry through the same frames the SVGs use.
 import type { ProjectConfigInput, SceneInput } from "@/modules/schema";
 import { buildFacadeGeometry } from "../facade/facade-geometry";
-import { facadeBandPolygons, facadeFrame } from "../facade/facade-svg";
+import { rotationFramePath } from "@/modules/domain";
+import { facadeBandPolygons, facadeFrame, turntableButtonPolygon } from "../facade/facade-svg";
 import type { FloorGeometry, Point, VillaGeometry } from "../geometry/types";
 import { floorPlanFrame } from "../svg/frame";
+import { TURNTABLE_FRAMES, TURNTABLE_HEIGHT, TURNTABLE_WIDTH } from "../turntable/turntable-camera";
+import { turntableUnitFrames } from "../turntable/turntable-svg";
 
 export const DEMO_SLUG = "demo-villa";
 export const facadeImagePath = "images/facade.svg";
 export const floorImagePath = (floorId: string) => `images/floor-${floorId}.svg`;
 export const LOGO_PATH = "images/logo.svg";
+export const TURNTABLE_SCENE_ID = "turntable";
+/** Poster of the turntable scene: a copy of its first frame. */
+export const turntablePosterPath = "images/turntable.svg";
+export const TURNTABLE_ROTATION = { frames: "rotations/turntable/frame-{index}.svg", count: TURNTABLE_FRAMES } as const;
+export const turntableFramePath = (frame: number) => rotationFramePath(TURNTABLE_ROTATION, frame);
 
 const px = (n: number) => Math.round(n * 100) / 100;
 const pxPoint = ([x, y]: Point | [number, number]): [number, number] => [px(x), px(y)];
@@ -25,6 +33,24 @@ function floorScene(villa: VillaGeometry, floor: FloorGeometry): SceneInput {
       id: u.code.toLowerCase(),
       points: u.outline.map((p) => pxPoint(frame.toPx(p))),
       target: { unit: u.code },
+    })),
+  };
+}
+
+/** The turntable scene: the villa block turning, with the four apartments drawn on every frame where they show. */
+function turntableScene(villa: VillaGeometry): SceneInput {
+  return {
+    id: TURNTABLE_SCENE_ID,
+    kind: "other",
+    type: "rotation-360",
+    title: { ar: "عرض 360°", en: "360° view" },
+    image: { path: turntablePosterPath, width: TURNTABLE_WIDTH, height: TURNTABLE_HEIGHT },
+    rotation: { ...TURNTABLE_ROTATION, width: TURNTABLE_WIDTH, height: TURNTABLE_HEIGHT },
+    hotspots: turntableUnitFrames(villa).map(({ code, frames }) => ({
+      id: code.toLowerCase(),
+      points: frames["1"],
+      frames,
+      target: { unit: code },
     })),
   };
 }
@@ -46,8 +72,11 @@ export function buildDemoVillaConfig(villa: VillaGeometry): ProjectConfigInput {
       kind: "facade",
       title: { ar: "الواجهة", en: "Facade" },
       image: { path: facadeImagePath, width: Math.round(frame.width), height: Math.round(frame.height) },
-      hotspots: facadeBandPolygons(villa).map((b) => ({ id: b.floorId, points: b.points.map(pxPoint), target: { scene: b.floorId } })),
-      children: villa.floors.map((f) => floorScene(villa, f)),
+      hotspots: [
+        ...facadeBandPolygons(villa).map((b) => ({ id: b.floorId, points: b.points.map(pxPoint), target: { scene: b.floorId } })),
+        { id: TURNTABLE_SCENE_ID, points: turntableButtonPolygon(villa).map(pxPoint), target: { scene: TURNTABLE_SCENE_ID } },
+      ],
+      children: [...villa.floors.map((f) => floorScene(villa, f)), turntableScene(villa)],
     },
   };
 }

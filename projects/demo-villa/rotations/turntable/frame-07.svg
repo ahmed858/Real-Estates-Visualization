@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="540" viewBox="0 0 800 540">
+<title>Turntable frame 7 · لقطة 7</title>
+<rect x="0" y="0" width="800" height="540" fill="#f4f6f8"/>
+<polygon points="544,210 544,370 96,370 96,210" fill="#e3ddd0" stroke="#6b6b6b" stroke-width="1"/>
+<polygon points="288,226 288,354 128,354 128,226" fill="#d6e4cf" stroke="#6b6b6b" stroke-width="1"/>
+<polygon points="512,305.5 288,305.5 288,354 512,354" fill="#cec8c0" stroke="#262626" stroke-width="1.5" stroke-linejoin="round"/>
+<polygon points="512,261.16 288,261.16 288,305.5 512,305.5" fill="#d3cfc9" stroke="#262626" stroke-width="1.5" stroke-linejoin="round"/>
+<polygon points="512,245.92 288,245.92 288,261.16 512,261.16" fill="#c6c1b7" stroke="#262626" stroke-width="1.5" stroke-linejoin="round"/>
+<polygon points="512,117.92 512,245.92 288,245.92 288,117.92" fill="#d9d4ca" stroke="#262626" stroke-width="1.5" stroke-linejoin="round"/>
+<polygon points="512,167.59 448,167.59 448,193.92 512,193.92" fill="#d4d2cd" stroke="#262626" stroke-width="1.5" stroke-linejoin="round"/>
+<polygon points="512,143.59 512,167.59 448,167.59 448,143.59" fill="#f7f4ee" stroke="#262626" stroke-width="1.5" stroke-linejoin="round"/>
+<polygon points="512,191.59 448,191.59 448,217.92 512,217.92" fill="#d4d2cd" stroke="#262626" stroke-width="1.5" stroke-linejoin="round"/>
+<polygon points="512,167.59 512,191.59 448,191.59 448,167.59" fill="#f7f4ee" stroke="#262626" stroke-width="1.5" stroke-linejoin="round"/>
+<polygon points="448,219.59 368,219.59 368,245.92 448,245.92" fill="#d4d2cd" stroke="#262626" stroke-width="1.5" stroke-linejoin="round"/>
+<polygon points="448,167.59 448,219.59 368,219.59 368,167.59" fill="#f7f4ee" stroke="#262626" stroke-width="1.5" stroke-linejoin="round"/>
+<polygon points="512,219.59 448,219.59 448,245.92 512,245.92" fill="#d4d2cd" stroke="#262626" stroke-width="1.5" stroke-linejoin="round"/>
+<polygon points="512,191.59 512,219.59 448,219.59 448,191.59" fill="#f7f4ee" stroke="#262626" stroke-width="1.5" stroke-linejoin="round"/>
+<text x="24" y="500" font-family="Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#262626">Turntable · frame 7 of 24</text>
+<text x="24" y="522" direction="rtl" text-anchor="end" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#6b6b6b">عرض 360° · لقطة 7 من 24</text>
+</svg>

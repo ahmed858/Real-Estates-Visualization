@@ -32,6 +32,26 @@ export function facadeFrame(facade: FacadeGeometry): FacadeFrame {
   return { width, height, toPx: ([x, z]) => [SIDE + (x - facade.left) * SCALE, TOP + (facade.height - z) * SCALE] };
 }
 
+/** The "360° view" button drawn in the footer, bottom right; its rectangle is the facade hotspot that opens the turntable. */
+export function turntableButtonPolygon(villa: VillaGeometry): [number, number][] {
+  const facade = buildFacadeGeometry(villa);
+  const frame = facadeFrame(facade);
+  const [, groundY] = frame.toPx([facade.left, 0]);
+  const [x0, y0] = [frame.width - SIDE - 220, groundY + 44];
+  const [x1, y1] = [frame.width - SIDE, groundY + 96];
+  return [[x0, y0], [x1, y0], [x1, y1], [x0, y1]];
+}
+
+function turntableButtonEl(villa: VillaGeometry): string {
+  const [[x0, y0], [x1], [, y1]] = turntableButtonPolygon(villa).slice(0, 3) as [[number, number], [number, number], [number, number]];
+  const cx = (x0 + x1) / 2;
+  return el("g", { id: "turntable-button" }, [
+    el("rect", { x: x0, y: y0, width: x1 - x0, height: y1 - y0, rx: 10, fill: COLORS.paper, stroke: COLORS.ink, "stroke-width": 2 }),
+    text("360° view", { x: cx, y: y0 + 22, "text-anchor": "middle", "font-family": FONT, "font-size": 16, "font-weight": 700, fill: COLORS.ink }),
+    text("عرض 360°", { x: cx, y: y0 + 42, direction: "rtl", "text-anchor": "middle", "font-family": FONT, "font-size": 14, fill: COLORS.muted }),
+  ]);
+}
+
 /** Each floor's band outline in image pixels, ready to use as a facade hotspot. */
 export function facadeBandPolygons(villa: VillaGeometry): { floorId: FloorId; points: [number, number][] }[] {
   const facade = buildFacadeGeometry(villa);
@@ -71,6 +91,7 @@ export function renderFacadeSvg(villa: VillaGeometry): string {
     ...facade.bands.map((b) => bandEl(frame, b, villa)),
     text("South elevation (courtyard side)", { x: SIDE, y: groundY + 60, "font-family": FONT, "font-size": 18, "font-weight": 700, fill: COLORS.ink }),
     text("الواجهة الجنوبية (جهة الحوش)", { x: SIDE, y: groundY + 86, "font-family": FONT, "font-size": 16, fill: COLORS.ink }),
+    turntableButtonEl(villa),
   ];
   return svgDocument(frame.width, frame.height, body, "Facade · الواجهة");
 }
