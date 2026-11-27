@@ -12,11 +12,19 @@ export interface ScenePanelProps {
   stats?: SceneStats;
   locale?: ViewerLocale;
   currency?: string;
+  /** The project's address and map link; shown on the root scene only. */
+  location?: SceneLocation;
+}
+
+export interface SceneLocation {
+  address: string;
+  /** Built with `mapsSearchUrl`; opens in a new tab. */
+  mapsHref: string;
 }
 
 const numberLocale = (locale: ViewerLocale) => (locale === "ar" ? "ar-EG" : "en-US");
 
-export function ScenePanel({ sceneTitle, text, stats, locale = "en", currency = "USD" }: ScenePanelProps) {
+export function ScenePanel({ sceneTitle, text, stats, locale = "en", currency = "USD", location }: ScenePanelProps) {
   const num = new Intl.NumberFormat(numberLocale(locale));
   const rows: [string, string][] = [];
   if (stats && stats.total > 0) {
@@ -37,6 +45,20 @@ export function ScenePanel({ sceneTitle, text, stats, locale = "en", currency = 
             </div>
           ))}
         </dl>
+      )}
+      {location && (
+        <div className="flex flex-col gap-1 border-t border-white/10 pt-2 text-sm">
+          <h3 className="text-zinc-400">{text.panel.location}</h3>
+          <address className="not-italic">{location.address}</address>
+          <a
+            href={location.mapsHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="self-start font-medium text-[var(--brand-accent)] underline underline-offset-2"
+          >
+            {text.panel.openInMaps}
+          </a>
+        </div>
       )}
       <p className="text-sm text-zinc-400">{text.selectHint}</p>
     </section>

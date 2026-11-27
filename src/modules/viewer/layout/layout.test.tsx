@@ -129,6 +129,27 @@ describe("ScenePanel", () => {
     const panel = screen.getByRole("region", { name: "Details" });
     expect(within(panel).getByRole("heading", { name: "Facade" })).toBeTruthy();
     expect(within(panel).getByText(en.selectHint)).toBeTruthy();
+    expect(within(panel).queryByRole("link")).toBeNull();
+  });
+
+  it("shows the address and an Open in maps link in a new tab", () => {
+    const mapsHref = "https://www.google.com/maps/search/?api=1&query=30.0444,31.2357";
+    render(<ScenePanel sceneTitle="Facade" text={en} location={{ address: "Fifth Settlement, New Cairo", mapsHref }} />);
+    const panel = screen.getByRole("region", { name: "Details" });
+    expect(within(panel).getByRole("heading", { name: "Location" })).toBeTruthy();
+    expect(within(panel).getByText("Fifth Settlement, New Cairo").tagName).toBe("ADDRESS");
+    const link = within(panel).getByRole("link", { name: "Open in maps" });
+    expect(link.getAttribute("href")).toBe(mapsHref);
+    expect(link.getAttribute("target")).toBe("_blank");
+    expect(link.getAttribute("rel")).toContain("noopener");
+  });
+
+  it("labels the location in Arabic", () => {
+    render(<ScenePanel sceneTitle="الواجهة" text={ar} locale="ar" location={{ address: "التجمع الخامس، القاهرة الجديدة", mapsHref: "https://example.test/" }} />);
+    const panel = screen.getByRole("region", { name: "التفاصيل" });
+    expect(within(panel).getByRole("heading", { name: "الموقع" })).toBeTruthy();
+    expect(within(panel).getByText("التجمع الخامس، القاهرة الجديدة")).toBeTruthy();
+    expect(within(panel).getByRole("link", { name: "افتح في الخرائط" })).toBeTruthy();
   });
 });
 

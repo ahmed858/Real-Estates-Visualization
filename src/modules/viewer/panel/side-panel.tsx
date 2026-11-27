@@ -2,7 +2,7 @@
 // The side panel: details of the unit selected in the URL, or the scene
 // summary when nothing (or an unknown code) is selected.
 import type { SceneStats } from "@/modules/domain";
-import { ScenePanel } from "../layout/scene-panel";
+import { ScenePanel, type SceneLocation } from "../layout/scene-panel";
 import { viewerText, type ViewerLocale } from "../layout/viewer-text";
 import type { UnitSummary } from "../scene/hover-card";
 import { selectUnit, useSelectedUnit } from "../selection/use-selected-unit";
@@ -27,6 +27,8 @@ export interface SidePanelProps {
   };
   /** The units page; adds "Compare with other units" to unit details. */
   unitsHref?: string;
+  /** The project's address and map link, passed on the root scene only. */
+  location?: SceneLocation;
 }
 
 const closeUnit = () => selectUnit(null);
@@ -43,7 +45,7 @@ function useEscapeToClose(active: boolean, close: () => void) {
   }, [active, close]);
 }
 
-export function SidePanel({ sceneTitle, stats, units, currency, locale, enquiry, unitsHref }: SidePanelProps) {
+export function SidePanel({ sceneTitle, stats, units, currency, locale, enquiry, unitsHref, location }: SidePanelProps) {
   const [selected] = useSelectedUnit();
   const text = viewerText(locale);
   const unit = selected ? units[selected] : undefined;
@@ -61,5 +63,5 @@ export function SidePanel({ sceneTitle, stats, units, currency, locale, enquiry,
       );
     return <UnitDetails unit={unit} text={text} locale={locale} currency={currency} onClose={closeUnit} enquiryHref={enquiryHref} unitsHref={unitsHref} />;
   }
-  return <ScenePanel sceneTitle={sceneTitle} text={text} stats={stats} locale={locale} currency={currency} />;
+  return <ScenePanel sceneTitle={sceneTitle} text={text} stats={stats} locale={locale} currency={currency} location={location} />;
 }

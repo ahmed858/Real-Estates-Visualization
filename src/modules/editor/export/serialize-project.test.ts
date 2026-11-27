@@ -55,4 +55,11 @@ describe("serializeProjectConfig", () => {
     expect(JSON.parse(serializeProjectConfig(hidden)).project.published).toBe(false);
     expect(JSON.parse(serializeProjectConfig(config)).project).not.toHaveProperty("published");
   });
+
+  it("keeps the project location", async () => {
+    const { config } = await load("projects/demo-villa/project.json");
+    const location = { lat: 30.0444, lng: 31.2357, address: { ar: "القاهرة الجديدة", en: "New Cairo" } };
+    const placed = { ...config, project: { ...config.project, location } };
+    expect(JSON.parse(serializeProjectConfig(placed)).project.location).toEqual(location);
+  });
 });
