@@ -2,7 +2,7 @@
 
 Ordered work units. The hourly agent takes the **first** unit whose status is
 `todo`, whose dependencies are all `done`, and that has no open `[agent]` PR.
-Phases up to 10 are broken down; later phases stay as headlines until the
+Phases up to 11 are broken down; later phases stay as headlines until the
 agent writes their breakdown in a planning unit.
 
 **Statuses** (as they read on `develop`): `todo` · `done` · `blocked` (question
@@ -36,7 +36,8 @@ verification commands. `npm run check` must pass for every unit.
 | 7 | Multi-client | A link per project, logo and colours per client. **done** |
 | 8 | Extras | Each on its own: gallery, compare, share, lead form to client CRM, location map. **done** |
 | 9 | Premium | 360° rotation and 3D model views, as renderers behind the scene Strategy. **done** |
-| 10 | Launch readiness | Premium scenes from the editor, a 3D demo, browser smoke tests in CI, release notes for `main`. |
+| 10 | Launch readiness | Premium scenes from the editor, a 3D demo, browser smoke tests in CI, release notes for `main`. **done** |
+| 11 | After launch | Wider browser coverage (second demo, Arabic, editor), then the owner's choice of what comes next (Q-4). |
 
 If a real client arrives early, Phase 6 may move ahead of Phase 4.
 
@@ -1090,7 +1091,48 @@ to clients, plus the two open questions:
 - Verify: `npm run check`.
 
 ### U-1005 Plan the next phase
-- Phase 10 · Docs · Depends on: U-1004 · **Gated: yes** · Status: `todo`
+- Phase 10 · Docs · Depends on: U-1004 · **Gated: yes** · Status: `done`
 - Review what is still open (Q-2, Q-3, client feedback if any) and write
   the next phase's units here, or record that the roadmap is complete.
+- Verify: `npm run check`.
+
+## Phase 11 · After launch
+
+Written by U-1005 after Phase 10. Every feature in the roadmap is built; the
+planned roadmap is complete. What is left:
+
+- Q-2 still blocks U-503 (private sheets via a service account); public
+  "anyone with the link" sheets work. Q-3 keeps its 60-second default.
+- No client feedback is recorded yet, so no feature work is planned beyond
+  this phase without the owner (Q-4 asks what comes next).
+- The browser smoke tests (U-1003) cover only the demo villa in English. The
+  photo demo (`demo-residence`), the Arabic right-to-left layout, the
+  compare page and the editor are still checked only by unit tests.
+
+### U-1101 Smoke tests: second demo, Arabic and compare
+- Phase 11 · `e2e` · Depends on: U-1005 · Gated: no · Status: `todo`
+- Add Playwright tests: `demo-residence` facade → typical floor → unit
+  panel; the demo villa in Arabic (default locale) has `dir="rtl"` and the
+  side panel and table read right to left; `/p/demo-villa/compare?units=…`
+  shows the picked units; the lead form is absent when `LEAD_WEBHOOKS` has
+  no entry. Same error-collecting fixture.
+- Acceptance: `npm run e2e` passes locally and in the CI job.
+- Verify: `npm run check`, `npm run build && npm run e2e`.
+
+### U-1102 Editor smoke test
+- Phase 11 · `e2e` · Depends on: U-1101 · Gated: no · Status: `todo`
+- A Playwright test against a build started with `EDITOR_ENABLED=true` on a
+  copy of a demo project (never the committed files): open
+  `/editor/demo-villa`, draw a polygon on a floor, pick a unit target, see the
+  problem list update, and download `project.json` whose new hotspot parses.
+  The editor stays off in the visitor tests (their server has no
+  `EDITOR_ENABLED`), and `/editor/demo-villa` answers 404 there (asserted).
+- Acceptance: both checks pass; the CI job runs both servers or a second
+  Playwright project with its own `webServer`.
+- Verify: `npm run check`, `npm run build && npm run e2e`.
+
+### U-1103 Plan what comes after launch
+- Phase 11 · Docs · Depends on: U-1102 · **Gated: yes** · Status: `blocked`
+- Waits for Q-4. Turn the owner's answer into units here (or record that
+  development pauses until client feedback).
 - Verify: `npm run check`.
