@@ -8,7 +8,7 @@ import type { ProjectConfig } from "@/modules/schema";
 import { LANG_PARAM, resolveLocale, viewerText, type ViewerLocale } from "@/modules/viewer";
 import { projectFileUrl } from "./project-view";
 
-export type ProjectPage = { kind: "scene"; sceneId?: string } | { kind: "units" };
+export type ProjectPage = { kind: "scene"; sceneId?: string } | { kind: "units" } | { kind: "compare" };
 
 /** Metadata for one page of a project; undefined when the scene does not exist. */
 export function projectMetadata(config: ProjectConfig, page: ProjectPage, locale: ViewerLocale): Metadata | undefined {
@@ -18,6 +18,7 @@ export function projectMetadata(config: ProjectConfig, page: ProjectPage, locale
   const text = viewerText(locale);
   let title = name;
   if (page.kind === "units") title = `${text.table.title} · ${name}`;
+  else if (page.kind === "compare") title = `${text.compare.title} · ${name}`;
   else if (page.sceneId !== undefined) {
     if (!tree.has(page.sceneId)) return undefined;
     if (page.sceneId !== tree.root.id) title = `${tree.get(page.sceneId).title[locale]} · ${name}`;
@@ -50,7 +51,7 @@ export async function loadProjectMetadata(source: ProjectSource, { params, searc
   try {
     const { config } = await source.load(slug);
     const locale = resolveLocale(query[LANG_PARAM], config.project.defaultLocale);
-    return projectMetadata(config, kind === "units" ? { kind } : { kind, sceneId }, locale) ?? {};
+    return projectMetadata(config, kind === "scene" ? { kind, sceneId } : { kind }, locale) ?? {};
   } catch (e) {
     if (e instanceof ProjectSourceError) return {};
     throw e;

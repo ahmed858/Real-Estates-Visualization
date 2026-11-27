@@ -772,14 +772,26 @@ service or send visitor data anywhere are gated.
 - Verify: `npm run check`.
 
 ### U-802 Compare units
-- Phase 8 · `viewer` + App · Depends on: U-801 · Gated: no · Status: `todo`
-- Pick up to 3 units (a checkbox in the units table and a "Compare" button
-  in the unit details panel); `/p/<slug>/compare?units=A,B,C` shows them side
-  by side (scene, floor, type, bedrooms, bathrooms, area, price, status,
-  plan image) with a WhatsApp button per unit. The selection lives in the
-  URL only, so a compare link can be shared. Unknown codes are skipped.
+- Phase 8 · `viewer` + App · Depends on: U-801 · Gated: no · Status: `done`
+- Split by the agent: this unit is the compare page; the pickers are U-808.
+- `/p/<slug>/compare?units=A,B,C` shows up to 3 units side by side (scene,
+  status, type, floor, bedrooms, bathrooms, area, price, plan image) with a
+  WhatsApp button per unit and a link to each unit on its plan. The
+  selection lives in the URL only, so a compare link can be shared. Unknown
+  and repeated codes are skipped. No scene may be called `compare`.
 - Acceptance: tests for parsing the `units` parameter (limit, unknown and
-  duplicate codes), the compare table in both locales, and the picker limit.
+  duplicate codes), the compare rows, and the compare table in both locales.
+- Verify: `npm run check`.
+
+### U-808 Pick units to compare
+- Phase 8 · `viewer` · Depends on: U-802 · Gated: no · Status: `todo`
+- A checkbox per row in the units table (at most 3 checked, the rest
+  disabled once 3 are picked) with a "Compare (n)" link to
+  `/p/<slug>/compare?units=...`, and a "Compare" link in the unit details
+  panel that opens the compare page with that unit. The picked codes live in
+  the units page URL (`?compare=A,B`) so Back and sharing keep them.
+- Acceptance: tests for the picker limit, the compare link and the panel
+  link in both locales.
 - Verify: `npm run check`.
 
 ### U-803 Unit photo gallery

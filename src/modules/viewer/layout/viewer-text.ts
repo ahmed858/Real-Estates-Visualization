@@ -43,6 +43,8 @@ export interface ViewerText {
   zoom: { in: string; out: string; reset: string };
   /** Share button of the unit panel; `copied` shows when the link went to the clipboard. */
   share: { button: string; copied: string };
+  /** The compare page. */
+  compare: { title: string; empty: string; scene: string };
   table: {
     title: string;
     /** Header link to the table. */
@@ -88,6 +90,7 @@ const TEXT: Record<ViewerLocale, ViewerText> = {
     },
     zoom: { in: "تكبير", out: "تصغير", reset: "١×" },
     share: { button: "مشاركة", copied: "تم نسخ رابط الوحدة" },
+    compare: { title: "مقارنة الوحدات", empty: "لا توجد وحدات للمقارنة. اختر حتى ٣ وحدات من قائمة كل الوحدات.", scene: "المكان" },
     table: {
       title: "كل الوحدات",
       link: "كل الوحدات",
@@ -138,6 +141,7 @@ const TEXT: Record<ViewerLocale, ViewerText> = {
     },
     zoom: { in: "Zoom in", out: "Zoom out", reset: "1×" },
     share: { button: "Share", copied: "Unit link copied" },
+    compare: { title: "Compare units", empty: "No units to compare. Pick up to 3 units from the list of all units.", scene: "Location" },
     table: {
       title: "All units",
       link: "All units",

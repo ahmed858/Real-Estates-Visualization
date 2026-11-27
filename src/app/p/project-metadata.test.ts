@@ -28,6 +28,8 @@ describe("project metadata", () => {
     expect(projectMetadata(config, { kind: "scene", sceneId: scene.id }, "en")?.title).toBe(`${scene.title.en} · Garden Residence`);
     expect(projectMetadata(config, { kind: "scene", sceneId: config.root.id }, "en")?.title).toBe("Garden Residence");
     expect(projectMetadata(config, { kind: "units" }, "en")?.title).toBe("All units · Garden Residence");
+    expect(projectMetadata(config, { kind: "compare" }, "en")?.title).toBe("Compare units · Garden Residence");
+    expect(projectMetadata(config, { kind: "compare" }, "ar")?.title).toBe("مقارنة الوحدات · جاردن ريزيدنس");
     const en = await loadProjectMetadata(projects, request("demo-residence", undefined, "en"), "units");
     expect(en.description).toBe("Interactive floor plans of Garden Residence: browse the floors and see which units are available.");
   });
