@@ -8,28 +8,35 @@ import { buildDemoVillaProject, errorsOf, validateProject, warningsOf, writeProj
 const files = buildDemoVillaProject();
 
 describe("buildDemoVillaProject", () => {
-  it("contains the config, sheet, logo, facade and one plan per floor", () => {
+  it("contains the config, sheet, logo, facade, one plan per floor and the turntable frames", () => {
     expect([...files.keys()].sort()).toEqual([
       "images/facade.svg",
       "images/floor-first.svg",
       "images/floor-ground.svg",
       "images/floor-roof.svg",
       "images/logo.svg",
+      "images/turntable.svg",
       "project.json",
+      ...Array.from({ length: 24 }, (_, i) => `rotations/turntable/frame-${String(i + 1).padStart(2, "0")}.svg`),
       "units.xlsx",
     ]);
   });
 
-  it("has a valid config: facade → 3 floors → 5 units", () => {
+  it("has a valid config: facade → 3 floors → 5 units, plus the turntable", () => {
     const parsed = parseProjectConfig(JSON.parse(files.get("project.json") as string));
     if (!parsed.ok) throw new Error(JSON.stringify(parsed.errors));
     const root = parsed.value.root;
-    expect(root.hotspots.map((h) => h.target)).toEqual([{ scene: "ground" }, { scene: "first" }, { scene: "roof" }]);
+    expect(root.hotspots.map((h) => h.target)).toEqual([{ scene: "ground" }, { scene: "first" }, { scene: "roof" }, { scene: "turntable" }]);
     expect(root.children.map((c) => [c.id, c.hotspots.map((h) => h.target)])).toEqual([
       ["ground", [{ unit: "G-01" }, { unit: "G-02" }]],
       ["first", [{ unit: "F-01" }, { unit: "F-02" }]],
       ["roof", [{ unit: "R-01" }]],
+      ["turntable", [{ unit: "G-01" }, { unit: "G-02" }, { unit: "F-01" }, { unit: "F-02" }]],
     ]);
+    const turntable = root.children[3];
+    expect(turntable.type).toBe("rotation-360");
+    expect(turntable.rotation).toMatchObject({ frames: "rotations/turntable/frame-{index}.svg", count: 24 });
+    for (const h of turntable.hotspots) expect(h.points).toEqual(h.frames?.["1"]);
   });
 
   it("uses image sizes that match the SVG files", () => {
@@ -37,6 +44,11 @@ describe("buildDemoVillaProject", () => {
     for (const scene of [config.root, ...config.root.children]) {
       const svg = files.get(scene.image.path) as string;
       expect(svg).toContain(`width="${scene.image.width}" height="${scene.image.height}"`);
+    }
+    const { rotation } = config.root.children[3];
+    for (let n = 1; n <= rotation.count; n++) {
+      const svg = files.get(`rotations/turntable/frame-${String(n).padStart(2, "0")}.svg`) as string;
+      expect(svg).toContain(`width="${rotation.width}" height="${rotation.height}"`);
     }
   });
 

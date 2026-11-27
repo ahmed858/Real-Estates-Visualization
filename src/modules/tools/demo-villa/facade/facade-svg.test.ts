@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { buildFacadeGeometry, buildVillaGeometry, facadeBandPolygons, renderFacadeSvg } from "../../index";
 import { polygonArea } from "../geometry/rect";
+import { facadeFrame, turntableButtonPolygon } from "./facade-svg";
 import { points } from "../svg/svg";
 
 const villa = buildVillaGeometry();
@@ -10,6 +11,17 @@ const svg = renderFacadeSvg(villa);
 describe("facade", () => {
   it("matches the committed drawing", async () => {
     await expect(svg).toMatchFileSnapshot("./__snapshots__/facade.svg");
+  });
+
+  it("draws the 360° view button exactly where its hotspot is, below the building and inside the image", () => {
+    const button = turntableButtonPolygon(villa);
+    const [[x0, y0], , [x1, y1]] = button;
+    expect(svg).toContain(`<g id="turntable-button"><rect x="${x0}" y="${y0}" width="${x1 - x0}" height="${y1 - y0}"`);
+    const frame = facadeFrame(facade);
+    const groundY = frame.toPx([facade.left, 0])[1];
+    expect(y0).toBeGreaterThan(groundY);
+    expect(x1).toBeLessThanOrEqual(frame.width);
+    expect(y1).toBeLessThanOrEqual(frame.height);
   });
 
   it("has one band per floor, stacked without gaps or overlaps", () => {
