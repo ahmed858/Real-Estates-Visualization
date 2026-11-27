@@ -34,8 +34,8 @@ config root (for example `root.children[0].hotspots[1].target.scene`) and a
 | `currency` | string | yes | 3-letter ISO 4217 code, e.g. `EGP`, `SAR`, `AED`. |
 | `contact.whatsapp` | string | yes | Sales WhatsApp number in international form: `+` then 8 to 15 digits, e.g. `+201001234567`. |
 | `branding.logo` | file path | yes | Logo image, e.g. `images/logo.svg`. |
-| `branding.primaryColor` | hex colour | yes | 6-digit hex, e.g. `#1a6b4f`. |
-| `branding.accentColor` | hex colour | yes | 6-digit hex, e.g. `#c89b3c`. |
+| `branding.primaryColor` | hex colour | yes | 6-digit hex, e.g. `#1a6b4f`. Glow of scene hotspots; `npm run validate` warns if it looks like a status colour. |
+| `branding.accentColor` | hex colour | yes | 6-digit hex, e.g. `#c89b3c`. Text and lines on the dark stage; `npm run validate` warns below 4.5:1 contrast on the stage or if it looks like a status colour. |
 
 ### Units source
 

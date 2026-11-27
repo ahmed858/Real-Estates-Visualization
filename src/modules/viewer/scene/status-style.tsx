@@ -5,6 +5,7 @@
 // Contrast against white (WCAG 1.4.11 asks 3:1 for graphics):
 // available #2b8a3e 4.4:1 · reserved #b35c00 4.7:1 · sold #c92a2a 5.5:1 · scene #1864ab 6.1:1.
 import type { CSSProperties } from "react";
+import { STATUS_COLORS } from "@/modules/domain";
 import type { UnitStatus } from "@/modules/schema";
 
 export interface HotspotStyle {
@@ -17,9 +18,9 @@ export interface HotspotStyle {
 }
 
 export const STATUS_STYLE: Record<UnitStatus | "scene", HotspotStyle> = {
-  available: { color: "#2b8a3e" },
-  reserved: { color: "#b35c00", dash: "8 5" },
-  sold: { color: "#c92a2a", hatch: true },
+  available: { color: STATUS_COLORS.available },
+  reserved: { color: STATUS_COLORS.reserved, dash: "8 5" },
+  sold: { color: STATUS_COLORS.sold, hatch: true },
   scene: { color: "#1864ab" },
 };
 

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ProjectSourceError, type LoadedProject } from "@/modules/data-sources";
 import { createSceneTree } from "@/modules/domain";
-import { FLOOR_PARAM, LANG_PARAM, LocaleSwitch, ProjectHeader, UNIT_PARAM, FilteredUnitsTable, StaleDataNote, ViewerMessage, resolveLocale, unitTableRows, viewerText, withLocale } from "@/modules/viewer";
+import { brandStyle, FLOOR_PARAM, LANG_PARAM, LocaleSwitch, ProjectHeader, UNIT_PARAM, FilteredUnitsTable, StaleDataNote, ViewerMessage, resolveLocale, unitTableRows, viewerText, withLocale } from "@/modules/viewer";
 import { projectFileUrl, projects, sceneUrl, type ProjectViewProps } from "./project-view";
 
 export async function UnitsView({ params, searchParams }: ProjectViewProps) {
@@ -29,7 +29,7 @@ export async function UnitsView({ params, searchParams }: ProjectViewProps) {
     return withLocale(`${sceneUrl(slug, sceneId, tree.root.id)}?${search}`, locale, defaultLocale);
   });
   const name = config.project.name[locale];
-  const style = { "--brand-primary": config.project.branding.primaryColor, "--brand-accent": config.project.branding.accentColor } as React.CSSProperties;
+  const style = brandStyle({ primary: config.project.branding.primaryColor, accent: config.project.branding.accentColor });
 
   return (
     <div lang={locale} dir={text.dir} style={style} className="flex min-h-screen flex-1 flex-col bg-zinc-950 text-zinc-100">

@@ -26,7 +26,7 @@ export function SceneFilter({ units, locale }: SceneFilterProps) {
         type="button"
         aria-expanded={open}
         onClick={() => setOpen((o) => !o)}
-        className={`rounded-md border px-3 py-1 text-sm font-medium hover:bg-white/10 ${active ? "border-[var(--brand-accent,#e4c98f)] text-[var(--brand-accent,#e4c98f)]" : "border-white/30 text-white"}`}
+        className={`rounded-md border px-3 py-1 text-sm font-medium ${active ? "border-[var(--brand-accent,#e4c98f)] bg-[var(--brand-accent,#e4c98f)] text-[var(--brand-on-accent,#000000)] hover:opacity-90" : "border-white/30 text-white hover:bg-white/10"}`}
       >
         {active ? text.table.filters.toggleActive : text.table.filters.toggle}
       </button>

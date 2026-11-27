@@ -2,10 +2,10 @@
 // Shared by `npm run validate` (tools) and the editor's live problem list.
 import type { ProjectConfig, UnitRow, UnitsSource } from "@/modules/schema";
 import type { SceneTree } from "../scene-tree/scene-tree";
-import type { Finding } from "./report";
+import { checkBranding } from "./brand-checks";
+import { CONFIG_FILE, UNITS_FILE, type Finding } from "./report";
 
-export const CONFIG_FILE = "project.json";
-export const UNITS_FILE = "units.xlsx";
+export { CONFIG_FILE, UNITS_FILE };
 
 /** How findings name where the unit rows came from. */
 export function unitsLabel(units: UnitsSource): string {
@@ -115,9 +115,18 @@ export function referencedFiles(config: ProjectConfig, tree: SceneTree, units: r
   ];
 }
 
-/** Every check that needs a valid config and valid unit rows, except file existence (that needs I/O). */
-export function checkProjectFit(tree: SceneTree, units: readonly UnitRow[] | undefined, sheet: string = UNITS_FILE): Finding[] {
+/**
+ * Every check that needs a valid config and valid unit rows, except file existence (that needs I/O).
+ * Pass `branding` to also check the brand colours (see `checkBranding`).
+ */
+export function checkProjectFit(
+  tree: SceneTree,
+  units: readonly UnitRow[] | undefined,
+  sheet: string = UNITS_FILE,
+  branding?: ProjectConfig["project"]["branding"],
+): Finding[] {
   return [
+    ...(branding ? checkBranding(branding) : []),
     ...scenesAreReachable(tree),
     ...(units ? [...hotspotUnitsExistInSheet(tree, units, sheet), ...sheetUnitsArePlaced(tree, units, sheet), ...sheetScenesMatch(tree, units, sheet)] : []),
   ];

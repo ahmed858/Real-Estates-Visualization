@@ -97,7 +97,7 @@ export async function validateProject(dir: string, options: ValidateOptions = {}
   const config = parsed?.ok ? parsed.value : undefined;
   if (config) {
     const tree = createSceneTree(config);
-    findings.push(...checkProjectFit(tree, sheet.units, label));
+    findings.push(...checkProjectFit(tree, sheet.units, label, config.project.branding));
     const units = sheet.units ?? [];
     for (const ref of referencedFiles(config, tree, units, label)) {
       if (!(await exists(join(dir, ref.path)))) {

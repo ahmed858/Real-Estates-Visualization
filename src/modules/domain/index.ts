@@ -38,5 +38,9 @@ export {
   unitsLabel,
 } from "./validation/checks";
 export type { FileReference } from "./validation/checks";
+export { checkBranding, MIN_STAGE_CONTRAST, MIN_STATUS_DIFFERENCE } from "./validation/brand-checks";
 export { errorsOf, formatReport, warningsOf } from "./validation/report";
 export type { Finding, Severity, ValidationReport } from "./validation/report";
+export { BLACK, colorDifference, contrastRatio, parseHexColor, readableTextColor, relativeLuminance, WHITE } from "./colour/contrast";
+export type { Rgb } from "./colour/contrast";
+export { STAGE_COLOR, STATUS_COLORS } from "./colour/palette";

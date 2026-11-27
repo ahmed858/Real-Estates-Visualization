@@ -18,6 +18,8 @@ export { HoverCard, formatPrice } from "./scene/hover-card";
 export type { HoverCardContent, HoverCardProps, SceneSummary, UnitSummary } from "./scene/hover-card";
 export { MOBILE_BREAKPOINT_PX, ViewerLayout } from "./layout/viewer-layout";
 export type { ViewerLayoutProps } from "./layout/viewer-layout";
+export { brandStyle } from "./layout/brand-style";
+export type { BrandColors } from "./layout/brand-style";
 export { ProjectHeader } from "./layout/project-header";
 export type { ProjectHeaderProps } from "./layout/project-header";
 export { StatusLegend, StatusSwatch } from "./layout/status-legend";
