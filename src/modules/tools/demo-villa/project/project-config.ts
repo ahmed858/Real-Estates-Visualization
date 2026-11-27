@@ -3,7 +3,7 @@
 import type { ProjectConfigInput, SceneInput } from "@/modules/schema";
 import { buildFacadeGeometry } from "../facade/facade-geometry";
 import { rotationFramePath } from "@/modules/domain";
-import { facadeBandPolygons, facadeFrame, turntableButtonPolygon } from "../facade/facade-svg";
+import { facadeBandPolygons, facadeFrame, modelButtonPolygon, turntableButtonPolygon } from "../facade/facade-svg";
 import type { FloorGeometry, Point, VillaGeometry } from "../geometry/types";
 import { floorPlanFrame } from "../svg/frame";
 import { TURNTABLE_FRAMES, TURNTABLE_HEIGHT, TURNTABLE_WIDTH } from "../turntable/turntable-camera";
@@ -18,6 +18,8 @@ export const TURNTABLE_SCENE_ID = "turntable";
 export const turntablePosterPath = "images/turntable.svg";
 export const TURNTABLE_ROTATION = { frames: "rotations/turntable/frame-{index}.svg", count: TURNTABLE_FRAMES } as const;
 export const turntableFramePath = (frame: number) => rotationFramePath(TURNTABLE_ROTATION, frame);
+export const MODEL_SCENE_ID = "model";
+export const MODEL_PATH = "models/villa.glb";
 
 const px = (n: number) => Math.round(n * 100) / 100;
 const pxPoint = ([x, y]: Point | [number, number]): [number, number] => [px(x), px(y)];
@@ -55,6 +57,28 @@ function turntableScene(villa: VillaGeometry): SceneInput {
   };
 }
 
+/**
+ * The 3D model scene: models/villa.glb with a hotspot per apartment mesh. Its
+ * poster is the turntable's first frame, so each hotspot's poster polygon is
+ * the apartment's outline on that frame.
+ */
+function modelScene(villa: VillaGeometry): SceneInput {
+  return {
+    id: MODEL_SCENE_ID,
+    kind: "other",
+    type: "model-3d",
+    title: { ar: "نموذج ثلاثي الأبعاد", en: "3D model" },
+    image: { path: turntablePosterPath, width: TURNTABLE_WIDTH, height: TURNTABLE_HEIGHT },
+    model: { path: MODEL_PATH },
+    hotspots: turntableUnitFrames(villa).map(({ code, frames }) => ({
+      id: code.toLowerCase(),
+      points: frames["1"],
+      mesh: code,
+      target: { unit: code },
+    })),
+  };
+}
+
 export function buildDemoVillaConfig(villa: VillaGeometry): ProjectConfigInput {
   const frame = facadeFrame(buildFacadeGeometry(villa));
   return {
@@ -75,8 +99,9 @@ export function buildDemoVillaConfig(villa: VillaGeometry): ProjectConfigInput {
       hotspots: [
         ...facadeBandPolygons(villa).map((b) => ({ id: b.floorId, points: b.points.map(pxPoint), target: { scene: b.floorId } })),
         { id: TURNTABLE_SCENE_ID, points: turntableButtonPolygon(villa).map(pxPoint), target: { scene: TURNTABLE_SCENE_ID } },
+        { id: MODEL_SCENE_ID, points: modelButtonPolygon(villa).map(pxPoint), target: { scene: MODEL_SCENE_ID } },
       ],
-      children: [...villa.floors.map((f) => floorScene(villa, f)), turntableScene(villa)],
+      children: [...villa.floors.map((f) => floorScene(villa, f)), turntableScene(villa), modelScene(villa)],
     },
   };
 }

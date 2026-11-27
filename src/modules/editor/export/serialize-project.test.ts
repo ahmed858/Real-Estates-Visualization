@@ -75,7 +75,7 @@ describe("serializeProjectConfig", () => {
         children: [
           ...config.root.children,
           { id: "spin", kind: "building", type: "rotation-360", title: { ar: "دوران", en: "Spin" }, image: { path: "images/p.png", width: 10, height: 10 }, rotation: { frames: "rotations/spin/f{index}.jpg", count: 4, width: 10, height: 10 }, hotspots: [{ id: "u", points: sq, frames: { "2": sq }, target: { scene: config.root.id } }], children: [] },
-          { id: "model", kind: "building", type: "model-3d", title: { ar: "نموذج", en: "Model" }, image: { path: "images/p.png", width: 10, height: 10 }, model: { path: "models/m.glb" }, hotspots: [{ id: "u", points: sq, mesh: "Unit_U", target: { scene: config.root.id } }], children: [] },
+          { id: "tower-model", kind: "building", type: "model-3d", title: { ar: "نموذج", en: "Model" }, image: { path: "images/p.png", width: 10, height: 10 }, model: { path: "models/m.glb" }, hotspots: [{ id: "u", points: sq, mesh: "Unit_U", target: { scene: config.root.id } }], children: [] },
         ],
       },
     };

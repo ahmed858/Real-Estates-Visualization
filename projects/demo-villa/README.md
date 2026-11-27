@@ -17,6 +17,10 @@ unless the generator changed.
   frames (`rotations/turntable/`, one every 15°, frame 1 = south side, also
   the poster `images/turntable.svg`) with the four apartments drawn on every
   frame where their outer walls show.
+- A "3D model" button next to it opens a `model-3d` scene of
+  `models/villa.glb` (about 12 KB, generated: the same block as boxes, one
+  node per apartment `G-01` … `F-02`, plus `stair` and `roof`), with one mesh
+  hotspot per apartment. Its poster is the turntable's first frame.
 - 5 units: `G-01`, `G-02` (ground, each with half of the courtyard), `F-01`,
   `F-02` (first), `R-01` (roof annex with terraces). Statuses are mixed:
   available, reserved and sold.

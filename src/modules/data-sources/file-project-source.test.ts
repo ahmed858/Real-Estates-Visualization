@@ -28,7 +28,7 @@ describe("FileProjectSource", () => {
   it("loads the demo villa: config and units", async () => {
     const project = await new FileProjectSource(projectsDir).load("demo-villa");
     expect(project.config.project.slug).toBe("demo-villa");
-    expect(project.config.root.children.map((c) => c.id)).toEqual(["ground", "first", "roof", "turntable"]);
+    expect(project.config.root.children.map((c) => c.id)).toEqual(["ground", "first", "roof", "turntable", "model"]);
     expect(project.units.map((u) => [u.code, u.status])).toEqual([
       ["G-01", "available"],
       ["G-02", "reserved"],
