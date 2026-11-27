@@ -108,6 +108,8 @@ Target forms:
 The premium views keep everything above: the scene's `image` and hotspot
 `points` still make a working 2D scene (the poster), and units, targets and
 the side panel work the same. Only the extra blocks below are new.
+What to ask the client or the 3D artist for, and how to add and check a
+premium scene, is in [premium.md](premium.md).
 
 **`rotation-360`**: a turntable, frames taken around the building in order.
 
