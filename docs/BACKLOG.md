@@ -1080,7 +1080,7 @@ to clients, plus the two open questions:
 - Verify: `npm run check`, `npm run e2e`.
 
 ### U-1004 Release notes for merging to main
-- Phase 10 · Docs · Depends on: U-1003 · Gated: no · Status: `todo`
+- Phase 10 · Docs · Depends on: U-1003 · Gated: no · Status: `done`
 - `docs/RELEASE.md`: what `develop` has that `main` does not, grouped by
   what a visitor, a client and the owner see, plus the environment
   variables a production deploy needs (from `.env.example`) and a short

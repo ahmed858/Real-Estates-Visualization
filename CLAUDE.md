@@ -74,5 +74,7 @@ npm run e2e       # browser smoke tests (Playwright) against the last build;
 - `docs/QUESTIONS.md`: open questions for the owner.
 - `docs/WORKLOG.md`: one line per agent run.
 - `docs/ARCHITECTURE.md`: modules, dependencies and patterns.
+- `docs/RELEASE.md`: what `develop` would ship to `main`. Every merged unit
+  that a visitor, client or the owner would notice adds a line there.
 - `projects/<slug>/`: data for one client project (first: `demo-villa`).
 - `.agent/PAUSE`: if this file exists the hourly agent stops immediately.
