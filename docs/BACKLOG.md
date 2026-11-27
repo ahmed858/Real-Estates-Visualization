@@ -956,7 +956,7 @@ Rules that keep the 2D core unchanged:
 - Verify: `npm run check`.
 
 ### U-910 Rotation viewer: keep `?frame=` on first load
-- Phase 9 · `viewer` · Depends on: U-903 · Gated: no · Status: `todo`
+- Phase 9 · `viewer` · Depends on: U-903 · Gated: no · Status: `done`
 - Found by U-904 on the demo turntable: opening `/p/demo-villa/turntable?frame=3`
   moves the slider to 3 but keeps showing frame 1 and its hotspots, because
   `Rotation360Scene` reads `window.location` in its first render, so the
