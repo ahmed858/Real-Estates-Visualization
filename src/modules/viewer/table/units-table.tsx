@@ -8,6 +8,7 @@ import type { ViewerLocale } from "../layout/viewer-text";
 import { viewerText } from "../layout/viewer-text";
 import { StatusSwatch } from "../layout/status-legend";
 import { formatPrice, type UnitSummary } from "../scene/hover-card";
+import { MAX_COMPARED } from "../compare/compare-params";
 import { sortUnits, UNIT_SORT_KEYS, type SortDirection, type UnitSortKey } from "./sort-units";
 
 export interface UnitTableRow extends UnitSummary {
@@ -21,7 +22,13 @@ export interface UnitsTableProps {
   locale: ViewerLocale;
 }
 
-export function UnitsTable({ rows, currency, locale }: UnitsTableProps) {
+export interface UnitPicking {
+  /** Codes picked for comparing; adds a checkbox column. */
+  picked: readonly string[];
+  onToggle: (code: string) => void;
+}
+
+export function UnitsTable({ rows, currency, locale, picking }: UnitsTableProps & { picking?: UnitPicking }) {
   const text = viewerText(locale);
   const [sort, setSort] = useState<{ key: UnitSortKey; direction: SortDirection }>({ key: "code", direction: "asc" });
   const num = new Intl.NumberFormat(locale === "ar" ? "ar-EG" : "en-US");
@@ -34,6 +41,11 @@ export function UnitsTable({ rows, currency, locale }: UnitsTableProps) {
       <caption className="sr-only">{text.table.title}</caption>
       <thead>
         <tr className="border-b border-white/15 text-zinc-400">
+          {picking && (
+            <td className={cell}>
+              <span className="sr-only">{text.compare.title}</span>
+            </td>
+          )}
           {UNIT_SORT_KEYS.map((key) => {
             const active = sort.key === key;
             return (
@@ -52,6 +64,18 @@ export function UnitsTable({ rows, currency, locale }: UnitsTableProps) {
       <tbody>
         {sorted.map((u) => (
           <tr key={u.code} data-unit={u.code} className="border-b border-white/5 hover:bg-white/5">
+            {picking && (
+              <td className={cell}>
+                <input
+                  type="checkbox"
+                  aria-label={text.compare.pick(u.code)}
+                  checked={picking.picked.includes(u.code)}
+                  disabled={!picking.picked.includes(u.code) && picking.picked.length >= MAX_COMPARED}
+                  onChange={() => picking.onToggle(u.code)}
+                  className="size-4 accent-[var(--brand-accent,#e4c98f)] disabled:opacity-30"
+                />
+              </td>
+            )}
             <td className={cell}>
               <Link href={u.href} className="font-semibold text-white underline-offset-2 hover:underline">
                 {u.code}

@@ -1,5 +1,7 @@
 // Side panel content for a selected unit: its facts, a WhatsApp enquiry
 // button, a share button, plan image and notes.
+import Link from "next/link";
+import { PICK_PARAM, withCodes } from "../compare/compare-params";
 import { formatPrice, type UnitSummary } from "../scene/hover-card";
 import type { ViewerLocale, ViewerText } from "../layout/viewer-text";
 import { WhatsAppButton } from "../contact/whatsapp-button";
@@ -15,9 +17,11 @@ export interface UnitDetailsProps {
   enquiryHref?: string;
   /** Share and copy functions; defaults to the browser's. */
   shareTarget?: ShareTarget;
+  /** The units page, e.g. "/p/demo/units?lang=en"; adds a link to compare this unit with others. */
+  unitsHref?: string;
 }
 
-export function UnitDetails({ unit, text, locale, currency, onClose, enquiryHref, shareTarget }: UnitDetailsProps) {
+export function UnitDetails({ unit, text, locale, currency, onClose, enquiryHref, shareTarget, unitsHref }: UnitDetailsProps) {
   const num = new Intl.NumberFormat(locale === "ar" ? "ar-EG" : "en-US");
   const rows: [string, string][] = [
     [text.card.status, text.status[unit.status]],
@@ -50,6 +54,11 @@ export function UnitDetails({ unit, text, locale, currency, onClose, enquiryHref
         ))}
       </dl>
       {enquiryHref && <WhatsAppButton href={enquiryHref} label={text.contact.unitButton} />}
+      {unitsHref && (
+        <Link href={withCodes(unitsHref, PICK_PARAM, [unit.code])} className="text-sm text-zinc-300 underline-offset-2 hover:text-white hover:underline">
+          {text.compare.withOthers}
+        </Link>
+      )}
       {unit.planImageUrl && (
         // eslint-disable-next-line @next/next/no-img-element
         <img src={unit.planImageUrl} alt={text.panel.plan(unit.code)} className="w-full rounded border border-white/10 bg-white" />

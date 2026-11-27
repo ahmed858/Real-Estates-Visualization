@@ -784,7 +784,7 @@ service or send visitor data anywhere are gated.
 - Verify: `npm run check`.
 
 ### U-808 Pick units to compare
-- Phase 8 · `viewer` · Depends on: U-802 · Gated: no · Status: `todo`
+- Phase 8 · `viewer` · Depends on: U-802 · Gated: no · Status: `done`
 - A checkbox per row in the units table (at most 3 checked, the rest
   disabled once 3 are picked) with a "Compare (n)" link to
   `/p/<slug>/compare?units=...`, and a "Compare" link in the unit details

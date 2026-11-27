@@ -38,7 +38,7 @@ export async function UnitsView({ params, searchParams }: ProjectViewProps) {
           </Link>
         </div>
         {project.unitsStale && <StaleDataNote text={text} />}
-        <FilteredUnitsTable rows={rows} currency={config.project.currency} locale={locale} />
+        <FilteredUnitsTable rows={rows} currency={config.project.currency} locale={locale} compareBase={withLocale(`/p/${slug}/compare`, locale, defaultLocale)} />
       </main>
     </div>
   );
