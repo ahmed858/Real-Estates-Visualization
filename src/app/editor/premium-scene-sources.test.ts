@@ -12,7 +12,7 @@ describe("premium scene sources", () => {
     const [folder] = await listRotationFolders(join(process.cwd(), "projects"), "demo-villa");
     const loaded = await allProjects.load("demo-villa");
     const saved = createSceneTree(loaded.config).scenes.find((s) => s.type === "rotation-360");
-    const { start: _start, ...rotation } = saved!.rotation!;
-    expect(rotationFromFolder(folder)).toEqual({ ok: true, rotation });
+    // The folder gives everything but `start`, which the owner may set afterwards.
+    expect(rotationFromFolder(folder)).toEqual({ ok: true, rotation: { ...saved!.rotation!, start: undefined } });
   });
 });
