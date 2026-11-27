@@ -18,6 +18,7 @@ import { MeshList } from "./mesh-list";
 import { nextHotspotId } from "./image-point";
 import { hotspotIds, targetOptions } from "../targets/target-options";
 import { TargetPicker } from "../targets/target-picker";
+import type { FramesFolder } from "../scenes/rotation-folder";
 
 interface SceneWorkspaceBaseProps {
   sceneId: string;
@@ -26,6 +27,9 @@ interface SceneWorkspaceBaseProps {
   unitCodes?: readonly string[];
   /** Images of the project folder with their sizes, for adding a child scene. */
   images?: readonly SceneImage[];
+  /** Frames folders under rotations/ and .glb files under models/, for adding a premium child scene. */
+  rotations?: readonly FramesFolder[];
+  models?: readonly string[];
   /** On a model-3d scene: node names read from its .glb, offered as meshes to link. */
   meshNames?: readonly string[];
 }
@@ -64,7 +68,7 @@ function onFrame(command: EditorCommand, frame: number | undefined): EditorComma
   return command;
 }
 
-export function SceneWorkspace({ state, dispatch, sceneId, imageUrl, unitCodes = [], images = [], meshNames, initialSelectedId }: SceneWorkspaceProps) {
+export function SceneWorkspace({ state, dispatch, sceneId, imageUrl, unitCodes = [], images = [], rotations, models, meshNames, initialSelectedId }: SceneWorkspaceProps) {
   const [selected, setSelected] = useState<string | undefined>(initialSelectedId);
   const [shownFrame, setFrame] = useState<number>();
   const doc = state.present;
@@ -233,7 +237,7 @@ export function SceneWorkspace({ state, dispatch, sceneId, imageUrl, unitCodes =
         ) : (
           <p className="text-sm text-zinc-400">None yet.</p>
         )}
-        <AddSceneForm config={doc.config} images={images} onAdd={(child) => dispatch({ type: "do", command: { type: "add-scene", parentId: sceneId, scene: child } })} />
+        <AddSceneForm config={doc.config} images={images} rotations={rotations} models={models} onAdd={(child) => dispatch({ type: "do", command: { type: "add-scene", parentId: sceneId, scene: child } })} />
       </section>
     </section>
   );

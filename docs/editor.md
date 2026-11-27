@@ -50,6 +50,10 @@ Under **Child scenes**, pick an image from the images folder, the kind
 The id is suggested from the English title. For one plan that serves many
 floors, tick **Typical floor** and give the floor range and the unit code
 template, e.g. `{floor}{suffix}` makes floor 3, suffix `02` into unit `302`.
+**Shown as** makes the scene a `360° rotation` (pick a frames folder under
+`rotations/`; count and frame size are read from the files) or a `3D model`
+(pick a `.glb` under `models/`); the image is then the poster. See
+[premium.md](premium.md#3-add-the-scene).
 The new scene appears in the scene list; open it to draw on it.
 
 ## 4. Draw the shapes

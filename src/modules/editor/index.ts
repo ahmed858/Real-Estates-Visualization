@@ -23,7 +23,9 @@ export type { CodeOption, SceneOption, TargetKind, TargetOptions } from "./targe
 export { AddSceneForm } from "./scenes/add-scene-form";
 export type { AddSceneFormProps } from "./scenes/add-scene-form";
 export { buildScene } from "./scenes/build-scene";
-export type { BuildSceneResult, SceneFormInput } from "./scenes/build-scene";
+export type { BuildSceneResult, SceneFormInput, SceneRendererChoice } from "./scenes/build-scene";
+export { rotationFromFolder } from "./scenes/rotation-folder";
+export type { FrameFile, FramesFolder, RotationFromFolderResult } from "./scenes/rotation-folder";
 export { EditorSession } from "./session/editor-session";
 export type { EditorSessionProps } from "./session/editor-session";
 export { editorSceneHref, editorSceneItems, SCENE_PARAM, sceneIdFromSearch } from "./session/scene-items";

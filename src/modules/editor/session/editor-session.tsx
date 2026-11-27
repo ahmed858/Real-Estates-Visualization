@@ -12,6 +12,7 @@ import { DownloadButton } from "../export/download-button";
 import { SceneWorkspace } from "../canvas/editor-workspace";
 import { createEditorState, editorReducer } from "../state/editor-state";
 import { SceneList } from "../workspace/scene-list";
+import type { FramesFolder } from "../scenes/rotation-folder";
 import { editorSceneHref, editorSceneItems, sceneIdFromSearch } from "./scene-items";
 
 export interface EditorSessionProps {
@@ -24,6 +25,9 @@ export interface EditorSessionProps {
   fileBaseUrl: string;
   unitCodes?: readonly string[];
   images?: readonly SceneImage[];
+  /** Frames folders under rotations/ (with frame sizes) and .glb files under models/, for adding premium scenes. */
+  rotations?: readonly FramesFolder[];
+  models?: readonly string[];
   /** Rows of the units source, for the live checks; undefined when it could not be read. */
   units?: readonly UnitRow[];
   /** Project-relative paths of files that exist, for the live checks. */
@@ -32,7 +36,7 @@ export interface EditorSessionProps {
   modelNodeNames?: Readonly<Record<string, readonly string[]>>;
 }
 
-export function EditorSession({ config, initialSceneId, editorPath, fileBaseUrl, unitCodes, images, units, existingFiles = [], modelNodeNames = {} }: EditorSessionProps) {
+export function EditorSession({ config, initialSceneId, editorPath, fileBaseUrl, unitCodes, images, rotations, models, units, existingFiles = [], modelNodeNames = {} }: EditorSessionProps) {
   const [state, dispatch] = useReducer(editorReducer, config, createEditorState);
   const [openId, setOpenId] = useState(initialSceneId);
   // A problem link selects its hotspot: remount the workspace with that selection.
@@ -66,7 +70,7 @@ export function EditorSession({ config, initialSceneId, editorPath, fileBaseUrl,
         <DownloadButton config={checkedConfig} errorCount={findings.filter((f) => f.severity === "error").length} />
       </div>
       <main>
-        <SceneWorkspace key={`${sceneId}#${focus.n}`} initialSelectedId={focus.hotspotId} state={state} dispatch={dispatch} sceneId={sceneId} imageUrl={`${fileBaseUrl}${scene.image.path}`} unitCodes={unitCodes} images={images} meshNames={scene.model ? modelNodeNames[scene.model.path] : undefined} />
+        <SceneWorkspace key={`${sceneId}#${focus.n}`} initialSelectedId={focus.hotspotId} state={state} dispatch={dispatch} sceneId={sceneId} imageUrl={`${fileBaseUrl}${scene.image.path}`} unitCodes={unitCodes} images={images} rotations={rotations} models={models} meshNames={scene.model ? modelNodeNames[scene.model.path] : undefined} />
       </main>
     </div>
   );

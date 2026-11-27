@@ -5,7 +5,7 @@
 import { access } from "node:fs/promises";
 import { join } from "node:path";
 import { notFound } from "next/navigation";
-import { listProjectImages, readModelNodeNames } from "@/modules/data-sources";
+import { listProjectImages, listProjectModels, listRotationFolders, readModelNodeNames } from "@/modules/data-sources";
 import { createSceneTree, referencedFiles } from "@/modules/domain";
 import { EditorSession } from "@/modules/editor";
 import { ViewerMessage } from "@/modules/viewer";
@@ -27,10 +27,13 @@ export async function EditorView({ params, searchParams }: EditorViewProps) {
   const tree = createSceneTree(state.project.config);
   const projectDir = join(process.cwd(), "projects", slug);
   const images = await listProjectImages(join(process.cwd(), "projects"), slug);
+  // Premium assets the add-scene form can use: frames folders (with frame sizes) and models.
+  const [rotations, models] = await Promise.all([listRotationFolders(join(process.cwd(), "projects"), slug), listProjectModels(join(process.cwd(), "projects"), slug)]);
   // Files the live checks may ask about: every image, plus whatever the saved project refers to.
   const referenced = referencedFiles(state.project.config, tree, state.project.units).map((r) => r.path);
   const present = await Promise.all(referenced.map((p) => access(join(projectDir, p)).then(() => p, () => undefined)));
-  const existingFiles = [...new Set([...images.map((i) => i.path), ...present.filter((p): p is string => p !== undefined)])];
+  const premiumFiles = [...rotations.flatMap((r) => r.files.map((f) => `${r.folder}/${f.name}`)), ...models];
+  const existingFiles = [...new Set([...images.map((i) => i.path), ...premiumFiles, ...present.filter((p): p is string => p !== undefined)])];
   // Node names of every model used by a model-3d scene, for linking meshes to hotspots.
   const modelPaths = [...new Set(tree.scenes.flatMap((s) => (s.type === "model-3d" && s.model ? [s.model.path] : [])))];
   const modelNodeNames = Object.fromEntries(await Promise.all(modelPaths.map(async (p) => [p, await readModelNodeNames(join(process.cwd(), "projects"), slug, p)] as const)));
@@ -48,6 +51,8 @@ export async function EditorView({ params, searchParams }: EditorViewProps) {
         fileBaseUrl={projectFileUrl(slug, "")}
         unitCodes={state.project.units.map((u) => u.code)}
         images={images}
+        rotations={rotations}
+        models={models}
         units={state.project.units}
         existingFiles={existingFiles}
         modelNodeNames={modelNodeNames}

@@ -80,3 +80,60 @@ describe("add-scene command", () => {
     expect(editorReducer(added, { type: "undo" }).present.config.root.children[0].children).toEqual([]);
   });
 });
+
+describe("buildScene for premium scenes", () => {
+  const frames = (names: string[], size = { width: 1600, height: 900 }) => ({ folder: "rotations/tower", files: names.map((name) => ({ name, ...size })) });
+  const numbered = (n: number, pad: number) => Array.from({ length: n }, (_, i) => `frame-${String(i + 1).padStart(pad, "0")}.jpg`);
+  const turntable = { ...input, id: "spin", kind: "facade" as const, titleEn: "360 view" };
+
+  it("builds a rotation-360 scene from a frames folder, with the image as poster", () => {
+    const result = buildScene(config(), turntable, image, { type: "rotation-360", folder: frames(numbered(12, 2)) });
+    expect(result).toMatchObject({
+      ok: true,
+      scene: { id: "spin", type: "rotation-360", image, rotation: { frames: "rotations/tower/frame-{index}.jpg", count: 12, width: 1600, height: 900 } },
+    });
+  });
+
+  it("accepts single-digit names when there are fewer than 10 frames", () => {
+    const result = buildScene(config(), turntable, image, { type: "rotation-360", folder: frames(numbered(3, 1)) });
+    expect(result).toMatchObject({ ok: true, scene: { rotation: { frames: "rotations/tower/frame-{index}.jpg", count: 3 } } });
+  });
+
+  it("refuses gaps in the numbering", () => {
+    const names = numbered(12, 2).filter((n) => n !== "frame-05.jpg").concat("frame-13.jpg");
+    expect(buildScene(config(), turntable, image, { type: "rotation-360", folder: frames(names) })).toEqual({
+      ok: false,
+      errors: [expect.stringMatching(/^rotation: rotations\/tower: 12 frames must be numbered 1 to 12 .*missing 5$/)],
+    });
+  });
+
+  it("refuses padding the viewer would not find, mixed names and unnumbered files", () => {
+    expect(buildScene(config(), turntable, image, { type: "rotation-360", folder: frames(numbered(12, 3)) })).toMatchObject({ ok: false, errors: [expect.stringContaining("with 2 digits")] });
+    expect(buildScene(config(), turntable, image, { type: "rotation-360", folder: frames(["frame-1.jpg", "shot-2.jpg"]) })).toMatchObject({ ok: false, errors: [expect.stringContaining("every frame must be named frame-<number>.jpg")] });
+    expect(buildScene(config(), turntable, image, { type: "rotation-360", folder: frames(["frame-1.jpg", "cover.jpg"]) })).toMatchObject({ ok: false, errors: [expect.stringContaining("not cover.jpg")] });
+    expect(buildScene(config(), turntable, image, { type: "rotation-360", folder: frames(["frame-1.jpg"]) })).toMatchObject({ ok: false, errors: [expect.stringContaining("at least 2 frames")] });
+  });
+
+  it("refuses frames of mixed sizes or unreadable size", () => {
+    const folder = { folder: "rotations/tower", files: [{ name: "frame-1.jpg", width: 1600, height: 900 }, { name: "frame-2.jpg", width: 800, height: 450 }] };
+    expect(buildScene(config(), turntable, image, { type: "rotation-360", folder })).toEqual({
+      ok: false,
+      errors: ["rotation: rotations/tower: every frame must be 1600×900 like frame-1.jpg, not frame-2.jpg (800×450)"],
+    });
+    const unreadable = { folder: "rotations/tower", files: [{ name: "frame-1.jpg", width: 1600, height: 900 }, { name: "frame-2.jpg" }] };
+    expect(buildScene(config(), turntable, image, { type: "rotation-360", folder: unreadable })).toMatchObject({ ok: false, errors: [expect.stringContaining("cannot read the size of frame-2.jpg")] });
+  });
+
+  it("asks for a folder when none is picked", () => {
+    expect(buildScene(config(), turntable, image, { type: "rotation-360", folder: undefined })).toEqual({ ok: false, errors: [expect.stringContaining("pick a frames folder")] });
+  });
+
+  it("builds a model-3d scene from a listed model, and asks for one when none is picked", () => {
+    expect(buildScene(config(), turntable, image, { type: "model-3d", modelPath: "models/tower.glb" })).toMatchObject({
+      ok: true,
+      scene: { type: "model-3d", image, model: { path: "models/tower.glb" } },
+    });
+    expect(buildScene(config(), turntable, image, { type: "model-3d", modelPath: undefined })).toEqual({ ok: false, errors: [expect.stringContaining("pick a .glb file")] });
+    expect(buildScene(config(), turntable, image, { type: "model-3d", modelPath: "images/tower.glb" })).toMatchObject({ ok: false, errors: [expect.stringMatching(/^model\.path: .*models\/ folder/)] });
+  });
+});

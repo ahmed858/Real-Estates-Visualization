@@ -1027,9 +1027,9 @@ to clients, plus the two open questions:
   (U-502), so nothing else waits for it.
 - Q-3 (refresh interval) has a working default: 60 seconds, overridable per
   project (U-504). No unit needed until the owner picks another value.
-- Premium scenes can only be added by editing `project.json` by hand: the
-  editor's add-scene form makes 2D scenes only (found while writing
-  `docs/premium.md`).
+- Premium scenes could only be added by editing `project.json` by hand: the
+  editor's add-scene form made 2D scenes only (found while writing
+  `docs/premium.md`; U-1001).
 - The 3D viewer has no demo: no committed project uses `model-3d`, so CI
   does not exercise it and it cannot be tried on the preview.
 - Browser behaviour (hydration, the lazily loaded 3D canvas, the turntable)
@@ -1039,7 +1039,7 @@ to clients, plus the two open questions:
   needs a short list of what a merge ships.
 
 ### U-1001 Add premium scenes from the editor
-- Phase 10 · `editor` · Depends on: U-909 · Gated: no · Status: `todo`
+- Phase 10 · `editor` · Depends on: U-909 · Gated: no · Status: `done`
 - The add-scene form gets a renderer choice: 2D image (as now), 360°
   rotation or 3D model. Rotation: pick a frames folder under `rotations/`
   from the project files; the form fills `frames` (with `{index}`), `count`
