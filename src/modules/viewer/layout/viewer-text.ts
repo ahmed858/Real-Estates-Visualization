@@ -43,6 +43,22 @@ export interface ViewerText {
   zoom: { in: string; out: string; reset: string };
   /** Share button of the unit panel; `copied` shows when the link went to the clipboard. */
   share: { button: string; copied: string };
+  /** The "Ask about this unit" form (sent to the project's webhook). */
+  lead: {
+    button: string;
+    title: (code: string) => string;
+    name: string;
+    phone: string;
+    message: string;
+    optional: string;
+    submit: string;
+    sending: string;
+    cancel: string;
+    sent: string;
+    invalid: { name: string; phone: string; message: string };
+    tooMany: string;
+    failed: string;
+  };
   /** The compare page. */
   compare: {
     title: string;
@@ -102,6 +118,21 @@ const TEXT: Record<ViewerLocale, ViewerText> = {
     },
     zoom: { in: "تكبير", out: "تصغير", reset: "١×" },
     share: { button: "مشاركة", copied: "تم نسخ رابط الوحدة" },
+    lead: {
+      button: "اطلب مكالمة عن الوحدة",
+      title: (c) => `اطلب مكالمة عن الوحدة ${c}`,
+      name: "الاسم",
+      phone: "رقم الموبايل",
+      message: "رسالة",
+      optional: "اختياري",
+      submit: "إرسال",
+      sending: "جارٍ الإرسال…",
+      cancel: "إلغاء",
+      sent: "تم الإرسال. سنتواصل معك قريبًا.",
+      invalid: { name: "اكتب اسمك.", phone: "اكتب رقمًا صحيحًا من ٧ إلى ١٥ رقمًا.", message: "الرسالة طويلة جدًا." },
+      tooMany: "أرسلت طلبات كثيرة. حاول بعد قليل أو تواصل معنا على واتساب.",
+      failed: "تعذر الإرسال. حاول مرة أخرى أو تواصل معنا على واتساب.",
+    },
     compare: { title: "مقارنة الوحدات", empty: "لا توجد وحدات للمقارنة. اختر حتى ٣ وحدات من قائمة كل الوحدات.", scene: "المكان", pick: (c) => `قارن الوحدة ${c}`, open: (n) => `قارن (${n})`, hint: "اختر وحدتين أو ثلاثًا للمقارنة.", withOthers: "قارن بوحدات أخرى" },
     table: {
       title: "كل الوحدات",
@@ -159,6 +190,21 @@ const TEXT: Record<ViewerLocale, ViewerText> = {
     },
     zoom: { in: "Zoom in", out: "Zoom out", reset: "1×" },
     share: { button: "Share", copied: "Unit link copied" },
+    lead: {
+      button: "Request a call about this unit",
+      title: (c) => `Request a call about unit ${c}`,
+      name: "Name",
+      phone: "Mobile number",
+      message: "Message",
+      optional: "optional",
+      submit: "Send",
+      sending: "Sending…",
+      cancel: "Cancel",
+      sent: "Sent. We will contact you soon.",
+      invalid: { name: "Enter your name.", phone: "Enter a valid number of 7 to 15 digits.", message: "The message is too long." },
+      tooMany: "Too many requests. Try again in a few minutes or contact us on WhatsApp.",
+      failed: "Sending failed. Try again or contact us on WhatsApp.",
+    },
     compare: { title: "Compare units", empty: "No units to compare. Pick up to 3 units from the list of all units.", scene: "Location", pick: (c) => `Compare unit ${c}`, open: (n) => `Compare (${n})`, hint: "Pick two or three units to compare.", withOthers: "Compare with other units" },
     table: {
       title: "All units",

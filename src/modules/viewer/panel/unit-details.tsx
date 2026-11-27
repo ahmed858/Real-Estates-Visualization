@@ -1,6 +1,7 @@
 "use client";
 // Side panel content for a selected unit: its facts, a WhatsApp enquiry
-// button, a share button, plan image and notes.
+// button, the lead form (when the project has a webhook), a share button,
+// plan image and notes.
 import Link from "next/link";
 import { useState } from "react";
 import { PhotoLightbox } from "./photo-lightbox";
@@ -9,6 +10,7 @@ import { formatPrice, type UnitSummary } from "../scene/hover-card";
 import type { ViewerLocale, ViewerText } from "../layout/viewer-text";
 import { WhatsAppButton } from "../contact/whatsapp-button";
 import { ShareButton, type ShareTarget } from "../contact/share-button";
+import { LeadForm, type LeadSend } from "../contact/lead-form";
 
 export interface UnitDetailsProps {
   unit: UnitSummary;
@@ -22,9 +24,13 @@ export interface UnitDetailsProps {
   shareTarget?: ShareTarget;
   /** The units page, e.g. "/p/demo/units?lang=en"; adds a link to compare this unit with others. */
   unitsHref?: string;
+  /** The project's slug when it has a lead webhook; adds the "Request a call" form. */
+  leadSlug?: string;
+  /** Sends the lead form; defaults to fetch. */
+  leadSend?: LeadSend;
 }
 
-export function UnitDetails({ unit, text, locale, currency, onClose, enquiryHref, shareTarget, unitsHref }: UnitDetailsProps) {
+export function UnitDetails({ unit, text, locale, currency, onClose, enquiryHref, shareTarget, unitsHref, leadSlug, leadSend }: UnitDetailsProps) {
   const num = new Intl.NumberFormat(locale === "ar" ? "ar-EG" : "en-US");
   const rows: [string, string][] = [
     [text.card.status, text.status[unit.status]],
@@ -60,6 +66,8 @@ export function UnitDetails({ unit, text, locale, currency, onClose, enquiryHref
         ))}
       </dl>
       {enquiryHref && <WhatsAppButton href={enquiryHref} label={text.contact.unitButton} />}
+      {/* Keyed by unit so switching units starts a fresh form. */}
+      {leadSlug && <LeadForm key={unit.code} slug={leadSlug} unitCode={unit.code} locale={locale} text={text} whatsappHref={enquiryHref} send={leadSend} />}
       {unitsHref && (
         <Link href={withCodes(unitsHref, PICK_PARAM, [unit.code])} className="text-sm text-zinc-300 underline-offset-2 hover:text-white hover:underline">
           {text.compare.withOthers}

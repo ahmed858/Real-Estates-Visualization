@@ -4,7 +4,7 @@
 import { join } from "node:path";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { FileProjectSource } from "@/modules/data-sources";
+import { FileProjectSource, LEAD_WEBHOOKS_ENV, parseLeadWebhooks } from "@/modules/data-sources";
 import { computeBedroomMix, computeSceneStats, createSceneTree, rollUpUnits, type FilterableUnit } from "@/modules/domain";
 import { projectPageState, visitorProjectSource } from "./project-page-state";
 import { Breadcrumbs, FloorPicker, LANG_PARAM, LocaleSwitch, ProjectHeader, resolveLocale, withLocale, SceneFilter, SceneStage, type SceneSummary, type UnitSummary, SidePanel, mapsSearchUrl, StaleDataNote, StatusLegend, ViewerLayout, ViewerMessage, viewerText, WhatsAppButton, enquiryMessage, whatsappLink } from "@/modules/viewer";
@@ -13,6 +13,8 @@ import { Breadcrumbs, FloorPicker, LANG_PARAM, LocaleSwitch, ProjectHeader, reso
 export const allProjects = new FileProjectSource(join(process.cwd(), "projects"));
 /** What visitors may open: hidden projects are not found unless PREVIEW_PROJECTS=true. */
 export const projects = visitorProjectSource(allProjects, process.env);
+/** Projects with a lead webhook show the lead form; the URLs stay on the server. Warnings are logged by the lead route. */
+const leadSlugs = new Set(parseLeadWebhooks(process.env[LEAD_WEBHOOKS_ENV]).keys());
 
 export const projectFileUrl = (slug: string, path: string) => `/files/${slug}/${path}`;
 
@@ -105,7 +107,7 @@ export async function ProjectView({ params, searchParams }: ProjectViewProps) {
       }
       scene={<SceneStage scene={scene} imageUrl={projectFileUrl(slug, scene.image.path)} units={sceneUnits} sceneTitles={sceneTitles} sceneSummaries={sceneSummaries} sceneUnits={unitsBelow} sceneHrefs={sceneHrefs} floors={floors} currency={config.project.currency} locale={locale} />}
       legend={<StatusLegend text={text} counts={stats?.byStatus} />}
-      panel={<SidePanel sceneTitle={scene.title[locale]} stats={stats} units={sceneUnits} currency={config.project.currency} locale={locale} enquiry={{ whatsapp: config.project.contact.whatsapp, projectName: name, typicalFloor: floors.length > 0 }} unitsHref={withLocale(`/p/${slug}/units`, locale, defaultLocale)} location={location} />}
+      panel={<SidePanel sceneTitle={scene.title[locale]} stats={stats} units={sceneUnits} currency={config.project.currency} locale={locale} enquiry={{ whatsapp: config.project.contact.whatsapp, projectName: name, typicalFloor: floors.length > 0 }} unitsHref={withLocale(`/p/${slug}/units`, locale, defaultLocale)} location={location} leadSlug={leadSlugs.has(slug) ? slug : undefined} />}
     />
   );
 }
