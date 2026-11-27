@@ -21,3 +21,6 @@ export type { Clock } from "./cached-unit-source";
 export { IMAGE_CONTENT_TYPES, listProjectImages, PROJECT_IMAGES_DIR, readProjectImage } from "./project-files";
 export type { ProjectFile, ProjectImage } from "./project-files";
 export { readImageSize } from "./image-size";
+export { LEAD_WEBHOOK_TIMEOUT_MS, LeadSinkError, WebhookLeadSink } from "./lead-sink";
+export type { LeadSink } from "./lead-sink";
+export { LEAD_WEBHOOKS_ENV, parseLeadWebhooks } from "./lead-webhooks";

@@ -43,3 +43,14 @@ export {
 export type { SheetIssue, SheetParseResult, SheetTable, UnitColumn, UnitRow } from "./units/units-sheet";
 export { STATUS_SPELLINGS, UNIT_STATUSES, normaliseStatus } from "./units/status";
 export type { UnitStatus } from "./units/status";
+export {
+  isLeadBot,
+  LEAD_HONEYPOT_FIELD,
+  LEAD_MESSAGE_MAX,
+  LEAD_NAME_MAX,
+  LEAD_PAYLOAD_TYPE,
+  LEAD_PAYLOAD_VERSION,
+  parseLeadRequest,
+  toAsciiDigits,
+} from "./lead/lead-request";
+export type { LeadPayload, LeadRequest } from "./lead/lead-request";

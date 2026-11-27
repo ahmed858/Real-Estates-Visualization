@@ -71,7 +71,7 @@ a compound (masterplan → buildings → floors → unit plans).
 
 | Field | Type | Required | Description |
 | --- | --- | --- | --- |
-| `id` | id | yes | Unique across the whole project. |
+| `id` | id | yes | Unique across the whole project. Not `units`, `compare` or `lead`: those are site pages. |
 | `kind` | enum | yes | `facade`, `masterplan`, `building`, `floor`, `unit-plan` or `other`. |
 | `type` | enum | no | Renderer. Defaults to `image-2d`, the only one in v1. 360° and 3D renderers will be added as new values. |
 | `title` | localized text | yes | Shown in navigation and breadcrumbs. |
