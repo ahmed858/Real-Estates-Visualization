@@ -816,7 +816,7 @@ service or send visitor data anywhere are gated.
 - Verify: `npm run check`.
 
 ### U-804 Project location
-- Phase 8 · `schema` + `viewer` · Depends on: U-803 · **Gated: yes** · Status: `todo`
+- Phase 8 · `schema` + `viewer` · Depends on: U-803 · **Gated: yes** · Status: `done`
 - An optional `project.location` (`lat`, `lng`, localized `address`). The
   side panel of the root scene shows the address and an "Open in maps" link
   (a plain `https://www.google.com/maps/search/?api=1&query=<lat>,<lng>`

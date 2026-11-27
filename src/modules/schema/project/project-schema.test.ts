@@ -164,6 +164,32 @@ describe("parseProjectConfig: error messages carry path and reason", () => {
     expect(whatsapp?.message).toMatch(/international number/);
   });
 
+  it("accepts a project without a location and keeps a valid one", () => {
+    expect(expectValid(minimal()).project.location).toBeUndefined();
+    const input = minimal();
+    const location = { lat: 30.0444, lng: 31.2357, address: { ar: "التجمع الخامس، القاهرة الجديدة", en: "Fifth Settlement, New Cairo" } };
+    input.project.location = location;
+    expect(expectValid(input).project.location).toEqual(location);
+  });
+
+  it("accepts the edges of the coordinate ranges", () => {
+    const input = minimal();
+    input.project.location = { lat: -90, lng: 180, address: title("Edge") };
+    expect(expectValid(input).project.location).toMatchObject({ lat: -90, lng: 180 });
+  });
+
+  it("rejects coordinates out of range, a missing address language and unknown location fields", () => {
+    const input = minimal();
+    input.project.location = { lat: 91, lng: -181, address: { ar: "القاهرة", en: "" } };
+    expect(errorsOf(input).map((e) => e.path)).toEqual(
+      expect.arrayContaining(["project.location.lat", "project.location.lng", "project.location.address.en"]),
+    );
+    expect(errorsOf(input).find((e) => e.path === "project.location.lat")?.message).toMatch(/-90 and 90/);
+    const typo = minimal();
+    (typo.project as Record<string, unknown>).location = { lat: 30, lon: 31, address: title("Cairo") };
+    expect(errorsOf(typo).map((e) => e.path)).toEqual(expect.arrayContaining(["project.location.lng"]));
+  });
+
   it("rejects unknown fields so typos are caught", () => {
     const input = { ...minimal(), extra: true };
     expect(errorsOf(input)[0].path).toBe("(root)");

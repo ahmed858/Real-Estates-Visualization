@@ -23,6 +23,15 @@ export const SCENE_RENDERER_TYPES = ["image-2d"] as const;
 /** The renderer a scene uses when project.json does not name one. */
 export const DEFAULT_SCENE_RENDERER_TYPE = "image-2d" satisfies (typeof SCENE_RENDERER_TYPES)[number];
 
+/** The project's place on the map (WGS 84 degrees) and its address in both languages. */
+export const projectLocationSchema = z
+  .object({
+    lat: z.number().min(-90, "must be between -90 and 90").max(90, "must be between -90 and 90"),
+    lng: z.number().min(-180, "must be between -180 and 180").max(180, "must be between -180 and 180"),
+    address: localizedTextSchema,
+  })
+  .strict();
+
 export const projectInfoSchema = z
   .object({
     slug: idSchema,
@@ -43,6 +52,8 @@ export const projectInfoSchema = z
         accentColor: hexColorSchema,
       })
       .strict(),
+    /** Where the project is; the root scene's panel shows the address and an "Open in maps" link. */
+    location: projectLocationSchema.optional(),
     /** false hides the project from visitors (404) unless preview is on. Missing means published. */
     published: z.boolean().optional(),
   })

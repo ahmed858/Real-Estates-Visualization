@@ -7,7 +7,7 @@ import { notFound } from "next/navigation";
 import { FileProjectSource } from "@/modules/data-sources";
 import { computeBedroomMix, computeSceneStats, createSceneTree, rollUpUnits, type FilterableUnit } from "@/modules/domain";
 import { projectPageState, visitorProjectSource } from "./project-page-state";
-import { Breadcrumbs, FloorPicker, LANG_PARAM, LocaleSwitch, ProjectHeader, resolveLocale, withLocale, SceneFilter, SceneStage, type SceneSummary, type UnitSummary, SidePanel, StaleDataNote, StatusLegend, ViewerLayout, ViewerMessage, viewerText, WhatsAppButton, enquiryMessage, whatsappLink } from "@/modules/viewer";
+import { Breadcrumbs, FloorPicker, LANG_PARAM, LocaleSwitch, ProjectHeader, resolveLocale, withLocale, SceneFilter, SceneStage, type SceneSummary, type UnitSummary, SidePanel, mapsSearchUrl, StaleDataNote, StatusLegend, ViewerLayout, ViewerMessage, viewerText, WhatsAppButton, enquiryMessage, whatsappLink } from "@/modules/viewer";
 
 /** Every project on disk, hidden ones included (the editor reads this). */
 export const allProjects = new FileProjectSource(join(process.cwd(), "projects"));
@@ -79,6 +79,8 @@ export async function ProjectView({ params, searchParams }: ProjectViewProps) {
   const sceneHrefs = Object.fromEntries(tree.scenes.map((s) => [s.id, withLocale(sceneUrl(slug, s.id, tree.root.id), locale, defaultLocale)]));
   const crumbs = tree.breadcrumbs(scene.id).map((s) => ({ id: s.id, title: s.title[locale], href: sceneHrefs[s.id] }));
   const name = config.project.name[locale];
+  const where = config.project.location;
+  const location = where && scene.id === tree.root.id ? { address: where.address[locale], mapsHref: mapsSearchUrl(where) } : undefined;
 
   return (
     <ViewerLayout
@@ -103,7 +105,7 @@ export async function ProjectView({ params, searchParams }: ProjectViewProps) {
       }
       scene={<SceneStage scene={scene} imageUrl={projectFileUrl(slug, scene.image.path)} units={sceneUnits} sceneTitles={sceneTitles} sceneSummaries={sceneSummaries} sceneUnits={unitsBelow} sceneHrefs={sceneHrefs} floors={floors} currency={config.project.currency} locale={locale} />}
       legend={<StatusLegend text={text} counts={stats?.byStatus} />}
-      panel={<SidePanel sceneTitle={scene.title[locale]} stats={stats} units={sceneUnits} currency={config.project.currency} locale={locale} enquiry={{ whatsapp: config.project.contact.whatsapp, projectName: name, typicalFloor: floors.length > 0 }} unitsHref={withLocale(`/p/${slug}/units`, locale, defaultLocale)} />}
+      panel={<SidePanel sceneTitle={scene.title[locale]} stats={stats} units={sceneUnits} currency={config.project.currency} locale={locale} enquiry={{ whatsapp: config.project.contact.whatsapp, projectName: name, typicalFloor: floors.length > 0 }} unitsHref={withLocale(`/p/${slug}/units`, locale, defaultLocale)} location={location} />}
     />
   );
 }
