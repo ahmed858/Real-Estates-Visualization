@@ -2,7 +2,7 @@
 
 Ordered work units. The hourly agent takes the **first** unit whose status is
 `todo`, whose dependencies are all `done`, and that has no open `[agent]` PR.
-Phases up to 9 are broken down; later phases stay as headlines until the
+Phases up to 10 are broken down; later phases stay as headlines until the
 agent writes their breakdown in a planning unit.
 
 **Statuses** (as they read on `develop`): `todo` · `done` · `blocked` (question
@@ -35,7 +35,8 @@ verification commands. `npm run check` must pass for every unit.
 | 6 | Drawing tool | Polygon editor for real client images. **done** |
 | 7 | Multi-client | A link per project, logo and colours per client. **done** |
 | 8 | Extras | Each on its own: gallery, compare, share, lead form to client CRM, location map. **done** |
-| 9 | Premium | 360° rotation and 3D model views, as renderers behind the scene Strategy. |
+| 9 | Premium | 360° rotation and 3D model views, as renderers behind the scene Strategy. **done** |
+| 10 | Launch readiness | Premium scenes from the editor, a 3D demo, browser smoke tests in CI, release notes for `main`. |
 
 If a real client arrives early, Phase 6 may move ahead of Phase 4.
 
@@ -1008,7 +1009,88 @@ Rules that keep the 2D core unchanged:
 - Verify: `npm run check`.
 
 ### U-909 Plan the next phase
-- Phase 9 · Docs · Depends on: U-908 · **Gated: yes** · Status: `todo`
+- Phase 9 · Docs · Depends on: U-908 · **Gated: yes** · Status: `done`
 - Review what Phases 1-9 left open (including Q-2 and Q-3) and write the
   next phase's units in this file, or record that the roadmap is complete.
+- Verify: `npm run check`.
+
+---
+
+## Phase 10 · Launch readiness
+
+Written by U-909 after reviewing Phases 1-9. Every planned feature exists;
+what is left is what this review found missing before showing the product
+to clients, plus the two open questions:
+
+- Q-2 (how clients share their Google Sheet) still blocks U-503 (private
+  sheets via a service account). Public "anyone with the link" sheets work
+  (U-502), so nothing else waits for it.
+- Q-3 (refresh interval) has a working default: 60 seconds, overridable per
+  project (U-504). No unit needed until the owner picks another value.
+- Premium scenes can only be added by editing `project.json` by hand: the
+  editor's add-scene form makes 2D scenes only (found while writing
+  `docs/premium.md`).
+- The 3D viewer has no demo: no committed project uses `model-3d`, so CI
+  does not exercise it and it cannot be tried on the preview.
+- Browser behaviour (hydration, the lazily loaded 3D canvas, the turntable)
+  is only checked by hand in agent runs; U-910 was a hydration bug that unit
+  tests did not catch.
+- `main` (production) lags `develop` by many units; the owner merges it and
+  needs a short list of what a merge ships.
+
+### U-1001 Add premium scenes from the editor
+- Phase 10 · `editor` · Depends on: U-909 · Gated: no · Status: `todo`
+- The add-scene form gets a renderer choice: 2D image (as now), 360°
+  rotation or 3D model. Rotation: pick a frames folder under `rotations/`
+  from the project files; the form fills `frames` (with `{index}`), `count`
+  and the frame size from the files it finds, and refuses a folder whose
+  frames are not numbered 1..n or differ in size. Model: pick a `.glb` under
+  `models/`. The poster stays a picked image, as for 2D.
+- The editor page passes the list of rotation folders and models (server
+  side, existing file listing helpers in `data-sources`).
+- Acceptance: build-scene tests for both types (valid, gaps in numbering,
+  mixed sizes, no model), form test for switching type.
+- Verify: `npm run check`.
+
+### U-1002 Demo 3D model
+- Phase 10 · `tools` + `projects` · Depends on: U-1001 · Gated: no · Status: `todo`
+- `npm run generate:demo` also writes `projects/demo-villa/models/villa.glb`:
+  the villa block from the turntable geometry as boxes, one named node per
+  ground and first floor apartment (`G-01` …) plus a roof node, written by a
+  small GLB writer in `tools` (no new dependency; positions, indices and
+  normals only, no textures), and a `model-3d` scene "3D model" under the
+  facade with a hotspot per apartment mesh. The facade gets a second button
+  next to "360° view".
+- Acceptance: generator test (valid GLB, node names, file under 30 KB,
+  deterministic), `glbNodeNames` reads the names back, the demo validates,
+  `check:demo` covers it.
+- Verify: `npm run check`.
+
+### U-1003 Browser smoke tests in CI
+- Phase 10 · App + `.github` · Depends on: U-1002 · **Gated: yes** · Status: `todo`
+- A few Playwright tests against the production build of the demo
+  projects: facade → floor → unit panel; units table filter; turntable
+  opens on `?frame=` and turns with the slider; 3D scene shows the poster
+  without WebGL and the model canvas with it; no console errors on these
+  pages. `npm run e2e` runs them locally; a separate CI job runs them after
+  the build (Chromium only).
+- Gated: adds `@playwright/test` (dev) and changes `.github/workflows`.
+- Acceptance: the job passes on the PR; the tests fail when a page throws
+  (one deliberately broken run described in the PR).
+- Verify: `npm run check`, `npm run e2e`.
+
+### U-1004 Release notes for merging to main
+- Phase 10 · Docs · Depends on: U-1003 · Gated: no · Status: `todo`
+- `docs/RELEASE.md`: what `develop` has that `main` does not, grouped by
+  what a visitor, a client and the owner see, plus the environment
+  variables a production deploy needs (from `.env.example`) and a short
+  checklist for the owner's merge (preview link checked, variables set in
+  Vercel). Agent runs append to it with each merged unit until the owner
+  merges `main`.
+- Verify: `npm run check`.
+
+### U-1005 Plan the next phase
+- Phase 10 · Docs · Depends on: U-1004 · **Gated: yes** · Status: `todo`
+- Review what is still open (Q-2, Q-3, client feedback if any) and write
+  the next phase's units here, or record that the roadmap is complete.
 - Verify: `npm run check`.
