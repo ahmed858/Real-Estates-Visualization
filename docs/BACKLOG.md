@@ -1120,7 +1120,7 @@ planned roadmap is complete. What is left:
 - Verify: `npm run check`, `npm run build && npm run e2e`.
 
 ### U-1102 Editor smoke test
-- Phase 11 · `e2e` · Depends on: U-1101 · Gated: no · Status: `todo`
+- Phase 11 · `e2e` · Depends on: U-1101 · Gated: no · Status: `done`
 - A Playwright test against a build started with `EDITOR_ENABLED=true` on a
   copy of a demo project (never the committed files): open
   `/editor/demo-villa`, draw a polygon on a floor, pick a unit target, see the
