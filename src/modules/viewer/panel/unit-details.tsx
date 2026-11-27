@@ -1,3 +1,4 @@
+"use client";
 // Side panel content for a selected unit: its facts, a WhatsApp enquiry
 // button, a share button, plan image and notes.
 import Link from "next/link";
