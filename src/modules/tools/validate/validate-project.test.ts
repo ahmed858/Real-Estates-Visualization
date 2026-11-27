@@ -158,6 +158,25 @@ describe("validateProject", () => {
     ]);
   });
 
+  it("reports rotation frames and 3D models over their size limit", async () => {
+    const dir = await copyValid();
+    await editConfig(dir, (config) => {
+      Object.assign(config.root, { type: "rotation-360", rotation: { frames: "rotations/root/f{index}.jpg", count: 2, width: 100, height: 100 } });
+      Object.assign(config.root.children[0], { type: "model-3d", model: { path: "models/ground.glb" } });
+    });
+    await mkdir(join(dir, "rotations", "root"), { recursive: true });
+    await mkdir(join(dir, "models"));
+    await writeFile(join(dir, "rotations", "root", "f1.jpg"), Buffer.alloc(10));
+    await writeFile(join(dir, "rotations", "root", "f2.jpg"), Buffer.alloc(Math.round(2.5 * 1024 * 1024)));
+    await writeFile(join(dir, "models", "ground.glb"), Buffer.alloc(31 * 1024 * 1024));
+    const report = await validateProject(dir, rows(VALID_ROWS));
+    const { root } = JSON.parse(await readFile(join(dir, "project.json"), "utf8")) as ProjectConfig;
+    expect(summary(report)).toEqual([
+      `error project.json (scene "${root.id}", rotation frame 2): file "rotations/root/f2.jpg" is 2.5 MB; rotation frames may be at most 2 MB`,
+      `error project.json (scene "${root.children[0].id}", model.path): file "models/ground.glb" is 31 MB; 3D models may be at most 30 MB`,
+    ]);
+  });
+
   it("warns, without failing, about unreachable scenes and mismatched sheet scenes", async () => {
     const dir = await copyValid();
     await editConfig(dir, (c) => {

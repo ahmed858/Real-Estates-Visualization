@@ -56,6 +56,7 @@ describe("rotation-360 scenes", () => {
 
   it("checks the frame pattern, count and start", () => {
     expect(errors(scene({ type: "rotation-360", rotation: { ...rotation, frames: "rotations/frame.jpg" } }))[0].path).toBe("root.rotation.frames");
+    expect(errors(scene({ type: "rotation-360", rotation: { ...rotation, frames: "images/frame-{index}.jpg" } }))[0]).toMatchObject({ path: "root.rotation.frames", message: expect.stringContaining("rotations/ folder") });
     expect(errors(scene({ type: "rotation-360", rotation: { ...rotation, count: 1 } }))[0].path).toBe("root.rotation.count");
     expect(errors(scene({ type: "rotation-360", rotation: { ...rotation, count: 361 } }))[0].path).toBe("root.rotation.count");
     expect(errors(scene({ type: "rotation-360", rotation: { ...rotation, start: 37 } }))).toEqual([{ path: "root.rotation.start", message: expect.stringContaining("between 1 and count (36)") }]);
@@ -89,6 +90,7 @@ describe("model-3d scenes", () => {
   it("needs a .glb model block, and only on its type", () => {
     expect(errors(scene({ type: "model-3d" }))[0].path).toBe("root.model");
     expect(errors(scene({ type: "model-3d", model: { path: "models/tower.obj" } }))[0]).toMatchObject({ path: "root.model.path", message: expect.stringContaining(".glb") });
+    expect(errors(scene({ type: "model-3d", model: { path: "images/tower.glb" } }))[0]).toMatchObject({ path: "root.model.path", message: expect.stringContaining("models/ folder") });
     expect(errors(scene({ model: { path: "models/tower.glb" } }))[0].path).toBe("root.model");
   });
 

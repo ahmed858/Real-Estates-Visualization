@@ -113,7 +113,7 @@ the side panel work the same. Only the extra blocks below are new.
 
 | Field | Type | Required | Description |
 | --- | --- | --- | --- |
-| `rotation.frames` | file path | yes | Path with `{index}`, e.g. `rotations/tower/frame-{index}.jpg`. `{index}` is the frame number from 1, zero-padded to the digits of `count` (`frame-01` … `frame-36`). Every frame must exist. |
+| `rotation.frames` | file path | yes | Path with `{index}` in the `rotations/` folder, e.g. `rotations/tower/frame-{index}.jpg`. `{index}` is the frame number from 1, zero-padded to the digits of `count` (`frame-01` … `frame-36`). Every frame must exist. |
 | `rotation.count` | integer | yes | Number of frames, 2 to 360. |
 | `rotation.width`, `rotation.height` | positive integer | yes | Frame size in pixels; `frames` polygons use it. |
 | `rotation.start` | integer | no | Frame shown first, 1 to `count`. Defaults to 1. |
@@ -122,7 +122,11 @@ the side panel work the same. Only the extra blocks below are new.
 
 | Field | Type | Required | Description |
 | --- | --- | --- | --- |
-| `model.path` | file path | yes | A `.glb` file, e.g. `models/tower.glb`. Must exist. |
+| `model.path` | file path | yes | A `.glb` file in the `models/` folder, e.g. `models/tower.glb`. Must exist. |
+
+Size limits: each rotation frame (any file under `rotations/`) at most 2 MB,
+each model at most 30 MB. The site does not serve larger files and
+`npm run validate` reports them.
 
 ```json
 {

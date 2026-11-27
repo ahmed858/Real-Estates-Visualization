@@ -18,7 +18,7 @@ export { createUnitSource, createUnitSourceFactory, PROJECT_UNITS_FILE, Unsuppor
 export type { UnitSourceFactory, UnitSourceFactoryOptions } from "./unit-source-factory";
 export { CachedUnitSource } from "./cached-unit-source";
 export type { Clock } from "./cached-unit-source";
-export { IMAGE_CONTENT_TYPES, listProjectImages, PROJECT_IMAGES_DIR, readProjectImage } from "./project-files";
+export { IMAGE_CONTENT_TYPES, listProjectImages, MODEL_CONTENT_TYPES, PROJECT_IMAGES_DIR, readProjectFile } from "./project-files";
 export type { ProjectFile, ProjectImage } from "./project-files";
 export { readImageSize } from "./image-size";
 export { LEAD_WEBHOOK_TIMEOUT_MS, LeadSinkError, WebhookLeadSink } from "./lead-sink";

@@ -1,7 +1,9 @@
-// Reads one image of a project folder for serving over HTTP. Only image types
-// are allowed, and the path must stay inside projects/<slug>/.
-import { readdir, readFile } from "node:fs/promises";
+// Reads one file of a project folder for serving over HTTP: images anywhere
+// in the folder, and 3D models (.glb) under models/. The path must stay
+// inside projects/<slug>/, and premium assets must be within their size limit.
+import { readdir, readFile, stat } from "node:fs/promises";
 import { extname, join, relative, resolve, sep } from "node:path";
+import { MODELS_DIR, projectFileSizeLimit } from "@/modules/domain";
 
 export const IMAGE_CONTENT_TYPES: Readonly<Record<string, string>> = {
   ".svg": "image/svg+xml",
@@ -9,6 +11,11 @@ export const IMAGE_CONTENT_TYPES: Readonly<Record<string, string>> = {
   ".jpg": "image/jpeg",
   ".jpeg": "image/jpeg",
   ".webp": "image/webp",
+};
+
+/** glTF binary models, served only from the project's models/ folder. */
+export const MODEL_CONTENT_TYPES: Readonly<Record<string, string>> = {
+  ".glb": "model/gltf-binary",
 };
 
 import { readImageSize } from "./image-size";
@@ -20,15 +27,23 @@ export interface ProjectFile {
   contentType: string;
 }
 
+function contentTypeOf(segments: readonly string[]): string | undefined {
+  const ext = extname(segments[segments.length - 1]).toLowerCase();
+  if (IMAGE_CONTENT_TYPES[ext]) return IMAGE_CONTENT_TYPES[ext];
+  if (MODEL_CONTENT_TYPES[ext] && segments[0] === MODELS_DIR) return MODEL_CONTENT_TYPES[ext];
+  return undefined;
+}
+
 /**
  * Returns the file at projects/<slug>/<segments...>, or null when the slug or
- * path is not allowed, the type is not an image, or the file does not exist.
- * Segments arrive already URL-decoded (e.g. "%2e%2e" is "..").
+ * path is not allowed, the type is not served, the file is over its size
+ * limit, or it does not exist. Segments arrive already URL-decoded (e.g.
+ * "%2e%2e" is "..").
  */
-export async function readProjectImage(projectsDir: string, slug: string, segments: readonly string[]): Promise<ProjectFile | null> {
+export async function readProjectFile(projectsDir: string, slug: string, segments: readonly string[]): Promise<ProjectFile | null> {
   if (!SLUG.test(slug) || segments.length === 0) return null;
   if (segments.some((s) => s === "" || s === "." || s === ".." || s.includes("/") || s.includes("\\") || s.includes("\0"))) return null;
-  const contentType = IMAGE_CONTENT_TYPES[extname(segments[segments.length - 1]).toLowerCase()];
+  const contentType = contentTypeOf(segments);
   if (!contentType) return null;
 
   const root = resolve(projectsDir, slug);
@@ -37,6 +52,8 @@ export async function readProjectImage(projectsDir: string, slug: string, segmen
   if (rel.startsWith("..") || rel.startsWith(sep) || rel === "") return null;
 
   try {
+    const limit = projectFileSizeLimit(segments.join("/"));
+    if (limit && (await stat(target)).size > limit.bytes) return null;
     return { body: await readFile(target), contentType };
   } catch (e) {
     const code = (e as NodeJS.ErrnoException).code;
