@@ -761,7 +761,7 @@ working unchanged. Units that change the data format, add a third-party
 service or send visitor data anywhere are gated.
 
 ### U-801 Share a unit
-- Phase 8 · `viewer` · Depends on: U-707 · Gated: no · Status: `todo`
+- Phase 8 · `viewer` · Depends on: U-707 · Gated: no · Status: `done`
 - A "Share" button in the unit details panel shares the unit's deep link
   (scene, `?unit=`, `?floor=` on typical floors, `?lang=` when not the
   default) through the Web Share API, falling back to copying the link with

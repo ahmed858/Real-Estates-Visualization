@@ -1,8 +1,9 @@
 // Side panel content for a selected unit: its facts, a WhatsApp enquiry
-// button, plan image and notes.
+// button, a share button, plan image and notes.
 import { formatPrice, type UnitSummary } from "../scene/hover-card";
 import type { ViewerLocale, ViewerText } from "../layout/viewer-text";
 import { WhatsAppButton } from "../contact/whatsapp-button";
+import { ShareButton, type ShareTarget } from "../contact/share-button";
 
 export interface UnitDetailsProps {
   unit: UnitSummary;
@@ -12,9 +13,11 @@ export interface UnitDetailsProps {
   onClose: () => void;
   /** WhatsApp link for an enquiry about this unit; omitted hides the button. */
   enquiryHref?: string;
+  /** Share and copy functions; defaults to the browser's. */
+  shareTarget?: ShareTarget;
 }
 
-export function UnitDetails({ unit, text, locale, currency, onClose, enquiryHref }: UnitDetailsProps) {
+export function UnitDetails({ unit, text, locale, currency, onClose, enquiryHref, shareTarget }: UnitDetailsProps) {
   const num = new Intl.NumberFormat(locale === "ar" ? "ar-EG" : "en-US");
   const rows: [string, string][] = [
     [text.card.status, text.status[unit.status]],
@@ -30,9 +33,13 @@ export function UnitDetails({ unit, text, locale, currency, onClose, enquiryHref
     <section aria-label={title} className="flex flex-col gap-3 rounded-lg border border-white/10 bg-white/5 p-4">
       <div className="flex items-start justify-between gap-2">
         <h2 className="text-lg font-semibold">{title}</h2>
-        <button type="button" onClick={onClose} className="rounded-md px-2 py-1 text-sm text-zinc-400 hover:bg-white/10">
-          {text.panel.close}
-        </button>
+        {/* Close stays last in focus order, after Share. */}
+        <div className="flex items-start gap-1">
+          <ShareButton code={unit.code} title={title} text={text} target={shareTarget} />
+          <button type="button" onClick={onClose} className="rounded-md px-2 py-1 text-sm text-zinc-400 hover:bg-white/10">
+            {text.panel.close}
+          </button>
+        </div>
       </div>
       <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-sm">
         {rows.map(([label, value]) => (

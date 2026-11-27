@@ -41,6 +41,8 @@ export interface ViewerText {
     unitOnFloor: (project: string, code: string, floor: string) => string;
   };
   zoom: { in: string; out: string; reset: string };
+  /** Share button of the unit panel; `copied` shows when the link went to the clipboard. */
+  share: { button: string; copied: string };
   table: {
     title: string;
     /** Header link to the table. */
@@ -85,6 +87,7 @@ const TEXT: Record<ViewerLocale, ViewerText> = {
       unitOnFloor: (p, c, f) => `مرحبًا، أريد الاستفسار عن الوحدة ${c} في الدور ${f} في مشروع ${p}.`,
     },
     zoom: { in: "تكبير", out: "تصغير", reset: "١×" },
+    share: { button: "مشاركة", copied: "تم نسخ رابط الوحدة" },
     table: {
       title: "كل الوحدات",
       link: "كل الوحدات",
@@ -134,6 +137,7 @@ const TEXT: Record<ViewerLocale, ViewerText> = {
       unitOnFloor: (p, c, f) => `Hello, I would like to ask about unit ${c} on floor ${f} in ${p}.`,
     },
     zoom: { in: "Zoom in", out: "Zoom out", reset: "1×" },
+    share: { button: "Share", copied: "Unit link copied" },
     table: {
       title: "All units",
       link: "All units",
