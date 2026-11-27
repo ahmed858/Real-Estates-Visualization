@@ -1,5 +1,6 @@
 // Home page directory: one card per published project (logo, name in the
-// project's default language, link to its viewer).
+// project's default language, link to its viewer). A project with a
+// location opens with its globe intro; the others open their root scene.
 import Link from "next/link";
 import type { ProjectInfo } from "@/modules/schema";
 
@@ -20,7 +21,7 @@ export function ProjectDirectory({ projects, fileUrl }: ProjectDirectoryProps) {
         return (
           <li key={p.slug}>
             <Link
-              href={`/p/${p.slug}`}
+              href={p.location ? `/p/${p.slug}/explore` : `/p/${p.slug}`}
               lang={locale}
               dir={locale === "ar" ? "rtl" : "ltr"}
               className="flex items-center gap-4 rounded-lg border border-zinc-200 border-t-4 p-4 text-start hover:bg-zinc-50 dark:border-zinc-800 dark:hover:bg-zinc-900"

@@ -24,6 +24,12 @@ describe("ProjectDirectory", () => {
     expect(cards[0].querySelector("img")?.getAttribute("src")).toBe("/files/villa/images/logo.svg");
   });
 
+  it("opens a project with a location on its globe intro", () => {
+    const located = { ...info("residence", "ar", "Residence", "ريزيدنس"), location: { lat: 30, lng: 31, address: { ar: "القاهرة", en: "Cairo" } } };
+    render(<ProjectDirectory projects={[located]} fileUrl={fileUrl} />);
+    expect(screen.getByRole("link").getAttribute("href")).toBe("/p/residence/explore");
+  });
+
   it("says so when no project is published", () => {
     render(<ProjectDirectory projects={[]} fileUrl={fileUrl} />);
     expect(screen.getByText("No projects are published yet.")).toBeTruthy();

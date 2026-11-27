@@ -113,6 +113,10 @@ client's language. Typical gaps:
    rows not drawn on any plan.
 6. **Navigation**: confirm the path you propose in section 4.
 7. **Brand**: any of name (Arabic and English), logo, colours, WhatsApp, currency.
+8. **Location**: the project's map pin (latitude and longitude), its address,
+   country and city names in Arabic and English, and up to 8 nearby places
+   with the drive time in minutes. With a location the project opens on the
+   globe intro (`/p/<slug>/explore`); without one it opens on its root scene.
 
 Never guess a price, status, unit code or unit count. Guessing geometry is
 fine (section 5) because the owner reviews it in the editor.
@@ -178,6 +182,10 @@ Titles are always `{ "ar": "…", "en": "…" }`.
    sheet and says which row and column is wrong.
    If the client keeps a live Google Sheet, add
    `"units": { "source": "google-sheet", "sheetId": "…" }` instead.
+5. If you have the location, add `project.location`:
+   `{ "lat", "lng", "address", "country", "city", "nearby": [{ "name", "minutes" }] }`
+   (every text in `ar` and `en`). Scene ids must not be `units`, `compare`,
+   `lead` or `explore`: those are page names.
 
 ## 7. Validate
 

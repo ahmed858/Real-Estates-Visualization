@@ -5,9 +5,9 @@ import { join } from "node:path";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { FileProjectSource, LEAD_WEBHOOKS_ENV, parseLeadWebhooks } from "@/modules/data-sources";
-import { computeBedroomMix, computeSceneStats, createSceneTree, premiumViews, rollUpUnits, type FilterableUnit } from "@/modules/domain";
+import { computeBedroomMix, computeSceneStats, createSceneTree, guidedTour, guidedTourStep, premiumViews, rollUpUnits, type FilterableUnit, type SceneTree } from "@/modules/domain";
 import { projectPageState, visitorProjectSource } from "./project-page-state";
-import { Breadcrumbs, FloorPicker, SceneViews, type SceneViewLink, LANG_PARAM, LocaleSwitch, ProjectHeader, resolveLocale, withLocale, SceneFilter, SceneStage, type SceneSummary, type UnitSummary, SidePanel, mapsSearchUrl, StaleDataNote, StatusLegend, ViewerLayout, ViewerMessage, viewerText, WhatsAppButton, enquiryMessage, whatsappLink } from "@/modules/viewer";
+import { Breadcrumbs, FloorPicker, SceneViews, type SceneViewLink, LANG_PARAM, LocaleSwitch, ProjectHeader, resolveLocale, withLocale, SceneFilter, SceneStage, type SceneSummary, type SceneTourStep, FLOOR_PARAM, GLOBE_STAGE_PARAM, globeText, TOUR_PARAM, type ViewerLocale, type UnitSummary, SidePanel, mapsSearchUrl, StaleDataNote, StatusLegend, ViewerLayout, ViewerMessage, viewerText, WhatsAppButton, enquiryMessage, whatsappLink } from "@/modules/viewer";
 
 /** Every project on disk, hidden ones included (the editor reads this). */
 export const allProjects = new FileProjectSource(join(process.cwd(), "projects"));
@@ -20,6 +20,28 @@ export const projectFileUrl = (slug: string, path: string) => `/files/${slug}/${
 
 /** The root scene lives at /p/<slug>; every other scene at /p/<slug>/<sceneId>. */
 export const sceneUrl = (slug: string, sceneId: string, rootId: string) => (sceneId === rootId ? `/p/${slug}` : `/p/${slug}/${sceneId}`);
+
+/** What the guided tour does on this scene, when ?tour=1 is on and the scene is on the tour's path. */
+export function tourStepFor(
+  tree: SceneTree,
+  units: readonly { code: string; status: "available" | "reserved" | "sold" }[],
+  sceneId: string,
+  hrefOf: (sceneId: string, query?: Record<string, string>) => string,
+): SceneTourStep | undefined {
+  const tour = guidedTour(tree, units);
+  const step = tour && guidedTourStep(tree, tour, sceneId);
+  if (!tour || !step) return undefined;
+  if (step.kind === "unit") return { kind: "unit", hotspotId: step.hotspotId, code: step.code, ...(step.viewSceneId && { viewHref: hrefOf(step.viewSceneId) }) };
+  // A typical floor shows the tour's unit only on the tour's floor.
+  const query: Record<string, string> = { [TOUR_PARAM]: "1" };
+  if (step.sceneId === tour.scenes.at(-1) && tour.unit.floor !== undefined) query[FLOOR_PARAM] = String(tour.unit.floor);
+  return { kind: "scene", hotspotId: step.hotspotId, href: hrefOf(step.sceneId, query) };
+}
+
+/** The breadcrumb that leads back up to the globe intro, for projects with a location. */
+export function globeCrumb(slug: string, locale: ViewerLocale, defaultLocale: ViewerLocale) {
+  return { id: "globe", title: globeText(locale).crumb, href: withLocale(`/p/${slug}/explore?${GLOBE_STAGE_PARAM}=site`, locale, defaultLocale) };
+}
 
 export interface ProjectViewParams {
   slug: string;
@@ -82,9 +104,19 @@ export async function ProjectView({ params, searchParams }: ProjectViewProps) {
   );
   const sceneTitles = Object.fromEntries(tree.scenes.map((s) => [s.id, s.title[locale]]));
   const views = premiumViews(tree, scene.id).flatMap((s): SceneViewLink[] => (s.type === "image-2d" ? [] : [{ id: s.id, title: s.title[locale], href: sceneHrefs[s.id], type: s.type }]));
-  const crumbs = tree.breadcrumbs(scene.id).map((s) => ({ id: s.id, title: s.title[locale], href: sceneHrefs[s.id] }));
-  const name = config.project.name[locale];
   const where = config.project.location;
+  const crumbs = [
+    ...(where ? [globeCrumb(slug, locale, defaultLocale)] : []),
+    ...tree.breadcrumbs(scene.id).map((s) => ({ id: s.id, title: s.title[locale], href: sceneHrefs[s.id] })),
+  ];
+  const tour =
+    query[TOUR_PARAM] === "1"
+      ? tourStepFor(tree, units, scene.id, (id, extra) => {
+          const href = sceneUrl(slug, id, tree.root.id);
+          return withLocale(extra ? `${href}?${new URLSearchParams(extra)}` : href, locale, defaultLocale);
+        })
+      : undefined;
+  const name = config.project.name[locale];
   const location = where && scene.id === tree.root.id ? { address: where.address[locale], mapsHref: mapsSearchUrl(where) } : undefined;
 
   return (
@@ -109,7 +141,7 @@ export async function ProjectView({ params, searchParams }: ProjectViewProps) {
           {project.unitsStale && <StaleDataNote text={text} />}
         </div>
       }
-      scene={<SceneStage scene={scene} imageUrl={projectFileUrl(slug, scene.image.path)} units={sceneUnits} sceneTitles={sceneTitles} sceneSummaries={sceneSummaries} sceneUnits={unitsBelow} sceneHrefs={sceneHrefs} floors={floors} currency={config.project.currency} locale={locale} />}
+      scene={<SceneStage scene={scene} imageUrl={projectFileUrl(slug, scene.image.path)} units={sceneUnits} sceneTitles={sceneTitles} sceneSummaries={sceneSummaries} sceneUnits={unitsBelow} sceneHrefs={sceneHrefs} floors={floors} currency={config.project.currency} locale={locale} tour={tour} />}
       legend={<StatusLegend text={text} counts={stats?.byStatus} />}
       panel={<SidePanel sceneTitle={scene.title[locale]} stats={stats} units={sceneUnits} currency={config.project.currency} locale={locale} enquiry={{ whatsapp: config.project.contact.whatsapp, projectName: name, typicalFloor: floors.length > 0 }} unitsHref={withLocale(`/p/${slug}/units`, locale, defaultLocale)} location={location} leadSlug={leadSlugs.has(slug) ? slug : undefined} />}
     />

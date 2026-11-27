@@ -39,6 +39,15 @@ Last merge into `main`: PR #33 (up to U-401, the Arabic / English switch).
   legend and summary on 3D, turntable and 360° pages no longer show 0 (the
   villa's turntable and model too), and a unit's panel opens the 360° tour
   of its apartment type (U-1302).
+- **Globe intro and guided tour:** a project with a location opens on a 3D
+  globe (`/p/<slug>/explore`) with its country marked. Pressing "Explore the
+  project" flies in one continuous move from orbit to the country, the city
+  and the project, opens into the facade, and a guided tour zooms on into a
+  floor, shows an available unit and enters its 360° view. Each stage can be
+  pressed through one at a time, linked to (`?stage=city`) and left with
+  "Back"; "Go straight to the project" skips it, any press stops the tour,
+  and reduced motion jumps instead of flying. Devices without WebGL or with
+  little power get a flat map. The home page cards open the globe (U-1401).
 
 ### What a client gets
 
