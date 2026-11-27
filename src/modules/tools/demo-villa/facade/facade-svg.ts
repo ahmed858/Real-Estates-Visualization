@@ -32,23 +32,32 @@ export function facadeFrame(facade: FacadeGeometry): FacadeFrame {
   return { width, height, toPx: ([x, z]) => [SIDE + (x - facade.left) * SCALE, TOP + (facade.height - z) * SCALE] };
 }
 
-/** The "360° view" button drawn in the footer, bottom right; its rectangle is the facade hotspot that opens the turntable. */
-export function turntableButtonPolygon(villa: VillaGeometry): [number, number][] {
+const BUTTON_WIDTH = 150;
+const BUTTON_GAP = 12;
+
+/** Footer button `slot` counted from the right (0 = rightmost), in image pixels. */
+function footerButtonPolygon(villa: VillaGeometry, slot: number): [number, number][] {
   const facade = buildFacadeGeometry(villa);
   const frame = facadeFrame(facade);
   const [, groundY] = frame.toPx([facade.left, 0]);
-  const [x0, y0] = [frame.width - SIDE - 220, groundY + 44];
-  const [x1, y1] = [frame.width - SIDE, groundY + 96];
+  const x1 = frame.width - SIDE - slot * (BUTTON_WIDTH + BUTTON_GAP);
+  const [x0, y0, y1] = [x1 - BUTTON_WIDTH, groundY + 44, groundY + 96];
   return [[x0, y0], [x1, y0], [x1, y1], [x0, y1]];
 }
 
-function turntableButtonEl(villa: VillaGeometry): string {
-  const [[x0, y0], [x1], [, y1]] = turntableButtonPolygon(villa).slice(0, 3) as [[number, number], [number, number], [number, number]];
+/** The "360° view" button drawn in the footer, bottom right; its rectangle is the facade hotspot that opens the turntable. */
+export const turntableButtonPolygon = (villa: VillaGeometry) => footerButtonPolygon(villa, 0);
+
+/** The "3D model" button, left of "360° view"; its rectangle is the facade hotspot that opens the 3D model scene. */
+export const modelButtonPolygon = (villa: VillaGeometry) => footerButtonPolygon(villa, 1);
+
+function footerButtonEl(id: string, polygon: [number, number][], en: string, ar: string): string {
+  const [[x0, y0], [x1], [, y1]] = polygon.slice(0, 3) as [[number, number], [number, number], [number, number]];
   const cx = (x0 + x1) / 2;
-  return el("g", { id: "turntable-button" }, [
+  return el("g", { id }, [
     el("rect", { x: x0, y: y0, width: x1 - x0, height: y1 - y0, rx: 10, fill: COLORS.paper, stroke: COLORS.ink, "stroke-width": 2 }),
-    text("360° view", { x: cx, y: y0 + 22, "text-anchor": "middle", "font-family": FONT, "font-size": 16, "font-weight": 700, fill: COLORS.ink }),
-    text("عرض 360°", { x: cx, y: y0 + 42, direction: "rtl", "text-anchor": "middle", "font-family": FONT, "font-size": 14, fill: COLORS.muted }),
+    text(en, { x: cx, y: y0 + 22, "text-anchor": "middle", "font-family": FONT, "font-size": 16, "font-weight": 700, fill: COLORS.ink }),
+    text(ar, { x: cx, y: y0 + 42, direction: "rtl", "text-anchor": "middle", "font-family": FONT, "font-size": 14, fill: COLORS.muted }),
   ]);
 }
 
@@ -91,7 +100,8 @@ export function renderFacadeSvg(villa: VillaGeometry): string {
     ...facade.bands.map((b) => bandEl(frame, b, villa)),
     text("South elevation (courtyard side)", { x: SIDE, y: groundY + 60, "font-family": FONT, "font-size": 18, "font-weight": 700, fill: COLORS.ink }),
     text("الواجهة الجنوبية (جهة الحوش)", { x: SIDE, y: groundY + 86, "font-family": FONT, "font-size": 16, fill: COLORS.ink }),
-    turntableButtonEl(villa),
+    footerButtonEl("model-button", modelButtonPolygon(villa), "3D model", "نموذج ثلاثي الأبعاد"),
+    footerButtonEl("turntable-button", turntableButtonPolygon(villa), "360° view", "عرض 360°"),
   ];
   return svgDocument(frame.width, frame.height, body, "Facade · الواجهة");
 }

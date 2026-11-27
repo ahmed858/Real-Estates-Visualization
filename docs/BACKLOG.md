@@ -1053,7 +1053,7 @@ to clients, plus the two open questions:
 - Verify: `npm run check`.
 
 ### U-1002 Demo 3D model
-- Phase 10 · `tools` + `projects` · Depends on: U-1001 · Gated: no · Status: `todo`
+- Phase 10 · `tools` + `projects` · Depends on: U-1001 · Gated: no · Status: `done`
 - `npm run generate:demo` also writes `projects/demo-villa/models/villa.glb`:
   the villa block from the turntable geometry as boxes, one named node per
   ground and first floor apartment (`G-01` …) plus a roof node, written by a

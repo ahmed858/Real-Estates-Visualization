@@ -8,7 +8,9 @@ import { renderFloorPlanSvg } from "../svg/floor-plan-svg";
 import { el, svgDocument, text } from "../svg/svg";
 import { renderTurntableFrameSvg } from "../turntable/turntable-svg";
 import { TURNTABLE_FRAMES } from "../turntable/turntable-camera";
-import { buildDemoVillaConfig, facadeImagePath, floorImagePath, LOGO_PATH, turntableFramePath, turntablePosterPath } from "./project-config";
+import { writeGlb } from "../../glb/write-glb";
+import { buildVillaModelNodes } from "../model/villa-model";
+import { buildDemoVillaConfig, facadeImagePath, floorImagePath, LOGO_PATH, MODEL_PATH, turntableFramePath, turntablePosterPath } from "./project-config";
 import { demoVillaUnitRows } from "./units";
 
 /** Project-relative path → file content. */
@@ -38,6 +40,7 @@ export function buildDemoVillaProject(): ProjectFiles {
   files.set(LOGO_PATH, logoSvg());
   for (let frame = 1; frame <= TURNTABLE_FRAMES; frame++) files.set(turntableFramePath(frame), renderTurntableFrameSvg(villa, frame));
   files.set(turntablePosterPath, renderTurntableFrameSvg(villa, 1));
+  files.set(MODEL_PATH, writeGlb(buildVillaModelNodes(villa)));
   return files;
 }
 
