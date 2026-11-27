@@ -45,4 +45,5 @@ export { BLACK, colorDifference, contrastRatio, parseHexColor, readableTextColor
 export type { Rgb } from "./colour/contrast";
 export { STAGE_COLOR, STATUS_COLORS } from "./colour/palette";
 export { rotationFramePath, rotationFramePaths } from "./premium/rotation-frames";
+export { GlbFormatError, glbNodeNames } from "./premium/glb-node-names";
 export { formatMegabytes, MAX_MODEL_BYTES, MAX_ROTATION_FRAME_BYTES, MODELS_DIR, projectFileSizeLimit, ROTATIONS_DIR } from "./premium/asset-limits";

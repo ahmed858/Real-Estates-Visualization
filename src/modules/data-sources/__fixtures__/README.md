@@ -40,3 +40,10 @@ read by `google-sheet-csv-source.test.ts` (hand-written):
   statuses, a quoted price with thousands separators, a quoted note with a
   comma and one with a line break, Arabic-Indic digits.
 - `units-invalid-row.csv`: row 3 has a non-numeric `area_m2` and an unknown status.
+
+## `models/two-units.glb`
+
+A tiny glTF binary read by `model-node-names.test.ts`: a `Tower` node with two
+box meshes `Unit_A1` and `Unit_B1`, a `Ground` plate and one unnamed node. It
+was written once by a short Python script (struct + json, no dependency) that
+packs the boxes' positions and indices into the binary chunk.

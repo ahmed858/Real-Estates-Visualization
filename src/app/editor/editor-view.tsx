@@ -5,7 +5,7 @@
 import { access } from "node:fs/promises";
 import { join } from "node:path";
 import { notFound } from "next/navigation";
-import { listProjectImages } from "@/modules/data-sources";
+import { listProjectImages, readModelNodeNames } from "@/modules/data-sources";
 import { createSceneTree, referencedFiles } from "@/modules/domain";
 import { EditorSession } from "@/modules/editor";
 import { ViewerMessage } from "@/modules/viewer";
@@ -31,6 +31,9 @@ export async function EditorView({ params, searchParams }: EditorViewProps) {
   const referenced = referencedFiles(state.project.config, tree, state.project.units).map((r) => r.path);
   const present = await Promise.all(referenced.map((p) => access(join(projectDir, p)).then(() => p, () => undefined)));
   const existingFiles = [...new Set([...images.map((i) => i.path), ...present.filter((p): p is string => p !== undefined)])];
+  // Node names of every model used by a model-3d scene, for linking meshes to hotspots.
+  const modelPaths = [...new Set(tree.scenes.flatMap((s) => (s.type === "model-3d" && s.model ? [s.model.path] : [])))];
+  const modelNodeNames = Object.fromEntries(await Promise.all(modelPaths.map(async (p) => [p, await readModelNodeNames(join(process.cwd(), "projects"), slug, p)] as const)));
   const initialSceneId = typeof sceneParam === "string" && tree.has(sceneParam) ? sceneParam : tree.root.id;
 
   return (
@@ -47,6 +50,7 @@ export async function EditorView({ params, searchParams }: EditorViewProps) {
         images={images}
         units={state.project.units}
         existingFiles={existingFiles}
+        modelNodeNames={modelNodeNames}
       />
     </div>
   );
