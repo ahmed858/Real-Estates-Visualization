@@ -41,6 +41,7 @@ function row(floor: FloorGeometry, unit: UnitGeometry): XlsxCell[] {
     price: sales.price,
     status: sales.status,
     plan_image: null,
+    gallery: null,
     notes: notes(unit),
   };
   return UNIT_COLUMNS.map((c) => values[c]);

@@ -55,9 +55,14 @@ export async function ProjectView({ params, searchParams }: ProjectViewProps) {
   const sceneUnits: Record<string, UnitSummary> = Object.fromEntries(
     units
       .filter((u) => drawn.has(u.code))
-      .map(({ code, type, floor, bedrooms, bathrooms, areaM2, price, status, planImage, notes }) => [
+      .map(({ code, type, floor, bedrooms, bathrooms, areaM2, price, status, planImage, gallery, notes }) => [
         code,
-        { code, type, floor, bedrooms, bathrooms, areaM2, price, status, ...(planImage && { planImageUrl: projectFileUrl(slug, planImage) }), ...(notes && { notes }) },
+        {
+          code, type, floor, bedrooms, bathrooms, areaM2, price, status,
+          ...(planImage && { planImageUrl: projectFileUrl(slug, planImage) }),
+          ...(gallery && { galleryUrls: gallery.map((path) => projectFileUrl(slug, path)) }),
+          ...(notes && { notes }),
+        },
       ]),
   );
   const bedroomMix = computeBedroomMix(tree, units);

@@ -66,3 +66,19 @@ export const filePathCell = z.preprocess(
     .refine((p) => !p.startsWith("/") && !/^[a-zA-Z]:/.test(p), "must be relative to the project folder")
     .refine((p) => !p.split(/[\\/]/).includes(".."), 'must not contain ".." segments'),
 );
+
+/** Splits a gallery cell ("a.jpg; b.jpg") into its non-empty paths. */
+export const galleryPaths = (cell: string): string[] => cell.split(";").map((p) => p.trim()).filter((p) => p !== "");
+
+/** Image paths separated by ";", each relative to the project folder; normalised to "a;b". */
+export const galleryCell = z.preprocess(
+  toText,
+  z
+    .string({ error: "must be text" })
+    .transform(galleryPaths)
+    .refine((paths) => paths.length > 0, "must list at least one image path")
+    .refine((paths) => paths.every((p) => !p.startsWith("/") && !/^[a-zA-Z]:/.test(p)), "every path must be relative to the project folder")
+    .refine((paths) => paths.every((p) => !p.split(/[\\/]/).includes("..")), 'no path may contain ".." segments')
+    .transform((paths) => paths.join(";")),
+);
+

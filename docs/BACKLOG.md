@@ -795,14 +795,24 @@ service or send visitor data anywhere are gated.
 - Verify: `npm run check`.
 
 ### U-803 Unit photo gallery
-- Phase 8 · `schema` + `viewer` · Depends on: U-802 · **Gated: yes** · Status: `todo`
+- Phase 8 · `schema` + `viewer` · Depends on: U-802 · **Gated: yes** · Status: `done`
+- Split by the agent: this unit adds the column end to end; the lightbox is U-809.
 - An optional `gallery` column in the units sheet: project image paths
-  separated by `;`. The unit details panel shows thumbnails that open a
-  keyboard-friendly lightbox (arrows, Escape, focus kept inside). The
-  validator reports gallery files that do not exist. The collection guide
-  and its template gain the column (Arabic and English).
+  separated by `;`. The unit details panel shows thumbnails that open the
+  full photo. The validator (and the editor's Problems panel) reports
+  gallery files that do not exist. The collection guides (Arabic and
+  English) and `docs/data-format.md` gain the column.
 - Acceptance: schema tests for the column, validator test for a missing
-  file, component tests for the lightbox keys.
+  file, panel test for the thumbnails.
+- Verify: `npm run check`.
+
+### U-809 Photo lightbox
+- Phase 8 · `viewer` · Depends on: U-803 · Gated: no · Status: `todo`
+- Clicking a gallery thumbnail opens a keyboard-friendly lightbox instead
+  of a new tab: arrows move between photos, Escape closes, focus stays
+  inside while open and returns to the thumbnail after; RTL flips the
+  arrow direction for Arabic.
+- Acceptance: component tests for the keys, focus trap and RTL.
 - Verify: `npm run check`.
 
 ### U-804 Project location

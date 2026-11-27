@@ -66,7 +66,7 @@ export interface ViewerText {
     columns: Record<"code" | "floor" | "type" | "bedrooms" | "areaM2" | "price" | "status", string>;
     filters: { label: string; toggle: string; toggleActive: string; min: string; max: string; clear: string; empty: string; count: (shown: string, total: string) => string };
   };
-  panel: { floor: string; bathrooms: string; notes: string; plan: (code: string) => string; close: string; units: string; priceRange: string; areaRange: string };
+  panel: { floor: string; bathrooms: string; notes: string; plan: (code: string) => string; close: string; units: string; priceRange: string; areaRange: string; photos: string; photo: (code: string, n: string, total: string) => string };
 }
 
 const TEXT: Record<ViewerLocale, ViewerText> = {
@@ -119,6 +119,8 @@ const TEXT: Record<ViewerLocale, ViewerText> = {
       units: "عدد الوحدات",
       priceRange: "الأسعار",
       areaRange: "المساحات",
+      photos: "الصور",
+      photo: (c, n, t) => `صورة ${n} من ${t} للوحدة ${c}`,
     },
   },
   en: {
@@ -170,6 +172,8 @@ const TEXT: Record<ViewerLocale, ViewerText> = {
       units: "Units",
       priceRange: "Prices",
       areaRange: "Areas",
+      photos: "Photos",
+      photo: (c, n, t) => `Photo ${n} of ${t} of unit ${c}`,
     },
   },
 };

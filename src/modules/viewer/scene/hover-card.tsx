@@ -18,6 +18,8 @@ export interface UnitSummary {
   status: UnitStatus;
   /** URL of the unit's plan image, when the sheet names one. */
   planImageUrl?: string;
+  /** URLs of the unit's photos, from the sheet's gallery column. */
+  galleryUrls?: string[];
   notes?: string;
 }
 
