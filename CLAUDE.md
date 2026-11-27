@@ -64,6 +64,8 @@ npm run build     # production build
 npm run generate:demo  # regenerate projects/demo-villa
 npm run check:demo     # regenerate, validate, fail if projects/demo-villa changed
 npm run check     # all of the above, what CI runs
+npm run e2e       # browser smoke tests (Playwright) against the last build;
+                  # CI runs them in a second job after `check`
 ```
 
 ## Where things live

@@ -1067,7 +1067,7 @@ to clients, plus the two open questions:
 - Verify: `npm run check`.
 
 ### U-1003 Browser smoke tests in CI
-- Phase 10 · App + `.github` · Depends on: U-1002 · **Gated: yes** · Status: `todo`
+- Phase 10 · App + `.github` · Depends on: U-1002 · **Gated: yes** · Status: `done`
 - A few Playwright tests against the production build of the demo
   projects: facade → floor → unit panel; units table filter; turntable
   opens on `?frame=` and turns with the slider; 3D scene shows the poster

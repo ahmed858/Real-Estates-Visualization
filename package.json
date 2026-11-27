@@ -9,6 +9,7 @@
     "lint": "eslint && node scripts/check-boundaries.mjs",
     "typecheck": "next typegen && tsc --noEmit",
     "test": "vitest run",
+    "e2e": "playwright test",
     "validate": "tsx scripts/validate.ts",
     "new:project": "tsx scripts/new-project.ts",
     "generate:demo": "tsx scripts/generate-demo.ts",
@@ -24,6 +25,7 @@
     "zod": "4.6.7"
   },
   "devDependencies": {
+    "@playwright/test": "1.63.0",
     "@tailwindcss/turbopack": "4.3.3",
     "@testing-library/react": "16.3.3",
     "@types/node": "^22.20.7",
