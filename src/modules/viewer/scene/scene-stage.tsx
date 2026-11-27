@@ -21,6 +21,8 @@ import { Zoomable } from "./zoomable";
 export interface SceneStageProps {
   scene: Scene;
   imageUrl: string;
+  /** URL of any project file, for premium renderers (rotation frames, models). */
+  fileUrl?: (path: string) => string;
   /** Units drawn on this scene, by code, from the units sheet. */
   units: Readonly<Record<string, UnitSummary>>;
   /** Localised title per scene id, used to name scene hotspots. */
@@ -107,7 +109,7 @@ export function cardAnnouncement(content: HoverCardContent, text: ViewerText, lo
 }
 
 export function SceneStage(props: SceneStageProps) {
-  const { scene, imageUrl, units, sceneTitles, locale, currency } = props;
+  const { scene, imageUrl, fileUrl, units, sceneTitles, locale, currency } = props;
   const text = viewerText(locale);
   const [hovered, setHovered] = useState<Hotspot | null>(null);
   const [, selectUnit] = useSelectedUnit();
@@ -131,6 +133,7 @@ export function SceneStage(props: SceneStageProps) {
         <SceneView
           scene={scene}
           imageUrl={imageUrl}
+          fileUrl={fileUrl}
           unitStatusOf={(h) => {
             const code = codeOf(h);
             return code ? units[code]?.status : undefined;
