@@ -71,7 +71,6 @@ export interface ProjectImage {
 }
 
 export const PROJECT_IMAGES_DIR = "images";
-
 /**
  * Every image in projects/<slug>/images/ whose size can be read, sorted by path.
  * Files that are not images, or whose size cannot be read, are left out.

@@ -5,9 +5,9 @@ import { join } from "node:path";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { FileProjectSource, LEAD_WEBHOOKS_ENV, parseLeadWebhooks } from "@/modules/data-sources";
-import { computeBedroomMix, computeSceneStats, createSceneTree, rollUpUnits, type FilterableUnit } from "@/modules/domain";
+import { computeBedroomMix, computeSceneStats, createSceneTree, premiumViews, rollUpUnits, type FilterableUnit } from "@/modules/domain";
 import { projectPageState, visitorProjectSource } from "./project-page-state";
-import { Breadcrumbs, FloorPicker, LANG_PARAM, LocaleSwitch, ProjectHeader, resolveLocale, withLocale, SceneFilter, SceneStage, type SceneSummary, type UnitSummary, SidePanel, mapsSearchUrl, StaleDataNote, StatusLegend, ViewerLayout, ViewerMessage, viewerText, WhatsAppButton, enquiryMessage, whatsappLink } from "@/modules/viewer";
+import { Breadcrumbs, FloorPicker, SceneViews, type SceneViewLink, LANG_PARAM, LocaleSwitch, ProjectHeader, resolveLocale, withLocale, SceneFilter, SceneStage, type SceneSummary, type UnitSummary, SidePanel, mapsSearchUrl, StaleDataNote, StatusLegend, ViewerLayout, ViewerMessage, viewerText, WhatsAppButton, enquiryMessage, whatsappLink } from "@/modules/viewer";
 
 /** Every project on disk, hidden ones included (the editor reads this). */
 export const allProjects = new FileProjectSource(join(process.cwd(), "projects"));
@@ -79,6 +79,7 @@ export async function ProjectView({ params, searchParams }: ProjectViewProps) {
   );
   const sceneTitles = Object.fromEntries(tree.scenes.map((s) => [s.id, s.title[locale]]));
   const sceneHrefs = Object.fromEntries(tree.scenes.map((s) => [s.id, withLocale(sceneUrl(slug, s.id, tree.root.id), locale, defaultLocale)]));
+  const views = premiumViews(tree, scene.id).flatMap((s): SceneViewLink[] => (s.type === "image-2d" ? [] : [{ id: s.id, title: s.title[locale], href: sceneHrefs[s.id], type: s.type }]));
   const crumbs = tree.breadcrumbs(scene.id).map((s) => ({ id: s.id, title: s.title[locale], href: sceneHrefs[s.id] }));
   const name = config.project.name[locale];
   const where = config.project.location;
@@ -100,6 +101,7 @@ export async function ProjectView({ params, searchParams }: ProjectViewProps) {
       nav={
         <div className="flex flex-wrap items-center justify-between gap-4">
           <Breadcrumbs items={crumbs} label={text.breadcrumbs} />
+          <SceneViews views={views} currentId={scene.id} text={text} />
           {floors.length > 0 && <FloorPicker floors={floors.map((f) => f.floor)} locale={locale} />}
           <SceneFilter units={projectUnits} locale={locale} />
           {project.unitsStale && <StaleDataNote text={text} />}

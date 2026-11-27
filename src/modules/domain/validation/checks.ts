@@ -69,13 +69,17 @@ export function sheetScenesMatch(tree: SceneTree, units: readonly UnitRow[], she
   return findings;
 }
 
-/** Child scenes that no hotspot of their parent opens cannot be reached by visitors. Warning only. */
+/**
+ * Child scenes that no hotspot of their parent opens cannot be reached by
+ * visitors. Premium children (3D, 360°) are reachable anyway: the viewer
+ * lists them as view shortcuts above the scene. Warning only.
+ */
 export function scenesAreReachable(tree: SceneTree): Finding[] {
   const findings: Finding[] = [];
   for (const scene of tree.scenes) {
     const targets = new Set(scene.hotspots.flatMap((h) => ("scene" in h.target ? [h.target.scene] : [])));
     for (const child of scene.children) {
-      if (!targets.has(child.id)) {
+      if (!targets.has(child.id) && child.type === "image-2d") {
         findings.push({
           severity: "warning",
           file: CONFIG_FILE,
@@ -113,6 +117,7 @@ export function referencedFiles(config: ProjectConfig, tree: SceneTree, units: r
       { path: s.image.path, file: CONFIG_FILE, location: `scene "${s.id}", image.path`, sceneId: s.id },
       ...(s.rotation ? rotationFramePaths(s.rotation) : []).map((path, i) => ({ path, file: CONFIG_FILE, location: `scene "${s.id}", rotation frame ${i + 1}`, sceneId: s.id })),
       ...(s.model ? [{ path: s.model.path, file: CONFIG_FILE, location: `scene "${s.id}", model.path`, sceneId: s.id }] : []),
+      ...(s.panorama ? [{ path: s.panorama.path, file: CONFIG_FILE, location: `scene "${s.id}", panorama.path`, sceneId: s.id }] : []),
     ]),
     ...units.flatMap((u) => [
       ...(u.planImage ? [{ path: u.planImage, file: sheet, location: `row ${u.sheetRow}, plan_image` }] : []),

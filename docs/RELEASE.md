@@ -29,6 +29,12 @@ Last merge into `main`: PR #33 (up to U-401, the Arabic / English switch).
   3D model view with an image fallback when WebGL is missing (U-906). The
   demo villa has both: "360° view" and "3D model" buttons on its facade
   (U-904, U-1002).
+- **360° panoramas and the 3D building in the residence demo:** a new
+  look-around viewer for 360° pictures (drag, keys, zoom; poster fallback),
+  3D / 360° shortcuts above a scene, and `demo-residence` now has a 3D model
+  of the building whose floors open their plans, plus 360° views of an
+  apartment A living room, an apartment B master bedroom and the rooftop
+  (U-1301).
 
 ### What a client gets
 

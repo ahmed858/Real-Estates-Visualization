@@ -8,6 +8,9 @@ export type { ViewerMessageProps } from "./components/viewer-message";
 export { Image2DScene } from "./scene/image-2d-scene";
 export { Rotation360Scene } from "./scene/rotation-360-scene";
 export { Model3DScene } from "./scene/model-3d-scene";
+export { Panorama360Scene } from "./scene/panorama-360-scene";
+export { DEFAULT_LOOK, dragLook, keyLook, lookDirection, zoomLook } from "./scene/panorama-look";
+export type { PanoramaLook } from "./scene/panorama-look";
 export { hotspotForObject, meshHotspots, meshTint, supportsWebGL } from "./scene/model-3d-mapping";
 export { fileBaseFrom, FRAME_PARAM, initialFrame, sceneOnFrame, withFrame, wrapFrame } from "./scene/rotation-frame";
 export { ACTIVE_FILL_OPACITY, HOTSPOT_FILL, STATUS_STYLE, hotspotStyle } from "./scene/status-style";
@@ -51,6 +54,8 @@ export { selectFloor, selectUnit, setUrlParams, useSelectedFloor, useSelectedUni
 export { Breadcrumbs } from "./navigation/breadcrumbs";
 export type { BreadcrumbsProps, Crumb } from "./navigation/breadcrumbs";
 export { FloorPicker } from "./navigation/floor-picker";
+export { SceneViews } from "./navigation/scene-views";
+export type { SceneViewLink, SceneViewsProps } from "./navigation/scene-views";
 export type { FloorPickerProps } from "./navigation/floor-picker";
 export { LANG_PARAM, otherLocale, resolveLocale, withLocale } from "./layout/locale";
 export { LocaleSwitch } from "./navigation/locale-switch";

@@ -23,7 +23,7 @@ export { IMAGE_CONTENT_TYPES, listProjectImages, MODEL_CONTENT_TYPES, PROJECT_IM
 export type { ProjectFile, ProjectImage } from "./project-files";
 export { readImageSize } from "./image-size";
 export { readModelNodeNames } from "./model-node-names";
-export { listProjectModels, listRotationFolders } from "./premium-files";
+export { listProjectModels, listProjectPanoramas, listRotationFolders } from "./premium-files";
 export type { RotationFolder, RotationFolderFile } from "./premium-files";
 export { LEAD_WEBHOOK_TIMEOUT_MS, LeadSinkError, WebhookLeadSink } from "./lead-sink";
 export type { LeadSink } from "./lead-sink";

@@ -4,6 +4,7 @@
 export {
   DEFAULT_SCENE_RENDERER_TYPE,
   isProjectPublished,
+  PANORAMA_EXTENSIONS,
   PROJECT_SCHEMA_VERSION,
   ROTATION_FRAME_PLACEHOLDER,
   ROTATION_MAX_FRAMES,
@@ -24,6 +25,7 @@ export type {
   SceneInput,
   SceneKind,
   SceneModel,
+  ScenePanorama,
   SceneRendererType,
   SceneRotation,
   TypicalFloors,

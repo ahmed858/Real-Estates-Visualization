@@ -1155,3 +1155,23 @@ not a rigid template.
   `npm run units:from-csv -- <slug> <file.csv>` writes units.xlsx from a
   validated CSV.
 - Verify: `npm run check`.
+
+## Phase 13 · Premium content for the residence demo
+
+Asked by the owner on 2026-11-27: the residence demo had no 3D or 360° view,
+and no real assets exist, so generate them.
+
+### U-1301 3D building and 360° panoramas for demo-residence
+- Phase 13 · `schema` + `domain` + `viewer` + `editor` + `projects` · Depends on: U-1201 · Gated: no · Status: `done`
+- New renderer `panorama-360` (`panorama: { path, width, height }`, 2:1
+  picture under `panoramas/`, 8 MB cap) with a lazily loaded three.js
+  look-around view and the poster as fallback; the editor's add-scene form
+  offers it. Premium children of a scene are listed as 3D / 360° shortcuts
+  next to the breadcrumbs (`premiumViews`), so photo facades need no drawn
+  buttons, and the reachability warning no longer asks for a hotspot to
+  them. Scene-link meshes in a model keep their materials and glow on hover.
+- `scripts/demo-residence-premium/` generates, in Chromium with three.js,
+  `models/residence.glb` (one node per floor), its poster and floor
+  polygons, and three panoramas with posters. Output is committed; CI does
+  not regenerate it.
+- Verify: `npm run check`.

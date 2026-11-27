@@ -67,6 +67,10 @@ describe("listProjectImages", () => {
   it("lists the demo images with their sizes, including the photo", async () => {
     const images = await listProjectImages(projectsDir, "demo-residence");
     expect(images).toEqual([
+      { path: "images/360-bedroom-b.jpg", width: 1600, height: 900 },
+      { path: "images/360-living-a.jpg", width: 1600, height: 900 },
+      { path: "images/360-rooftop.jpg", width: 1600, height: 900 },
+      { path: "images/building-3d.jpg", width: 1600, height: 1080 },
       { path: "images/facade.jpg", width: 1600, height: 1707 },
       { path: "images/floor-plan-ground.svg", width: 1200, height: 900 },
       { path: "images/floor-plan-typical.svg", width: 1200, height: 900 },

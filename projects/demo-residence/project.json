@@ -1033,6 +1033,283 @@
             }
           }
         ]
+      },
+      {
+        "id": "building-3d",
+        "kind": "building",
+        "type": "model-3d",
+        "title": {
+          "ar": "العمارة 3D",
+          "en": "3D building"
+        },
+        "image": {
+          "path": "images/building-3d.jpg",
+          "width": 1600,
+          "height": 1080
+        },
+        "model": {
+          "path": "models/residence.glb"
+        },
+        "hotspots": [
+          {
+            "id": "floor-5",
+            "points": [
+              [
+                418,
+                446
+              ],
+              [
+                969,
+                622
+              ],
+              [
+                1193,
+                462
+              ],
+              [
+                1200,
+                399
+              ],
+              [
+                973,
+                545
+              ],
+              [
+                411,
+                383
+              ]
+            ],
+            "mesh": "floor-5",
+            "target": {
+              "scene": "floor-5"
+            }
+          },
+          {
+            "id": "floor-4",
+            "points": [
+              [
+                425,
+                506
+              ],
+              [
+                965,
+                697
+              ],
+              [
+                1186,
+                524
+              ],
+              [
+                1193,
+                462
+              ],
+              [
+                969,
+                622
+              ],
+              [
+                418,
+                446
+              ]
+            ],
+            "mesh": "floor-4",
+            "target": {
+              "scene": "floor-4"
+            }
+          },
+          {
+            "id": "floor-3",
+            "points": [
+              [
+                432,
+                564
+              ],
+              [
+                961,
+                768
+              ],
+              [
+                1179,
+                584
+              ],
+              [
+                1186,
+                524
+              ],
+              [
+                965,
+                697
+              ],
+              [
+                425,
+                506
+              ]
+            ],
+            "mesh": "floor-3",
+            "target": {
+              "scene": "floor-3"
+            }
+          },
+          {
+            "id": "floor-2",
+            "points": [
+              [
+                438,
+                620
+              ],
+              [
+                957,
+                835
+              ],
+              [
+                1172,
+                641
+              ],
+              [
+                1179,
+                584
+              ],
+              [
+                961,
+                768
+              ],
+              [
+                432,
+                564
+              ]
+            ],
+            "mesh": "floor-2",
+            "target": {
+              "scene": "floor-2"
+            }
+          },
+          {
+            "id": "floor-1",
+            "points": [
+              [
+                444,
+                675
+              ],
+              [
+                954,
+                900
+              ],
+              [
+                1166,
+                696
+              ],
+              [
+                1172,
+                641
+              ],
+              [
+                957,
+                835
+              ],
+              [
+                438,
+                620
+              ]
+            ],
+            "mesh": "floor-1",
+            "target": {
+              "scene": "floor-1"
+            }
+          },
+          {
+            "id": "ground",
+            "points": [
+              [
+                451,
+                734
+              ],
+              [
+                950,
+                971
+              ],
+              [
+                1159,
+                757
+              ],
+              [
+                1166,
+                696
+              ],
+              [
+                954,
+                900
+              ],
+              [
+                444,
+                675
+              ]
+            ],
+            "mesh": "ground",
+            "target": {
+              "scene": "ground"
+            }
+          }
+        ]
+      },
+      {
+        "id": "living-a-360",
+        "kind": "unit-plan",
+        "type": "panorama-360",
+        "title": {
+          "ar": "ريسبشن شقة A (360°)",
+          "en": "Apartment A living room (360°)"
+        },
+        "image": {
+          "path": "images/360-living-a.jpg",
+          "width": 1600,
+          "height": 900
+        },
+        "panorama": {
+          "path": "panoramas/living-a.jpg",
+          "width": 4096,
+          "height": 2048
+        },
+        "hotspots": []
+      },
+      {
+        "id": "bedroom-b-360",
+        "kind": "unit-plan",
+        "type": "panorama-360",
+        "title": {
+          "ar": "النوم الرئيسية شقة B (360°)",
+          "en": "Apartment B master bedroom (360°)"
+        },
+        "image": {
+          "path": "images/360-bedroom-b.jpg",
+          "width": 1600,
+          "height": 900
+        },
+        "panorama": {
+          "path": "panoramas/bedroom-b.jpg",
+          "width": 4096,
+          "height": 2048
+        },
+        "hotspots": []
+      },
+      {
+        "id": "rooftop-360",
+        "kind": "other",
+        "type": "panorama-360",
+        "title": {
+          "ar": "السطح (360°)",
+          "en": "Rooftop (360°)"
+        },
+        "image": {
+          "path": "images/360-rooftop.jpg",
+          "width": 1600,
+          "height": 900
+        },
+        "panorama": {
+          "path": "panoramas/rooftop.jpg",
+          "width": 4096,
+          "height": 2048
+        },
+        "hotspots": []
       }
     ]
   }

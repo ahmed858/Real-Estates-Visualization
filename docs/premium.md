@@ -1,12 +1,14 @@
 # Premium scenes guide (owner)
 
-Two premium views can sit next to the 2D scenes of a project:
+Three premium views can sit next to the 2D scenes of a project:
 
 - **360° rotation** (`rotation-360`): a turntable of the building, a series of
   pictures taken or rendered around it. The visitor drags (or uses the
   slider) to turn it, and the units are shapes drawn on the frames.
 - **3D model** (`model-3d`): a model the visitor orbits. Each unit is a named
   part of the model, coloured by its status.
+- **360° panorama** (`panorama-360`): a 360° picture taken from one spot, an
+  apartment's living room or the rooftop. The visitor looks around in it.
 
 Both keep the scene's normal picture as the **poster**: it shows while the
 premium view loads, on devices that cannot show it, in link previews and in
@@ -48,6 +50,19 @@ Ask the 3D artist for:
   on the origin. The viewer frames the camera on the whole model.
 - **Poster**: a render of the model from the main angle, for the scene image.
 
+### 360° panorama
+
+Ask the photographer (or renderer) for:
+
+- **Format**: one equirectangular picture per spot, JPG, exactly twice as
+  wide as tall: 4096 x 2048 is a good size (6000 x 3000 at most), **8 MB or
+  less**, ideally under 1.5 MB so phones open it quickly. Most 360° cameras
+  and every renderer export this format.
+- **Height**: taken at eye height (about 1.5 m) in the middle of the room,
+  level, with the most attractive direction (the window, the view) in the
+  centre of the picture: the viewer opens there.
+- **Poster**: a normal photo from the same spot looking the same way.
+
 ## 2. Put the files in the project folder
 
 ```
@@ -56,6 +71,7 @@ projects/<slug>/
   rotations/tower/frame-01.jpg    rotation frames (any folder under rotations/)
   …
   models/tower.glb                3D models (only under models/)
+  panoramas/living-room.jpg       360° panoramas (only under panoramas/)
 ```
 
 ## 3. Add the scene
@@ -69,10 +85,14 @@ Open the parent scene in the editor and use the **Child scenes** form
   digits of n: `frame-01` .. `frame-36`), use more than one name pattern, or
   differ in size.
 - **Shown as** `3D model`: pick the `.glb` file under `models/`.
-- In both cases the picked image is the scene's poster.
+- **Shown as** `360° panorama`: pick the picture under `panoramas/` (only
+  2:1 pictures are listed).
+- In every case the picked image is the scene's poster.
 
-Then draw a hotspot on the parent scene that opens the new scene (target
-**Scene**). The hand-written form of these scenes is in
+Visitors reach a premium scene from the **3D / 360°** shortcuts the viewer
+shows above its parent scene, so no hotspot is needed. You can still draw a
+hotspot on the parent scene that opens it (target **Scene**), for example a
+button drawn on a rendered facade. The hand-written form of these scenes is in
 [data-format.md](data-format.md#premium-scenes).
 
 Then open the scene in the editor
@@ -105,5 +125,16 @@ Download `project.json` and replace the project's file, as for any edit.
 - Try a link with the poster only: a device without WebGL (or a failed model
   load) must still show the poster and the unit list.
 
-The demo project has a generated turntable to try: open `/p/demo-villa`,
-then **360° view**.
+The demo projects have premium scenes to try: `/p/demo-villa`, then
+**360° view** or **3D model**; and `/p/demo-residence`, then the **3D
+building** (each floor opens its plan) and the **360°** living room, master
+bedroom and rooftop. The residence's scenes are generated, see
+`projects/demo-residence/README.md`.
+
+### 3D building models whose floors open floor scenes
+
+For a building model, name one node per floor after the floor scene id
+(`ground`, `floor-1` …) and give the model scene one hotspot per floor with
+`mesh` set to that name and target **Scene** the floor. The floors keep the
+model's own materials and glow while hovered; clicking one opens the floor
+plan.

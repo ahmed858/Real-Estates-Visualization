@@ -11,7 +11,7 @@ export const CROSS_FIELD_RULES = [
   "Every hotspot point lies inside its scene image (0 <= x <= width, 0 <= y <= height).",
   "floors (typical floors) is only allowed on kind \"floor\", needs from <= to, and its hotspots use unitSuffix, never unit.",
   "unitSuffix targets are only allowed on a typical floor.",
-  "rotation is required on and only allowed on type \"rotation-360\"; model likewise on type \"model-3d\".",
+  "rotation is required on and only allowed on type \"rotation-360\"; model likewise on type \"model-3d\"; panorama likewise on type \"panorama-360\".",
   "Paths are relative to the project folder and never contain \"..\".",
 ] as const;
 

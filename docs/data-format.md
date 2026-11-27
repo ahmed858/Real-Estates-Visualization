@@ -78,13 +78,14 @@ its `project.schema.json` is this format as a JSON Schema.
 | --- | --- | --- | --- |
 | `id` | id | yes | Unique across the whole project. Not `units`, `compare` or `lead`: those are site pages. |
 | `kind` | enum | yes | `facade`, `masterplan`, `phase`, `block`, `cluster`, `building`, `floor`, `unit-plan` or `other`. A label for what the image shows; every kind renders the same, only `floor` may be a typical floor. |
-| `type` | enum | no | Renderer: `image-2d` (default), or the premium `rotation-360` and `model-3d` (see [Premium scenes](#premium-scenes)). |
+| `type` | enum | no | Renderer: `image-2d` (default), or the premium `rotation-360`, `model-3d` and `panorama-360` (see [Premium scenes](#premium-scenes)). |
 | `title` | localized text | yes | Shown in navigation and breadcrumbs. |
 | `image.path` | file path | yes | The scene image. On a premium scene it is the poster, shown while the view loads and where it cannot run. |
 | `image.width` | positive integer | yes | Image width in pixels. Hotspot points use this coordinate system. |
 | `image.height` | positive integer | yes | Image height in pixels. |
 | `rotation` | rotation | only `rotation-360` | Required on, and only allowed on, a `rotation-360` scene. |
 | `model` | model | only `model-3d` | Required on, and only allowed on, a `model-3d` scene. |
+| `panorama` | panorama | only `panorama-360` | Required on, and only allowed on, a `panorama-360` scene. |
 | `floors` | typical floors | no | Only on `kind: "floor"`. One plan that serves a range of floors, see below. |
 | `hotspots` | hotspot[] | no | Defaults to none. |
 | `children` | scene[] | no | Child scenes. Defaults to none. |
@@ -135,12 +136,34 @@ In the viewer the visitor orbits the model (drag, pinch, arrow keys on the
 focused view). Every mesh named by a hotspot's `mesh` (or a child of a node
 with that name) is tinted with its unit's status colour (scene links in the
 link colour) and opens like a 2D hotspot; other meshes keep their own
-materials. A list of the scene's hotspots stays under the view for keyboard
+materials. A mesh that links to a scene (a floor of a building model) keeps
+its own materials too and glows in the link colour while hovered. A list of the scene's hotspots stays under the view for keyboard
 and screen reader users, and the poster shows while the model loads, if it
 fails to load, and on devices without WebGL.
 
+**`panorama-360`**: a 360° x 180° equirectangular picture the visitor looks
+around in from one spot (a room, a rooftop).
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `panorama.path` | file path | yes | A `.jpg`, `.png` or `.webp` picture in the `panoramas/` folder, e.g. `panoramas/living-room.jpg`. Must exist. |
+| `panorama.width`, `panorama.height` | positive integer | yes | Picture size in pixels; the width must be exactly twice the height (e.g. 4096 x 2048). |
+
+In the viewer the visitor drags (or uses the arrow keys) to look around and
+zooms with the wheel, a pinch or `+` / `-`; the view opens on the centre of
+the picture and turns slowly until touched (not when the device asks for
+reduced motion). The poster shows while the picture loads and on devices
+without WebGL; pick a normal photo from the same spot as the poster.
+
+Premium scenes are reachable without a hotspot: the viewer lists every
+premium child of the current scene (and, on a premium scene, its premium
+siblings) as **3D / 360°** shortcuts next to the breadcrumbs, so a photo
+facade does not need drawn buttons. A hotspot that opens a premium scene
+still works, and that scene is then left out of the shortcuts.
+
 Size limits: each rotation frame (any file under `rotations/`) at most 2 MB,
-each model at most 30 MB. The site does not serve larger files and
+each model at most 30 MB, each panorama (any file under `panoramas/`) at
+most 8 MB. The site does not serve larger files and
 `npm run validate` reports them.
 
 ```json
