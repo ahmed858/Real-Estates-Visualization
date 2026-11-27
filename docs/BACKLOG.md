@@ -2,7 +2,7 @@
 
 Ordered work units. The hourly agent takes the **first** unit whose status is
 `todo`, whose dependencies are all `done`, and that has no open `[agent]` PR.
-Phases up to 8 are broken down; later phases stay as headlines until the
+Phases up to 9 are broken down; later phases stay as headlines until the
 agent writes their breakdown in a planning unit.
 
 **Statuses** (as they read on `develop`): `todo` · `done` · `blocked` (question
@@ -34,8 +34,8 @@ verification commands. `npm run check` must pass for every unit.
 | 5 | Live status | Site re-reads the sheet continuously (Google Sheets for clients). **done** (U-503 waits for Q-2) |
 | 6 | Drawing tool | Polygon editor for real client images. **done** |
 | 7 | Multi-client | A link per project, logo and colours per client. **done** |
-| 8 | Extras | Each on its own: gallery, compare, share, lead form to client CRM, location map. |
-| later | Premium | 360° rotation and 3D model views. |
+| 8 | Extras | Each on its own: gallery, compare, share, lead form to client CRM, location map. **done** |
+| 9 | Premium | 360° rotation and 3D model views, as renderers behind the scene Strategy. |
 
 If a real client arrives early, Phase 6 may move ahead of Phase 4.
 
@@ -858,9 +858,141 @@ service or send visitor data anywhere are gated.
 - Verify: `npm run check`.
 
 ### U-806 Plan the premium phase (360° and 3D)
-- Phase 8 · Docs · Depends on: U-810 · **Gated: yes** · Status: `todo`
+- Phase 8 · Docs · Depends on: U-810 · **Gated: yes** · Status: `done`
 - Break the premium layer into units in this file: new scene renderer
   types behind the existing Strategy (`SCENE_RENDERER_TYPES`), how their
   assets are stored, and what the editor needs, without changing the 2D
   core.
+- Verify: `npm run check`.
+
+## Phase 9 · Premium (360° and 3D)
+
+Written by U-806 from what Phase 8 produced. The viewer already picks a
+scene's renderer from a registry keyed by `scene.type` (Strategy,
+`SCENE_RENDERER_TYPES` in `schema`, `DEFAULT_SCENE_RENDERERS` in `viewer`),
+and `SceneView` shows a clear message for a type it has no renderer for.
+Phase 9 adds two renderer types behind that Strategy without changing the
+scene tree, the units sheet, the side panel or the 2D renderer:
+
+- `rotation-360`: a turntable of the building, a sequence of photos or
+  renders taken around it (for example 36 frames, one every 10°). The
+  visitor drags (or uses the arrow keys) to turn it; units and floors are
+  polygons drawn on some frames.
+- `model-3d`: a glTF binary model (`.glb`) the visitor orbits; units are
+  meshes in the model, named after a hotspot.
+
+Rules that keep the 2D core unchanged:
+
+- Every scene keeps its required `image`. For a premium scene it is the
+  poster: shown while the premium view loads, on devices without WebGL,
+  in Open Graph previews and in the editor's scene list. A project that
+  drops the premium renderer still works as plain 2D.
+- The new data lives in optional, renderer-specific blocks
+  (`scene.rotation`, `scene.model`, `hotspot.frames`, `hotspot.mesh`);
+  `schemaVersion` stays 1 because every existing file stays valid.
+- Hotspot ids, targets and unit codes work exactly as in 2D, so the side
+  panel, filters, deep links, compare and leads need no change.
+- Premium assets live in the project folder next to `images/`:
+  `rotations/<scene-id>/` (frames) and `models/` (`.glb`), served by the
+  existing `/files` route with size limits.
+- Units that add a dependency (a 3D library) or change the data format are
+  gated.
+
+### U-901 Premium scene data in the schema
+- Phase 9 · `schema` + `domain` · Depends on: U-806 · **Gated: yes** · Status: `todo`
+- `SCENE_RENDERER_TYPES` gains `rotation-360` and `model-3d`. A
+  `rotation-360` scene requires `rotation: { frames, count, width, height,
+  start? }`, where `frames` is a project path with `{index}` (e.g.
+  `rotations/tower/frame-{index}.jpg`, index 1-based, zero-padded to the
+  digits of `count`), and its hotspots may carry `frames: { "<n>": points }`
+  (polygons on the frames where the hotspot is visible). A `model-3d` scene
+  requires `model: { path }` (a `.glb` file) and its hotspots carry `mesh`
+  (the mesh name in the model). The blocks are rejected on a scene of
+  another type. Tree rules and `checkProjectFit` check frame numbers in
+  range, polygon points inside the frame, and every frame and model file
+  present (`missingFile`).
+- `serializeProjectConfig` keeps the new blocks in schema key order, and
+  both demo projects still export byte for byte.
+- Acceptance: schema tests for both types (required blocks, wrong type,
+  frame numbers, padding), validation tests for missing frames/models.
+- Verify: `npm run check`.
+
+### U-902 Serve premium assets
+- Phase 9 · `data-sources` + App · Depends on: U-901 · Gated: no · Status: `todo`
+- `/files/<slug>/rotations/...` serves frames (same image types as now)
+  and `/files/<slug>/models/*.glb` serves `model/gltf-binary`, with a size
+  cap per file (frames 2 MB, models 30 MB) checked by the validator too,
+  and long cache headers. Nothing outside `images/`, `rotations/` and
+  `models/` is served.
+- Acceptance: tests for the content types, size caps and refused paths.
+- Verify: `npm run check`.
+
+### U-903 Rotation viewer
+- Phase 9 · `viewer` · Depends on: U-902 · Gated: no · Status: `todo`
+- `Rotation360Scene` registered for `rotation-360`: shows the poster, then
+  the frames once preloaded (progress shown), turns with drag, swipe and
+  the arrow keys (flipped for RTL), draws the hotspots of the current frame
+  with the same status colours, hover card and keyboard focus as 2D, and
+  hides hotspots on frames where they have no polygon. `?frame=` keeps the
+  angle in the URL for sharing. No new dependency.
+- The renderer props get a `fileUrl(path)` helper next to `imageUrl`, so a
+  renderer can load its own assets; `Image2DScene` is unchanged.
+- Acceptance: component tests for turning (pointer, keys, RTL), hotspots
+  per frame, selecting a unit, and the URL.
+- Verify: `npm run check`.
+
+### U-904 Demo turntable
+- Phase 9 · `tools` + `projects` · Depends on: U-903 · Gated: no · Status: `todo`
+- `npm run generate:demo` also writes a small generated turntable (for
+  example 24 SVG frames of the demo villa block from different angles,
+  original drawings) and a `rotation-360` scene with a few unit hotspots,
+  so the viewer can be tried and `check:demo` covers it.
+- Acceptance: generator test (frame count, hotspot frames valid), the demo
+  validates.
+- Verify: `npm run check`.
+
+### U-905 Draw hotspots on rotation frames in the editor
+- Phase 9 · `editor` · Depends on: U-904 · Gated: no · Status: `todo`
+- The editor shows a frame strip for a `rotation-360` scene; the owner
+  draws a hotspot's polygon on a frame, can copy it to the next frame and
+  nudge it, and the Problems panel reports frames out of range. Undo and
+  download work as for 2D.
+- Acceptance: editor state tests for per-frame polygons and copying, canvas
+  test for switching frames.
+- Verify: `npm run check`.
+
+### U-906 3D model viewer
+- Phase 9 · `viewer` · Depends on: U-905 · **Gated: yes** · Status: `todo`
+- `Model3DScene` registered for `model-3d`, loaded only on scenes that use
+  it (dynamic import, so 2D pages ship no 3D code). Orbit with drag,
+  pinch and keys; meshes named by a hotspot's `mesh` are tinted by unit
+  status and open the unit like a 2D hotspot; a list of the scene's units
+  stays available for keyboard and screen reader users; the poster shows
+  when WebGL is missing. The PR picks the 3D library (likely three.js) and
+  justifies it.
+- Acceptance: tests for the mesh-to-hotspot mapping and status tints (pure
+  functions), the fallback without WebGL, and the accessible unit list.
+- Verify: `npm run check`.
+
+### U-907 Map model meshes in the editor
+- Phase 9 · `editor` · Depends on: U-906 · Gated: no · Status: `todo`
+- For a `model-3d` scene the editor lists the mesh names read from the
+  `.glb` file (server side, no 3D rendering needed) and lets the owner
+  link each mesh to a hotspot target with the existing target picker.
+- Acceptance: test for reading mesh names from a small fixture `.glb`, and
+  editor state tests for linking.
+- Verify: `npm run check`.
+
+### U-908 Owner guide for premium scenes
+- Phase 9 · Docs · Depends on: U-907 · Gated: no · Status: `todo`
+- `docs/premium.md`: what to ask the client or the 3D artist for (frame
+  count, size, naming; `.glb` with one named mesh per unit, polygon budget,
+  file size), how to add the scene in the editor and how to check it.
+  Linked from `docs/editor.md` and `docs/data-format.md`.
+- Verify: `npm run check`.
+
+### U-909 Plan the next phase
+- Phase 9 · Docs · Depends on: U-908 · **Gated: yes** · Status: `todo`
+- Review what Phases 1-9 left open (including Q-2 and Q-3) and write the
+  next phase's units in this file, or record that the roadmap is complete.
 - Verify: `npm run check`.
