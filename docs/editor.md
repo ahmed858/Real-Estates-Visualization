@@ -59,6 +59,25 @@ The new scene appears in the scene list; open it to draw on it.
 - Click a shape to select it, drag a corner to move it, Delete removes the
   selected shape.
 - Ctrl+Z / Cmd+Z undoes, Shift+Ctrl+Z / Shift+Cmd+Z redoes, across scenes.
+- Arrow keys nudge the selected shape by 1 px (10 px with Shift).
+
+### Rotation (360°) scenes
+
+A `rotation-360` scene shows a frame strip above the canvas: **Poster** (the
+scene image) and one button per frame. On a frame, the canvas shows that
+frame and the shapes drawn on it.
+
+- A new shape drawn on a frame becomes a new hotspot with that frame's
+  polygon; its poster polygon is the same shape scaled to the poster, which
+  you can adjust on **Poster**.
+- Select a hotspot, open a frame where it has no polygon and press
+  **Draw <id> on frame n** to draw it there.
+- **Copy to next frame** copies the selected hotspot's polygon to the next
+  frame and opens it, so you can nudge it into place with the arrow keys.
+  **Remove from this frame** hides the hotspot on that frame.
+- Frames where the selected hotspot has a polygon are underlined. The
+  Problems panel reports polygons on frames that do not exist and points
+  outside the frame.
 
 ## 5. Pick what each shape opens
 

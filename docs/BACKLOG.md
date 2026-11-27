@@ -968,7 +968,7 @@ Rules that keep the 2D core unchanged:
 - Verify: `npm run check`.
 
 ### U-905 Draw hotspots on rotation frames in the editor
-- Phase 9 · `editor` · Depends on: U-904 · Gated: no · Status: `todo`
+- Phase 9 · `editor` · Depends on: U-904 · Gated: no · Status: `done`
 - The editor shows a frame strip for a `rotation-360` scene; the owner
   draws a hotspot's polygon on a frame, can copy it to the next frame and
   nudge it, and the Problems panel reports frames out of range. Undo and
