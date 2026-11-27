@@ -1,6 +1,8 @@
 // Side panel content for a selected unit: its facts, a WhatsApp enquiry
 // button, a share button, plan image and notes.
 import Link from "next/link";
+import { useState } from "react";
+import { PhotoLightbox } from "./photo-lightbox";
 import { PICK_PARAM, withCodes } from "../compare/compare-params";
 import { formatPrice, type UnitSummary } from "../scene/hover-card";
 import type { ViewerLocale, ViewerText } from "../layout/viewer-text";
@@ -33,6 +35,9 @@ export function UnitDetails({ unit, text, locale, currency, onClose, enquiryHref
     [text.card.price, formatPrice(unit.price, currency, locale)],
   ];
   const title = `${text.unit} ${unit.code}`;
+  const gallery = unit.galleryUrls ?? [];
+  const photoAlt = (i: number) => text.panel.photo(unit.code, num.format(i + 1), num.format(gallery.length));
+  const [photo, setPhoto] = useState<number | null>(null);
   return (
     <section aria-label={title} className="flex flex-col gap-3 rounded-lg border border-white/10 bg-white/5 p-4">
       <div className="flex items-start justify-between gap-2">
@@ -59,18 +64,26 @@ export function UnitDetails({ unit, text, locale, currency, onClose, enquiryHref
           {text.compare.withOthers}
         </Link>
       )}
-      {unit.galleryUrls && unit.galleryUrls.length > 0 && (
+      {gallery.length > 0 && (
         <ul aria-label={text.panel.photos} className="grid grid-cols-3 gap-2">
-          {unit.galleryUrls.map((url, i) => (
+          {gallery.map((url, i) => (
             <li key={url}>
-              <a href={url} target="_blank" rel="noopener noreferrer" className="block overflow-hidden rounded border border-white/10 hover:border-white/40">
+              <a
+                href={url}
+                onClick={(e) => {
+                  e.preventDefault();
+                  setPhoto(i);
+                }}
+                className="block overflow-hidden rounded border border-white/10 hover:border-white/40"
+              >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={url} alt={text.panel.photo(unit.code, num.format(i + 1), num.format(unit.galleryUrls!.length))} loading="lazy" className="aspect-square w-full object-cover" />
+                <img src={url} alt={photoAlt(i)} loading="lazy" className="aspect-square w-full object-cover" />
               </a>
             </li>
           ))}
         </ul>
       )}
+      {photo !== null && <PhotoLightbox urls={gallery} index={photo} alt={photoAlt} text={text} onIndex={setPhoto} onClose={() => setPhoto(null)} />}
       {unit.planImageUrl && (
         // eslint-disable-next-line @next/next/no-img-element
         <img src={unit.planImageUrl} alt={text.panel.plan(unit.code)} className="w-full rounded border border-white/10 bg-white" />
