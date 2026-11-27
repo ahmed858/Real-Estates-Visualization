@@ -1110,8 +1110,8 @@ planned roadmap is complete. What is left:
   compare page and the editor are still checked only by unit tests.
 
 ### U-1101 Smoke tests: second demo, Arabic and compare
-- Phase 11 · `e2e` · Depends on: U-1005 · Gated: no · Status: `todo`
-- Add Playwright tests: `demo-residence` facade → typical floor → unit
+- Phase 11 · `e2e` · Depends on: U-1005 · Gated: no · Status: `done`
+- Add Playwright tests: `demo-residence` facade → a floor → unit
   panel; the demo villa in Arabic (default locale) has `dir="rtl"` and the
   side panel and table read right to left; `/p/demo-villa/compare?units=…`
   shows the picked units; the lead form is absent when `LEAD_WEBHOOKS` has
