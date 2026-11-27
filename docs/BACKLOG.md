@@ -955,6 +955,18 @@ Rules that keep the 2D core unchanged:
   validates.
 - Verify: `npm run check`.
 
+### U-910 Rotation viewer: keep `?frame=` on first load
+- Phase 9 · `viewer` · Depends on: U-903 · Gated: no · Status: `todo`
+- Found by U-904 on the demo turntable: opening `/p/demo-villa/turntable?frame=3`
+  moves the slider to 3 but keeps showing frame 1 and its hotspots, because
+  `Rotation360Scene` reads `window.location` in its first render, so the
+  server HTML (frame 1) and the client state (frame 3) differ and hydration
+  keeps the server image. Read the frame after mount instead (the first
+  render always uses `rotation.start` or 1, as on the server).
+- Acceptance: component test that renders the server markup, hydrates with
+  `?frame=3` and expects frame 3's image and hotspots.
+- Verify: `npm run check`.
+
 ### U-905 Draw hotspots on rotation frames in the editor
 - Phase 9 · `editor` · Depends on: U-904 · Gated: no · Status: `todo`
 - The editor shows a frame strip for a `rotation-360` scene; the owner
