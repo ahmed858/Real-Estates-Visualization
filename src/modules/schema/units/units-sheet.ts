@@ -4,6 +4,8 @@ import type { z } from "zod";
 import {
   countCell,
   filePathCell,
+  galleryCell,
+  galleryPaths,
   integerCell,
   isBlank,
   nonNegativeNumberCell,
@@ -24,6 +26,8 @@ export interface UnitRow {
   price: number;
   status: UnitStatus;
   planImage?: string;
+  /** Unit photos (project file paths), from the `gallery` column. */
+  gallery?: string[];
   notes?: string;
   /** Row number in the sheet (1-based, as the spreadsheet app shows it). */
   sheetRow: number;
@@ -41,11 +45,12 @@ export const UNIT_COLUMNS = [
   "price",
   "status",
   "plan_image",
+  "gallery",
   "notes",
 ] as const;
 export type UnitColumn = (typeof UNIT_COLUMNS)[number];
 
-export const OPTIONAL_UNIT_COLUMNS: readonly UnitColumn[] = ["plan_image", "notes"];
+export const OPTIONAL_UNIT_COLUMNS: readonly UnitColumn[] = ["plan_image", "gallery", "notes"];
 export const REQUIRED_UNIT_COLUMNS: readonly UnitColumn[] = UNIT_COLUMNS.filter(
   (c) => !OPTIONAL_UNIT_COLUMNS.includes(c),
 );
@@ -83,6 +88,7 @@ const CELL_SCHEMAS: Record<Exclude<UnitColumn, "status">, CellSchema> = {
   area_m2: positiveNumberCell,
   price: nonNegativeNumberCell,
   plan_image: filePathCell,
+  gallery: galleryCell,
   notes: textCell,
 };
 
@@ -153,6 +159,7 @@ function readRow(cells: readonly unknown[], row: number, index: Map<UnitColumn, 
     sheetRow: row,
   };
   if (values.plan_image !== undefined) unit.planImage = values.plan_image as string;
+  if (values.gallery !== undefined) unit.gallery = galleryPaths(values.gallery as string);
   if (values.notes !== undefined) unit.notes = values.notes as string;
   return { errors, unit };
 }

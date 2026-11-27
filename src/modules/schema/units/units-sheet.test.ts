@@ -98,6 +98,9 @@ describe("parseUnitsSheet: column types", () => {
     ["price", -5, "must not be negative"],
     ["scene", "Ground Floor", "must be a scene id: lowercase letters, digits and single dashes"],
     ["plan_image", "../x.svg", 'must not contain ".." segments'],
+    ["gallery", "images/a.jpg; ../b.jpg", 'no path may contain ".." segments'],
+    ["gallery", "/images/a.jpg", "every path must be relative to the project folder"],
+    ["gallery", " ; ", "must list at least one image path"],
   ] as const)("rejects %s = %j", (column, value, message) => {
     expect(errors(table(row({ [column]: value })))).toEqual([{ row: 2, column, message }]);
   });
@@ -166,3 +169,18 @@ describe("parseUnitsSheet: sheet-level errors", () => {
     );
   });
 });
+
+describe("parseUnitsSheet: gallery column", () => {
+  it("splits the photo paths on ';', trimming spaces and empty parts", () => {
+    const [unit] = units(table(row({ gallery: " images/g01-1.jpg ;images/g01-2.jpg; " })));
+    expect(unit.gallery).toEqual(["images/g01-1.jpg", "images/g01-2.jpg"]);
+  });
+
+  it("is optional: a blank cell or a sheet without the column has no gallery", () => {
+    expect(units(table(row()))[0]).not.toHaveProperty("gallery");
+    const header = HEADER.filter((c) => c !== "gallery");
+    const [unit] = units({ header, rows: [header.map((c) => (c === "code" ? "G-01" : row()[HEADER.indexOf(c)]))] });
+    expect(unit).not.toHaveProperty("gallery");
+  });
+});
+

@@ -69,6 +69,23 @@ describe("SidePanel", () => {
     expect(within(panel).getByText("Private garden")).toBeTruthy();
   });
 
+  it("shows the unit's photos as thumbnails that open the full photo, with numbered names", () => {
+    const withPhotos = { ...units, "G-01": { ...g01, galleryUrls: ["/files/demo/images/a.jpg", "/files/demo/images/b.jpg"] } };
+    window.history.replaceState(null, "", "/p/demo/ground?unit=G-01");
+    render(<SidePanel sceneTitle="Ground floor" stats={stats} units={withPhotos} currency="EGP" locale="ar" />);
+    const photos = within(screen.getByRole("list", { name: "الصور" })).getAllByRole("img");
+    expect(photos.map((img) => [img.getAttribute("alt"), img.closest("a")?.getAttribute("href")])).toEqual([
+      ["صورة ١ من ٢ للوحدة G-01", "/files/demo/images/a.jpg"],
+      ["صورة ٢ من ٢ للوحدة G-01", "/files/demo/images/b.jpg"],
+    ]);
+  });
+
+  it("has no photo list without photos", () => {
+    window.history.replaceState(null, "", "/p/demo/ground?unit=G-01");
+    render(<SidePanel sceneTitle="Ground floor" stats={stats} units={units} currency="EGP" locale="en" />);
+    expect(screen.queryByRole("list", { name: "Photos" })).toBeNull();
+  });
+
   it("has no plan image when the sheet names none", () => {
     window.history.replaceState(null, "", "/p/demo/ground?unit=G-02");
     render(<SidePanel sceneTitle="Ground floor" stats={stats} units={units} currency="EGP" locale="en" />);

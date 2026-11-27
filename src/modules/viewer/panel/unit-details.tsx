@@ -59,6 +59,18 @@ export function UnitDetails({ unit, text, locale, currency, onClose, enquiryHref
           {text.compare.withOthers}
         </Link>
       )}
+      {unit.galleryUrls && unit.galleryUrls.length > 0 && (
+        <ul aria-label={text.panel.photos} className="grid grid-cols-3 gap-2">
+          {unit.galleryUrls.map((url, i) => (
+            <li key={url}>
+              <a href={url} target="_blank" rel="noopener noreferrer" className="block overflow-hidden rounded border border-white/10 hover:border-white/40">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={url} alt={text.panel.photo(unit.code, num.format(i + 1), num.format(unit.galleryUrls!.length))} loading="lazy" className="aspect-square w-full object-cover" />
+              </a>
+            </li>
+          ))}
+        </ul>
+      )}
       {unit.planImageUrl && (
         // eslint-disable-next-line @next/next/no-img-element
         <img src={unit.planImageUrl} alt={text.panel.plan(unit.code)} className="w-full rounded border border-white/10 bg-white" />

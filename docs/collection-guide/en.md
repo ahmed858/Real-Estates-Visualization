@@ -58,6 +58,7 @@ built from is described in [../data-format.md](../data-format.md).
 | `price` | yes | `4250000` |
 | `status` | yes | `available` |
 | `plan_image` | no | `images/type-a.svg` |
+| `gallery` | no | `images/g01-living.jpg; images/g01-kitchen.jpg` (unit photos, separated by `;`) |
 | `notes` | no | `Garden view` |
 
 ## Live units sheet (Google Sheets)

@@ -191,6 +191,7 @@ Column names are fixed; their order and letter case do not matter.
 | `price` | number ≥ 0 | yes | Price in the project currency. |
 | `status` | status | yes | `available`, `reserved` or `sold`, in English or Arabic (see below). |
 | `plan_image` | file path | no | Unit plan image, relative to the project folder, e.g. `images/type-a.svg`. |
+| `gallery` | file paths | no | Unit photos separated by `;`, each relative to the project folder, e.g. `images/g01-living.jpg; images/g01-kitchen.jpg`. Shown as thumbnails in the unit panel; `npm run validate` reports missing files. |
 | `notes` | text | no | Free text. |
 
 ### Value rules

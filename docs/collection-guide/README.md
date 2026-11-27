@@ -16,7 +16,9 @@ Google offer "Make a copy" straight away.
 sheet schema and that both guides have the same structure (headings, table
 rows, list and checklist items). Change both guides in the same PR.
 
-The template was written once with `write-excel-file@4.1.1` (not a project
+The optional `gallery` column (U-803) is not in the template; clients who
+send unit photos add it themselves, as the guides explain. The template was
+written once with `write-excel-file@4.1.1` (not a project
 dependency) by this script, run as `node gen.mjs <this folder>`:
 
 ```js

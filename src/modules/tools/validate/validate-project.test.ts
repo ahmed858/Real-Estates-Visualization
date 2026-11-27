@@ -132,11 +132,12 @@ describe("validateProject", () => {
     const dir = await copyValid();
     await rm(join(dir, "images", "first.svg"));
     await rm(join(dir, "images", "logo.svg"));
-    const report = await validateProject(dir, rows([unit("G-01", "ground", 2), unit("G-02", "ground", 3, { planImage: "images/missing.svg" }), unit("F-01", "first", 4)]));
+    const report = await validateProject(dir, rows([unit("G-01", "ground", 2), unit("G-02", "ground", 3, { planImage: "images/missing.svg" }), unit("F-01", "first", 4, { gallery: ["images/ground.svg", "images/no-photo.jpg"] })]));
     expect(summary(report)).toEqual([
       'error project.json (project.branding.logo): file "images/logo.svg" does not exist',
       'error project.json (scene "first", image.path): file "images/first.svg" does not exist',
       'error units.xlsx (row 3, plan_image): file "images/missing.svg" does not exist',
+      'error units.xlsx (row 4, gallery): file "images/no-photo.jpg" does not exist',
     ]);
   });
 

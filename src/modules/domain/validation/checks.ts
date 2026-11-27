@@ -109,9 +109,10 @@ export function referencedFiles(config: ProjectConfig, tree: SceneTree, units: r
   return [
     { path: config.project.branding.logo, file: CONFIG_FILE, location: "project.branding.logo" },
     ...tree.scenes.map((s) => ({ path: s.image.path, file: CONFIG_FILE, location: `scene "${s.id}", image.path`, sceneId: s.id })),
-    ...units.flatMap((u) =>
-      u.planImage ? [{ path: u.planImage, file: sheet, location: `row ${u.sheetRow}, plan_image` }] : [],
-    ),
+    ...units.flatMap((u) => [
+      ...(u.planImage ? [{ path: u.planImage, file: sheet, location: `row ${u.sheetRow}, plan_image` }] : []),
+      ...(u.gallery ?? []).map((path) => ({ path, file: sheet, location: `row ${u.sheetRow}, gallery` })),
+    ]),
   ];
 }
 

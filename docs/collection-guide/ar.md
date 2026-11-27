@@ -60,6 +60,7 @@
 | `price` | نعم | `4250000` |
 | `status` | نعم | `available` |
 | `plan_image` | لا | `images/type-a.svg` |
+| `gallery` | لا | `images/g01-living.jpg; images/g01-kitchen.jpg` (صور الوحدة، بينها `;`) |
 | `notes` | لا | `Garden view` |
 
 ## شيت الوحدات المباشر (Google Sheets)
