@@ -8,6 +8,8 @@ export interface SceneRendererProps {
   scene: Scene;
   /** URL of the scene image (e.g. "/files/demo-villa/images/facade.svg"). */
   imageUrl: string;
+  /** URL of any project file, for renderers that load their own assets (frames, models). Derived from imageUrl when missing. */
+  fileUrl?: (path: string) => string;
   /** Status of the unit a hotspot opens; undefined for scene hotspots or unknown units. */
   unitStatusOf: (hotspot: Hotspot) => UnitStatus | undefined;
   /** Accessible name of a hotspot, e.g. "Unit G-01, available" or "Ground floor". */

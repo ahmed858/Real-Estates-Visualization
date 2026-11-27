@@ -929,7 +929,10 @@ Rules that keep the 2D core unchanged:
 - Verify: `npm run check`.
 
 ### U-903 Rotation viewer
-- Phase 9 · `viewer` · Depends on: U-902 · Gated: no · Status: `todo`
+- Phase 9 · `viewer` · Depends on: U-902 · Gated: no · Status: `done`
+- Done by the agent with a slider (native range input: arrow keys, screen
+  readers and RTL flipping come with it) instead of custom arrow-key
+  handling, and frames prefetched in the background without a progress bar.
 - `Rotation360Scene` registered for `rotation-360`: shows the poster, then
   the frames once preloaded (progress shown), turns with drag, swipe and
   the arrow keys (flipped for RTL), draws the hotspots of the current frame

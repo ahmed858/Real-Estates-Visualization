@@ -85,7 +85,7 @@ describe("SceneView with Image2DScene", () => {
   });
 
   it("shows a message for a renderer type that is not registered", () => {
-    render(<SceneView {...props()} scene={{ ...scene, type: "rotation-360" as never }} />);
+    render(<SceneView {...props()} scene={{ ...scene, type: "not-a-renderer" as never }} />);
     expect(screen.getByRole("heading", { name: "This view is not available yet" })).toBeTruthy();
   });
 

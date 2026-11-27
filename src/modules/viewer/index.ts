@@ -6,6 +6,8 @@ export { StaleDataNote } from "./components/stale-data-note";
 export type { StaleDataNoteProps } from "./components/stale-data-note";
 export type { ViewerMessageProps } from "./components/viewer-message";
 export { Image2DScene } from "./scene/image-2d-scene";
+export { Rotation360Scene } from "./scene/rotation-360-scene";
+export { FRAME_PARAM, initialFrame, sceneOnFrame, withFrame, wrapFrame } from "./scene/rotation-frame";
 export { ACTIVE_FILL_OPACITY, HOTSPOT_FILL, STATUS_STYLE, hotspotStyle } from "./scene/status-style";
 export type { HotspotStyle } from "./scene/status-style";
 export { DEFAULT_SCENE_RENDERERS, SceneView } from "./scene/scene-view";
