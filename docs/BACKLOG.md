@@ -721,7 +721,7 @@ project without touching code.
 - Verify: `npm run check`.
 
 ### U-705 Project directory on the home page
-- Phase 7 · App · Depends on: U-704 · Gated: no · Status: `todo`
+- Phase 7 · App · Depends on: U-704 · Gated: no · Status: `done`
 - `ProjectSource` gains a `list()` of published slugs; `/` shows a card per
   published project (logo, name in its default locale, link) instead of the
   single demo link. Hidden projects never appear.

@@ -1,6 +1,6 @@
 // The Adapter target for whole projects: config plus unit rows. The viewer
 // depends on this interface, never on where or how a project is stored.
-import type { ProjectConfig, UnitRow } from "@/modules/schema";
+import type { ProjectConfig, ProjectInfo, UnitRow } from "@/modules/schema";
 import type { StaleUnits } from "./unit-source";
 
 export interface LoadedProject {
@@ -13,6 +13,11 @@ export interface LoadedProject {
 export interface ProjectSource {
   /** Loads and validates one project. Rejects with ProjectSourceError for a missing or invalid project. */
   load(slug: string): Promise<LoadedProject>;
+  /**
+   * Project info of every project with a valid config, sorted by slug. Does not
+   * read unit sheets. Invalid or unreadable projects are left out.
+   */
+  list(): Promise<ProjectInfo[]>;
 }
 
 export type ProjectSourceErrorKind = "not-found" | "invalid-config" | "invalid-units";

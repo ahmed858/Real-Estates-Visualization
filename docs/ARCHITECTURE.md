@@ -14,7 +14,7 @@ a module imports its internal files.
 | --- | --- | --- |
 | `schema` | Data shapes for project config and the units sheet, and their validation. | nothing |
 | `domain` | Pure logic: scene tree, typical-floor expansion, floor stats, filters, colour contrast and the status palette, project validation checks (shared by `npm run validate` and the editor). No React, no I/O. | `schema` |
-| `data-sources` | Read unit rows from a spreadsheet behind one `UnitSource` interface (.xlsx file now, Google Sheets later), and whole projects (config + units) behind `ProjectSource`. | `schema`, `domain` |
+| `data-sources` | Read unit rows from a spreadsheet behind one `UnitSource` interface (.xlsx file now, Google Sheets later), and whole projects (config + units, plus a list of all projects) behind `ProjectSource`; `PublishedProjectSource` hides unpublished ones from visitors. | `schema`, `domain` |
 | `viewer` | React components: scene image, coloured polygons, hover card, side panel, navigation. | `schema`, `domain` |
 | `editor` | Internal polygon drawing tool for real client images. | `schema`, `domain`, `viewer` |
 | `tools` | Node scripts: validate a project, generate the demo villa. | `schema`, `domain`, `data-sources` |
