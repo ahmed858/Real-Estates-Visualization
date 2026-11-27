@@ -2,7 +2,7 @@
 
 Ordered work units. The hourly agent takes the **first** unit whose status is
 `todo`, whose dependencies are all `done`, and that has no open `[agent]` PR.
-Phases 1 to 4 are broken down; later phases stay as headlines until the
+Phases up to 8 are broken down; later phases stay as headlines until the
 agent writes their breakdown in a planning unit.
 
 **Statuses** (as they read on `develop`): `todo` · `done` · `blocked` (question
@@ -33,7 +33,7 @@ verification commands. `npm run check` must pass for every unit.
 | 4 | Sales tools | Units table with filters, WhatsApp button with unit code, Arabic/English, mobile. **done** |
 | 5 | Live status | Site re-reads the sheet continuously (Google Sheets for clients). **done** (U-503 waits for Q-2) |
 | 6 | Drawing tool | Polygon editor for real client images. **done** |
-| 7 | Multi-client | A link per project, logo and colours per client. |
+| 7 | Multi-client | A link per project, logo and colours per client. **done** |
 | 8 | Extras | Each on its own: gallery, compare, share, lead form to client CRM, location map. |
 | later | Premium | 360° rotation and 3D model views. |
 
@@ -743,6 +743,86 @@ project without touching code.
 - Verify: `npm run check`.
 
 ### U-707 Plan Phase 8 (extras)
-- Phase 7 · Docs · Depends on: U-706 · **Gated: yes** · Status: `todo`
+- Phase 7 · Docs · Depends on: U-706 · **Gated: yes** · Status: `done`
 - Break Phase 8 into units in this file, using what Phase 7 produced.
+- Verify: `npm run check`.
+
+---
+
+## Phase 8 · Extras
+
+Written by U-707 from what Phase 7 produced. Every project now has its own
+link (or its own domain through `PROJECT_DOMAINS`), its own title, icon and
+readable colours, can stay hidden until it is ready, and is listed on the
+home page. Phase 8 adds the extras from the roadmap, each on its own so the
+owner can ship or sell them separately. Each extra that needs project data
+is optional in `project.json` or the units sheet, so existing projects keep
+working unchanged. Units that change the data format, add a third-party
+service or send visitor data anywhere are gated.
+
+### U-801 Share a unit
+- Phase 8 · `viewer` · Depends on: U-707 · Gated: no · Status: `todo`
+- A "Share" button in the unit details panel shares the unit's deep link
+  (scene, `?unit=`, `?floor=` on typical floors, `?lang=` when not the
+  default) through the Web Share API, falling back to copying the link with
+  a short "Link copied" note. A pure helper builds the absolute URL from the
+  current location, so it also works on a client's own domain.
+- Acceptance: tests for the URL helper (typical floor, language, client
+  domain) and the button (share, clipboard fallback, both locales).
+- Verify: `npm run check`.
+
+### U-802 Compare units
+- Phase 8 · `viewer` + App · Depends on: U-801 · Gated: no · Status: `todo`
+- Pick up to 3 units (a checkbox in the units table and a "Compare" button
+  in the unit details panel); `/p/<slug>/compare?units=A,B,C` shows them side
+  by side (scene, floor, type, bedrooms, bathrooms, area, price, status,
+  plan image) with a WhatsApp button per unit. The selection lives in the
+  URL only, so a compare link can be shared. Unknown codes are skipped.
+- Acceptance: tests for parsing the `units` parameter (limit, unknown and
+  duplicate codes), the compare table in both locales, and the picker limit.
+- Verify: `npm run check`.
+
+### U-803 Unit photo gallery
+- Phase 8 · `schema` + `viewer` · Depends on: U-802 · **Gated: yes** · Status: `todo`
+- An optional `gallery` column in the units sheet: project image paths
+  separated by `;`. The unit details panel shows thumbnails that open a
+  keyboard-friendly lightbox (arrows, Escape, focus kept inside). The
+  validator reports gallery files that do not exist. The collection guide
+  and its template gain the column (Arabic and English).
+- Acceptance: schema tests for the column, validator test for a missing
+  file, component tests for the lightbox keys.
+- Verify: `npm run check`.
+
+### U-804 Project location
+- Phase 8 · `schema` + `viewer` · Depends on: U-803 · **Gated: yes** · Status: `todo`
+- An optional `project.location` (`lat`, `lng`, localized `address`). The
+  side panel of the root scene shows the address and an "Open in maps" link
+  (a plain `https://www.google.com/maps/search/?api=1&query=<lat>,<lng>`
+  link, no map library, no API key, nothing loaded until the visitor
+  clicks). An embedded map is left for later because it needs a third-party
+  script and a key.
+- Acceptance: schema tests (ranges, optional), link builder test, panel
+  test in both locales.
+- Verify: `npm run check`.
+
+### U-805 Lead form sent to the client's CRM
+- Phase 8 · `schema` + `data-sources` + App + `viewer` · Depends on: U-804 · **Gated: yes** · Status: `todo`
+- An optional "Ask about this unit" form next to the WhatsApp button (name,
+  phone, optional message, unit code filled in). A server route validates
+  it, rejects bots with a hidden honeypot field and a simple per-IP rate
+  limit, and POSTs one JSON document to the project's webhook. Webhook URLs
+  are secrets, so they live in an env var `LEAD_WEBHOOKS=slug=url,...`
+  (documented in `.env.example`), never in `project.json`; a project
+  without a webhook shows no form. A webhook works with most CRMs directly
+  or through Zapier or Make. The JSON shape is documented for the owner.
+- Acceptance: tests for parsing the env var, the form validation, the
+  honeypot, the rate limit and the forwarded JSON (webhook mocked).
+- Verify: `npm run check`.
+
+### U-806 Plan the premium phase (360° and 3D)
+- Phase 8 · Docs · Depends on: U-805 · **Gated: yes** · Status: `todo`
+- Break the premium layer into units in this file: new scene renderer
+  types behind the existing Strategy (`SCENE_RENDERER_TYPES`), how their
+  assets are stored, and what the editor needs, without changing the 2D
+  core.
 - Verify: `npm run check`.
