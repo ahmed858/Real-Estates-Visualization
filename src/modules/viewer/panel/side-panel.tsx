@@ -25,6 +25,8 @@ export interface SidePanelProps {
     /** True on a typical floor scene: the message then names the unit's floor. */
     typicalFloor?: boolean;
   };
+  /** The units page; adds "Compare with other units" to unit details. */
+  unitsHref?: string;
 }
 
 const closeUnit = () => selectUnit(null);
@@ -41,7 +43,7 @@ function useEscapeToClose(active: boolean, close: () => void) {
   }, [active, close]);
 }
 
-export function SidePanel({ sceneTitle, stats, units, currency, locale, enquiry }: SidePanelProps) {
+export function SidePanel({ sceneTitle, stats, units, currency, locale, enquiry, unitsHref }: SidePanelProps) {
   const [selected] = useSelectedUnit();
   const text = viewerText(locale);
   const unit = selected ? units[selected] : undefined;
@@ -57,7 +59,7 @@ export function SidePanel({ sceneTitle, stats, units, currency, locale, enquiry 
           ...(enquiry.typicalFloor && { floor: new Intl.NumberFormat(locale === "ar" ? "ar-EG" : "en-US").format(unit.floor) }),
         }),
       );
-    return <UnitDetails unit={unit} text={text} locale={locale} currency={currency} onClose={closeUnit} enquiryHref={enquiryHref} />;
+    return <UnitDetails unit={unit} text={text} locale={locale} currency={currency} onClose={closeUnit} enquiryHref={enquiryHref} unitsHref={unitsHref} />;
   }
   return <ScenePanel sceneTitle={sceneTitle} text={text} stats={stats} locale={locale} currency={currency} />;
 }

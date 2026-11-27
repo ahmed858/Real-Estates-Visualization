@@ -44,7 +44,19 @@ export interface ViewerText {
   /** Share button of the unit panel; `copied` shows when the link went to the clipboard. */
   share: { button: string; copied: string };
   /** The compare page. */
-  compare: { title: string; empty: string; scene: string };
+  compare: {
+    title: string;
+    empty: string;
+    scene: string;
+    /** Checkbox label in the units table. */
+    pick: (code: string) => string;
+    /** Link to the compare page with the picked units. */
+    open: (count: string) => string;
+    /** Shown while fewer than two units are picked. */
+    hint: string;
+    /** Unit panel link to the units list with this unit picked. */
+    withOthers: string;
+  };
   table: {
     title: string;
     /** Header link to the table. */
@@ -90,7 +102,7 @@ const TEXT: Record<ViewerLocale, ViewerText> = {
     },
     zoom: { in: "تكبير", out: "تصغير", reset: "١×" },
     share: { button: "مشاركة", copied: "تم نسخ رابط الوحدة" },
-    compare: { title: "مقارنة الوحدات", empty: "لا توجد وحدات للمقارنة. اختر حتى ٣ وحدات من قائمة كل الوحدات.", scene: "المكان" },
+    compare: { title: "مقارنة الوحدات", empty: "لا توجد وحدات للمقارنة. اختر حتى ٣ وحدات من قائمة كل الوحدات.", scene: "المكان", pick: (c) => `قارن الوحدة ${c}`, open: (n) => `قارن (${n})`, hint: "اختر وحدتين أو ثلاثًا للمقارنة.", withOthers: "قارن بوحدات أخرى" },
     table: {
       title: "كل الوحدات",
       link: "كل الوحدات",
@@ -141,7 +153,7 @@ const TEXT: Record<ViewerLocale, ViewerText> = {
     },
     zoom: { in: "Zoom in", out: "Zoom out", reset: "1×" },
     share: { button: "Share", copied: "Unit link copied" },
-    compare: { title: "Compare units", empty: "No units to compare. Pick up to 3 units from the list of all units.", scene: "Location" },
+    compare: { title: "Compare units", empty: "No units to compare. Pick up to 3 units from the list of all units.", scene: "Location", pick: (c) => `Compare unit ${c}`, open: (n) => `Compare (${n})`, hint: "Pick two or three units to compare.", withOthers: "Compare with other units" },
     table: {
       title: "All units",
       link: "All units",

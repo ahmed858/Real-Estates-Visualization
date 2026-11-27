@@ -19,3 +19,19 @@ export function parseCompareCodes(value: string | readonly string[] | undefined,
   }
   return codes;
 }
+
+/** The units page remembers picked codes in ?compare=A,B, so Back and sharing keep them. */
+export const PICK_PARAM = "compare";
+
+/** Adds the code, or removes it when already picked; adding past MAX_COMPARED does nothing. */
+export function togglePicked(picked: readonly string[], code: string): string[] {
+  if (picked.includes(code)) return picked.filter((c) => c !== code);
+  return picked.length < MAX_COMPARED ? [...picked, code] : [...picked];
+}
+
+/** `base` (a path, maybe with ?lang=) with `param` set to the comma-separated codes. */
+export function withCodes(base: string, param: string, codes: readonly string[]): string {
+  const url = new URL(base, "http://local");
+  url.searchParams.set(param, codes.join(","));
+  return `${url.pathname}${url.search.replace(/%2C/g, ",")}`;
+}
