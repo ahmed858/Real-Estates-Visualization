@@ -43,3 +43,13 @@ Format:
   seconds unless you choose another value (for example 30 seconds or 5
   minutes).
 - Answer: (owner fills this in)
+
+## Q-4 (U-1103) What should come after launch?
+- Asked: 2026-11-27
+- Question: Everything on the roadmap is built (Phases 1-10). Two small test
+  units remain (U-1101, U-1102). After them, what next? For example: (a)
+  pause until the first client gives feedback; (b) visitor analytics (which
+  units people open most); (c) a "reserve this unit" request with a deposit
+  link; (d) a simple page where the client changes statuses without a
+  sheet. Pick one or more, or describe something else.
+- Answer: (owner fills this in)
