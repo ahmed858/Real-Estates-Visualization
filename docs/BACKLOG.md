@@ -843,7 +843,7 @@ service or send visitor data anywhere are gated.
 - Verify: `npm run check`.
 
 ### U-810 Lead form in the unit panel
-- Phase 8 · `viewer` + App · Depends on: U-805 · Gated: no · Status: `todo`
+- Phase 8 · `viewer` + App · Depends on: U-805 · Gated: no · Status: `done`
 - An "Ask about this unit" button next to WhatsApp in the unit details panel
   opens a small form (name, phone, optional message, the hidden `website`
   field, unit code and locale filled in) that posts JSON to

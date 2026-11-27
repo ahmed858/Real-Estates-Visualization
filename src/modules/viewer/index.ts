@@ -39,6 +39,9 @@ export { COMPARE_PARAM, MAX_COMPARED, parseCompareCodes, PICK_PARAM, togglePicke
 export { CompareTable } from "./compare/compare-table";
 export type { CompareTableProps, CompareUnit } from "./compare/compare-table";
 export { ShareButton } from "./contact/share-button";
+export { LeadForm } from "./contact/lead-form";
+export type { LeadFormProps, LeadSend, LeadSendResult } from "./contact/lead-form";
+export { leadEndpoint } from "./contact/lead-endpoint";
 export type { ShareButtonProps, ShareTarget } from "./contact/share-button";
 export { selectFloor, selectUnit, setUrlParams, useSelectedFloor, useSelectedUnit, useUrlParam, useUrlSearch } from "./selection/use-selected-unit";
 export { Breadcrumbs } from "./navigation/breadcrumbs";

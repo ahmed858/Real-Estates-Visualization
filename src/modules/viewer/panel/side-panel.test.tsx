@@ -149,4 +149,17 @@ describe("selecting a unit", () => {
     render(<SidePanel sceneTitle="Ground floor" stats={stats} units={units} currency="EGP" locale="en" enquiry={{ whatsapp: "+201001234567", projectName: "X" }} />);
     expect(screen.queryByTestId("whatsapp-link")).toBeNull();
   });
+  it("shows the lead form button only for a project with a webhook, and starts fresh for another unit", () => {
+    window.history.replaceState(null, "", "/p/demo/ground?unit=G-01");
+    const request = "Request a call about this unit";
+    const { unmount } = render(<SidePanel sceneTitle="Ground floor" stats={stats} units={units} currency="EGP" locale="en" />);
+    expect(screen.queryByRole("button", { name: request })).toBeNull();
+    unmount();
+    render(<SidePanel sceneTitle="Ground floor" stats={stats} units={units} currency="EGP" locale="en" leadSlug="demo" />);
+    fireEvent.click(screen.getByRole("button", { name: request }));
+    expect(screen.getByRole("form", { name: "Request a call about unit G-01" })).toBeTruthy();
+    act(() => selectUnit("G-02"));
+    expect(screen.queryByRole("form")).toBeNull();
+    expect(within(screen.getByRole("region", { name: "Unit G-02" })).getByRole("button", { name: request })).toBeTruthy();
+  });
 });

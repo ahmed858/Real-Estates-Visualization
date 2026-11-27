@@ -15,6 +15,11 @@ almost any CRM, a Google Sheet or an email inbox.
    `client-towers=https://hooks.zapier.com/hooks/catch/123/abc/,demo-villa=https://hook.eu1.make.com/xyz`.
 3. Redeploy. A project without an entry shows no form.
 
+Visitors then see "Request a call about this unit" (Arabic: "اطلب مكالمة عن
+الوحدة") under the WhatsApp button in the unit panel. The form asks for a
+name, a mobile number and an optional message; if sending fails it offers
+WhatsApp instead.
+
 The URL is a secret (anyone who has it can send fake leads), so it never goes
 in `project.json`, the repository or a log line. Bad entries are skipped with
 a warning that names only the slug.

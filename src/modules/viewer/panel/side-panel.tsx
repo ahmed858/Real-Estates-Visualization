@@ -29,6 +29,8 @@ export interface SidePanelProps {
   unitsHref?: string;
   /** The project's address and map link, passed on the root scene only. */
   location?: SceneLocation;
+  /** The project's slug when it has a lead webhook (LEAD_WEBHOOKS); shows the lead form on unit details. */
+  leadSlug?: string;
 }
 
 const closeUnit = () => selectUnit(null);
@@ -45,7 +47,7 @@ function useEscapeToClose(active: boolean, close: () => void) {
   }, [active, close]);
 }
 
-export function SidePanel({ sceneTitle, stats, units, currency, locale, enquiry, unitsHref, location }: SidePanelProps) {
+export function SidePanel({ sceneTitle, stats, units, currency, locale, enquiry, unitsHref, location, leadSlug }: SidePanelProps) {
   const [selected] = useSelectedUnit();
   const text = viewerText(locale);
   const unit = selected ? units[selected] : undefined;
@@ -61,7 +63,7 @@ export function SidePanel({ sceneTitle, stats, units, currency, locale, enquiry,
           ...(enquiry.typicalFloor && { floor: new Intl.NumberFormat(locale === "ar" ? "ar-EG" : "en-US").format(unit.floor) }),
         }),
       );
-    return <UnitDetails unit={unit} text={text} locale={locale} currency={currency} onClose={closeUnit} enquiryHref={enquiryHref} unitsHref={unitsHref} />;
+    return <UnitDetails unit={unit} text={text} locale={locale} currency={currency} onClose={closeUnit} enquiryHref={enquiryHref} unitsHref={unitsHref} leadSlug={leadSlug} />;
   }
   return <ScenePanel sceneTitle={sceneTitle} text={text} stats={stats} locale={locale} currency={currency} location={location} />;
 }

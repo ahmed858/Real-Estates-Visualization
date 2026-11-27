@@ -67,8 +67,8 @@ describe("handleLeadRequest", () => {
 
   it("uses the project's default language and null for no message", async () => {
     const { sink, deps } = setup();
-    const { message: _m, locale: _l, ...rest } = form();
-    await handleLeadRequest(SLUG, post(rest), deps);
+    const withoutOptional: Record<string, string | undefined> = { ...form(), message: undefined, locale: undefined };
+    await handleLeadRequest(SLUG, post(withoutOptional), deps);
     expect(sink.sent[0].locale).toBe(demo.config.project.defaultLocale);
     expect(sink.sent[0].contact.message).toBeNull();
   });
