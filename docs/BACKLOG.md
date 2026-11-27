@@ -978,7 +978,7 @@ Rules that keep the 2D core unchanged:
 - Verify: `npm run check`.
 
 ### U-906 3D model viewer
-- Phase 9 · `viewer` · Depends on: U-905 · **Gated: yes** · Status: `todo`
+- Phase 9 · `viewer` · Depends on: U-905 · **Gated: yes** · Status: `done`
 - `Model3DScene` registered for `model-3d`, loaded only on scenes that use
   it (dynamic import, so 2D pages ship no 3D code). Orbit with drag,
   pinch and keys; meshes named by a hotspot's `mesh` are tinted by unit
