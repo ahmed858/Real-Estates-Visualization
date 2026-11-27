@@ -40,6 +40,8 @@ export type EditorCommand =
   | { type: "copy-frame"; sceneId: string; hotspotId: string; from: number; to: number }
   /** Hides a hotspot on one rotation frame by removing its polygon there. */
   | { type: "remove-frame"; sceneId: string; hotspotId: string; frame: number }
+  /** On a model-3d scene: a new hotspot for a mesh of the model, with a placeholder poster polygon (refused when the mesh or id is taken). */
+  | { type: "add-mesh-hotspot"; sceneId: string; mesh: string; hotspotId: string; target: HotspotTarget }
   | { type: "close-polygon"; hotspotId: string; target: HotspotTarget }
   | { type: "delete-hotspot"; sceneId: string; hotspotId: string }
   /** Adds a child scene under `parentId` (refused when the scene id is already used). */
@@ -128,6 +130,22 @@ function newHotspot(scene: Scene, draft: DraftShape, id: string, target: Hotspot
   return { id, points: poster, frames: { [String(draft.frame)]: draft.points }, target };
 }
 
+/**
+ * Poster polygon for a hotspot that only lives in the 3D model: a small square
+ * in the middle of the poster, so the poster (and devices without WebGL) still
+ * offer it. The owner can redraw it on the poster.
+ */
+function placeholderPolygon({ width, height }: { width: number; height: number }): Point[] {
+  const half = Math.max(1, Math.round(Math.min(width, height) / 20));
+  const [cx, cy] = [Math.round(width / 2), Math.round(height / 2)];
+  return [
+    [cx - half, cy - half],
+    [cx + half, cy - half],
+    [cx + half, cy + half],
+    [cx - half, cy + half],
+  ];
+}
+
 export function applyCommand(doc: EditorDocument, command: EditorCommand): EditorDocument | null {
   switch (command.type) {
     case "start-hotspot": {
@@ -185,6 +203,16 @@ export function applyCommand(doc: EditorDocument, command: EditorCommand): Edito
         const points = polygonOf(h, from);
         return points ? withPolygon(h, to, points.map(([x, y]) => [x, y])) : null;
       });
+    }
+
+    case "add-mesh-hotspot": {
+      const { mesh, hotspotId, target } = command;
+      if (!mesh.trim() || !hotspotId) return null;
+      const root = editScene(doc.config.root, command.sceneId, (scene) => {
+        if (scene.type !== "model-3d" || scene.hotspots.some((h) => h.mesh === mesh || h.id === hotspotId)) return null;
+        return { ...scene, hotspots: [...scene.hotspots, { id: hotspotId, points: placeholderPolygon(scene.image), mesh, target }] };
+      });
+      return root && { ...doc, config: { ...doc.config, root } };
     }
 
     case "remove-frame":

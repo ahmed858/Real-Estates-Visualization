@@ -79,6 +79,15 @@ frame and the shapes drawn on it.
   Problems panel reports polygons on frames that do not exist and points
   outside the frame.
 
+### 3D model scenes
+
+A `model-3d` scene lists **Model meshes**: the named nodes read from its
+`.glb` file. **Link** next to a mesh creates a hotspot for it (with a small
+placeholder square in the middle of the poster, which you can redraw) and
+selects it, so you can pick its unit or scene in the target picker below.
+**Select** opens a mesh's existing hotspot. A hotspot whose mesh is not in
+the model is listed with "not in the model".
+
 ## 5. Pick what each shape opens
 
 Select a shape; under it, **Leads to** offers:

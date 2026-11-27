@@ -991,7 +991,7 @@ Rules that keep the 2D core unchanged:
 - Verify: `npm run check`.
 
 ### U-907 Map model meshes in the editor
-- Phase 9 · `editor` · Depends on: U-906 · Gated: no · Status: `todo`
+- Phase 9 · `editor` · Depends on: U-906 · Gated: no · Status: `done`
 - For a `model-3d` scene the editor lists the mesh names read from the
   `.glb` file (server side, no 3D rendering needed) and lets the owner
   link each mesh to a hotspot target with the existing target picker.

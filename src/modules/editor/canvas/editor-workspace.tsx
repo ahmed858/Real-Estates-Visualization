@@ -13,7 +13,8 @@ import { fileBaseFrom, sceneOnFrame, wrapFrame } from "@/modules/viewer";
 import { AddSceneForm } from "../scenes/add-scene-form";
 import type { EditorCommand } from "../state/commands";
 import { canRedo, canUndo, createEditorState, editorReducer, type EditorAction, type EditorState } from "../state/editor-state";
-import { DrawingCanvas } from "./drawing-canvas";
+import { DrawingCanvas, UNSET_TARGET } from "./drawing-canvas";
+import { MeshList } from "./mesh-list";
 import { nextHotspotId } from "./image-point";
 import { hotspotIds, targetOptions } from "../targets/target-options";
 import { TargetPicker } from "../targets/target-picker";
@@ -25,6 +26,8 @@ interface SceneWorkspaceBaseProps {
   unitCodes?: readonly string[];
   /** Images of the project folder with their sizes, for adding a child scene. */
   images?: readonly SceneImage[];
+  /** On a model-3d scene: node names read from its .glb, offered as meshes to link. */
+  meshNames?: readonly string[];
 }
 
 export interface EditorWorkspaceProps extends SceneWorkspaceBaseProps {
@@ -61,7 +64,7 @@ function onFrame(command: EditorCommand, frame: number | undefined): EditorComma
   return command;
 }
 
-export function SceneWorkspace({ state, dispatch, sceneId, imageUrl, unitCodes = [], images = [], initialSelectedId }: SceneWorkspaceProps) {
+export function SceneWorkspace({ state, dispatch, sceneId, imageUrl, unitCodes = [], images = [], meshNames, initialSelectedId }: SceneWorkspaceProps) {
   const [selected, setSelected] = useState<string | undefined>(initialSelectedId);
   const [shownFrame, setFrame] = useState<number>();
   const doc = state.present;
@@ -198,6 +201,19 @@ export function SceneWorkspace({ state, dispatch, sceneId, imageUrl, unitCodes =
           onApply={(target, id) => {
             dispatch({ type: "do", command: { type: "set-target", sceneId, hotspotId: selectedHotspot.id, target, id } });
             setSelected(id);
+          }}
+        />
+      )}
+      {scene.type === "model-3d" && (
+        <MeshList
+          meshNames={meshNames}
+          hotspots={scene.hotspots}
+          selectedId={selectedId}
+          onSelect={setSelected}
+          onLink={(mesh) => {
+            const hotspotId = nextHotspotId(doc.config);
+            dispatch({ type: "do", command: { type: "add-mesh-hotspot", sceneId, mesh, hotspotId, target: UNSET_TARGET } });
+            setSelected(hotspotId);
           }}
         />
       )}

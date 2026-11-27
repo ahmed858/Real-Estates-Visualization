@@ -28,9 +28,11 @@ export interface EditorSessionProps {
   units?: readonly UnitRow[];
   /** Project-relative paths of files that exist, for the live checks. */
   existingFiles?: readonly string[];
+  /** Node names of each model-3d scene's model (read on the server), by model path. */
+  modelNodeNames?: Readonly<Record<string, readonly string[]>>;
 }
 
-export function EditorSession({ config, initialSceneId, editorPath, fileBaseUrl, unitCodes, images, units, existingFiles = [] }: EditorSessionProps) {
+export function EditorSession({ config, initialSceneId, editorPath, fileBaseUrl, unitCodes, images, units, existingFiles = [], modelNodeNames = {} }: EditorSessionProps) {
   const [state, dispatch] = useReducer(editorReducer, config, createEditorState);
   const [openId, setOpenId] = useState(initialSceneId);
   // A problem link selects its hotspot: remount the workspace with that selection.
@@ -64,7 +66,7 @@ export function EditorSession({ config, initialSceneId, editorPath, fileBaseUrl,
         <DownloadButton config={checkedConfig} errorCount={findings.filter((f) => f.severity === "error").length} />
       </div>
       <main>
-        <SceneWorkspace key={`${sceneId}#${focus.n}`} initialSelectedId={focus.hotspotId} state={state} dispatch={dispatch} sceneId={sceneId} imageUrl={`${fileBaseUrl}${scene.image.path}`} unitCodes={unitCodes} images={images} />
+        <SceneWorkspace key={`${sceneId}#${focus.n}`} initialSelectedId={focus.hotspotId} state={state} dispatch={dispatch} sceneId={sceneId} imageUrl={`${fileBaseUrl}${scene.image.path}`} unitCodes={unitCodes} images={images} meshNames={scene.model ? modelNodeNames[scene.model.path] : undefined} />
       </main>
     </div>
   );
