@@ -828,7 +828,8 @@ service or send visitor data anywhere are gated.
 - Verify: `npm run check`.
 
 ### U-805 Lead form sent to the client's CRM
-- Phase 8 · `schema` + `data-sources` + App + `viewer` · Depends on: U-804 · **Gated: yes** · Status: `todo`
+- Phase 8 · `schema` + `data-sources` + App · Depends on: U-804 · **Gated: yes** · Status: `done`
+- Split by the agent: this unit is the server side (request shape, `LEAD_WEBHOOKS`, honeypot, rate limit, `POST /p/<slug>/lead`, `docs/leads.md`); the form is U-810.
 - An optional "Ask about this unit" form next to the WhatsApp button (name,
   phone, optional message, unit code filled in). A server route validates
   it, rejects bots with a hidden honeypot field and a simple per-IP rate
@@ -841,8 +842,23 @@ service or send visitor data anywhere are gated.
   honeypot, the rate limit and the forwarded JSON (webhook mocked).
 - Verify: `npm run check`.
 
+### U-810 Lead form in the unit panel
+- Phase 8 · `viewer` + App · Depends on: U-805 · Gated: no · Status: `todo`
+- An "Ask about this unit" button next to WhatsApp in the unit details panel
+  opens a small form (name, phone, optional message, the hidden `website`
+  field, unit code and locale filled in) that posts JSON to
+  `/p/<slug>/lead` (`/lead` on a client's own domain, so build the URL from
+  the current path). It is shown only when the project has a webhook in
+  `LEAD_WEBHOOKS` (the page passes a boolean, never the URL). It shows the
+  field errors the route names, "Sent, we will call you" on success, and a
+  WhatsApp fallback on 429/502; ar/en text, RTL, keyboard and screen reader
+  friendly (labels, `aria-invalid`, focus moves to the result).
+- Acceptance: component tests for showing/hiding, submit (fetch mocked),
+  field errors, success and failure in both locales.
+- Verify: `npm run check`.
+
 ### U-806 Plan the premium phase (360° and 3D)
-- Phase 8 · Docs · Depends on: U-805 · **Gated: yes** · Status: `todo`
+- Phase 8 · Docs · Depends on: U-810 · **Gated: yes** · Status: `todo`
 - Break the premium layer into units in this file: new scene renderer
   types behind the existing Strategy (`SCENE_RENDERER_TYPES`), how their
   assets are stored, and what the editor needs, without changing the 2D
