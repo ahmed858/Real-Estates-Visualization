@@ -1,4 +1,4 @@
-import { cp, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { cp, mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -138,6 +138,23 @@ describe("validateProject", () => {
       'error project.json (scene "first", image.path): file "images/first.svg" does not exist',
       'error units.xlsx (row 3, plan_image): file "images/missing.svg" does not exist',
       'error units.xlsx (row 4, gallery): file "images/no-photo.jpg" does not exist',
+    ]);
+  });
+
+  it("reports missing rotation frames and 3D models", async () => {
+    const dir = await copyValid();
+    await editConfig(dir, (config) => {
+      Object.assign(config.root, { type: "rotation-360", rotation: { frames: "rotations/root/f{index}.svg", count: 3, width: 100, height: 100 } });
+      Object.assign(config.root.children[0], { type: "model-3d", model: { path: "models/ground.glb" } });
+    });
+    await mkdir(join(dir, "rotations", "root"), { recursive: true });
+    await writeFile(join(dir, "rotations", "root", "f2.svg"), "<svg/>");
+    const report = await validateProject(dir, rows(VALID_ROWS));
+    const { root } = JSON.parse(await readFile(join(dir, "project.json"), "utf8")) as ProjectConfig;
+    expect(summary(report)).toEqual([
+      `error project.json (scene "${root.id}", rotation frame 1): file "rotations/root/f1.svg" does not exist`,
+      `error project.json (scene "${root.id}", rotation frame 3): file "rotations/root/f3.svg" does not exist`,
+      `error project.json (scene "${root.children[0].id}", model.path): file "models/ground.glb" does not exist`,
     ]);
   });
 

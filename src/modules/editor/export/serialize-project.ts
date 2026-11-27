@@ -9,14 +9,16 @@ export const PROJECT_JSON_FILE = "project.json";
 type SceneJson = Omit<Scene, "type" | "children"> & { type?: Scene["type"]; children?: SceneJson[] };
 
 function sceneJson({ type, children, ...rest }: Scene): SceneJson {
-  // Key order follows the schema: id, kind, type, title, image, floors, hotspots, children.
-  const { id, kind, title, image, floors, hotspots } = rest;
+  // Key order follows the schema: id, kind, type, title, image, rotation, model, floors, hotspots, children.
+  const { id, kind, title, image, rotation, model, floors, hotspots } = rest;
   return {
     id,
     kind,
     ...(type !== DEFAULT_SCENE_RENDERER_TYPE && { type }),
     title,
     image,
+    ...(rotation && { rotation }),
+    ...(model && { model }),
     ...(floors && { floors }),
     hotspots,
     ...(children.length > 0 && { children: children.map(sceneJson) }),

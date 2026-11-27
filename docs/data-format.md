@@ -73,11 +73,13 @@ a compound (masterplan → buildings → floors → unit plans).
 | --- | --- | --- | --- |
 | `id` | id | yes | Unique across the whole project. Not `units`, `compare` or `lead`: those are site pages. |
 | `kind` | enum | yes | `facade`, `masterplan`, `building`, `floor`, `unit-plan` or `other`. |
-| `type` | enum | no | Renderer. Defaults to `image-2d`, the only one in v1. 360° and 3D renderers will be added as new values. |
+| `type` | enum | no | Renderer: `image-2d` (default), or the premium `rotation-360` and `model-3d` (see [Premium scenes](#premium-scenes)). |
 | `title` | localized text | yes | Shown in navigation and breadcrumbs. |
-| `image.path` | file path | yes | The scene image. |
+| `image.path` | file path | yes | The scene image. On a premium scene it is the poster, shown while the view loads and where it cannot run. |
 | `image.width` | positive integer | yes | Image width in pixels. Hotspot points use this coordinate system. |
 | `image.height` | positive integer | yes | Image height in pixels. |
+| `rotation` | rotation | only `rotation-360` | Required on, and only allowed on, a `rotation-360` scene. |
+| `model` | model | only `model-3d` | Required on, and only allowed on, a `model-3d` scene. |
 | `floors` | typical floors | no | Only on `kind: "floor"`. One plan that serves a range of floors, see below. |
 | `hotspots` | hotspot[] | no | Defaults to none. |
 | `children` | scene[] | no | Child scenes. Defaults to none. |
@@ -88,6 +90,8 @@ a compound (masterplan → buildings → floors → unit plans).
 | --- | --- | --- | --- |
 | `id` | id | yes | Unique within its scene. |
 | `points` | `[x, y][]` | yes | Polygon in image pixels, at least 3 points, every point inside the image (`0 ≤ x ≤ width`, `0 ≤ y ≤ height`). |
+| `frames` | object | no | `rotation-360` only: `{ "<frame number>": [[x, y], ...] }`, the polygon on each frame where the hotspot is visible. |
+| `mesh` | text | no | `model-3d` only: the name of the mesh in the model that is this hotspot. Each mesh at most once per scene. |
 | `target` | object | yes | Exactly one of the forms below. |
 
 Target forms:
@@ -98,6 +102,46 @@ Target forms:
   on a typical floor.
 - `{ "unitSuffix": "<suffix>" }`: only on a typical floor. The unit code is
   built per floor from the floor's `unitCode` template.
+
+### Premium scenes
+
+The premium views keep everything above: the scene's `image` and hotspot
+`points` still make a working 2D scene (the poster), and units, targets and
+the side panel work the same. Only the extra blocks below are new.
+
+**`rotation-360`**: a turntable, frames taken around the building in order.
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `rotation.frames` | file path | yes | Path with `{index}`, e.g. `rotations/tower/frame-{index}.jpg`. `{index}` is the frame number from 1, zero-padded to the digits of `count` (`frame-01` … `frame-36`). Every frame must exist. |
+| `rotation.count` | integer | yes | Number of frames, 2 to 360. |
+| `rotation.width`, `rotation.height` | positive integer | yes | Frame size in pixels; `frames` polygons use it. |
+| `rotation.start` | integer | no | Frame shown first, 1 to `count`. Defaults to 1. |
+
+**`model-3d`**: a glTF binary model.
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `model.path` | file path | yes | A `.glb` file, e.g. `models/tower.glb`. Must exist. |
+
+```json
+{
+  "id": "tower-spin",
+  "kind": "building",
+  "type": "rotation-360",
+  "title": { "ar": "البرج", "en": "Tower" },
+  "image": { "path": "images/tower-poster.jpg", "width": 1600, "height": 900 },
+  "rotation": { "frames": "rotations/tower/frame-{index}.jpg", "count": 36, "width": 1600, "height": 900 },
+  "hotspots": [
+    {
+      "id": "a-101",
+      "points": [[100, 100], [300, 100], [300, 250], [100, 250]],
+      "frames": { "1": [[100, 100], [300, 100], [300, 250], [100, 250]], "2": [[140, 100], [330, 100], [330, 250], [140, 250]] },
+      "target": { "unit": "A-101" }
+    }
+  ]
+}
+```
 
 ### Typical floors
 

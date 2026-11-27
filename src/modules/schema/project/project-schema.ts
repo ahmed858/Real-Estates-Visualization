@@ -16,10 +16,11 @@ export const PROJECT_SCHEMA_VERSION = 1;
 export const SCENE_KINDS = ["facade", "masterplan", "building", "floor", "unit-plan", "other"] as const;
 
 /**
- * Scene renderer types (Strategy hook). Only the 2D image renderer exists in v1;
- * 360° and 3D renderers are added here later without changing the tree.
+ * Scene renderer types (Strategy hook). `image-2d` is the core; the premium
+ * types (`rotation-360`, a turntable of frames, and `model-3d`, a .glb model)
+ * add their own optional blocks and keep `image` as the poster and fallback.
  */
-export const SCENE_RENDERER_TYPES = ["image-2d"] as const;
+export const SCENE_RENDERER_TYPES = ["image-2d", "rotation-360", "model-3d"] as const;
 /** The renderer a scene uses when project.json does not name one. */
 export const DEFAULT_SCENE_RENDERER_TYPE = "image-2d" satisfies (typeof SCENE_RENDERER_TYPES)[number];
 
@@ -80,10 +81,40 @@ export const hotspotTargetSchema = z.union([
   z.object({ unitSuffix: z.string().trim().min(1, "unit suffix is required") }).strict(),
 ]);
 
+/** Placeholder in `rotation.frames` replaced by the 1-based frame number, zero-padded to the digits of `count`. */
+export const ROTATION_FRAME_PLACEHOLDER = "{index}";
+export const ROTATION_MAX_FRAMES = 360;
+
+/** A turntable: `count` frames of the same size taken around the building, in order. */
+export const sceneRotationSchema = z
+  .object({
+    frames: projectFilePathSchema.refine((p) => p.includes(ROTATION_FRAME_PLACEHOLDER), `must contain ${ROTATION_FRAME_PLACEHOLDER}, e.g. rotations/tower/frame-${ROTATION_FRAME_PLACEHOLDER}.jpg`),
+    count: z.number().int().min(2, "a rotation needs at least 2 frames").max(ROTATION_MAX_FRAMES, `at most ${ROTATION_MAX_FRAMES} frames`),
+    width: z.number().int().positive(),
+    height: z.number().int().positive(),
+    /** Frame shown first (1-based). Missing means 1. */
+    start: z.number().int().min(1).optional(),
+  })
+  .strict();
+
+/** A 3D model in glTF binary format. */
+export const sceneModelSchema = z
+  .object({
+    path: projectFilePathSchema.refine((p) => p.toLowerCase().endsWith(".glb"), "must be a .glb file (glTF binary)"),
+  })
+  .strict();
+
+const polygonSchema = z.array(pointSchema).min(3, "a polygon needs at least 3 points");
+
 export const hotspotSchema = z
   .object({
     id: idSchema,
-    points: z.array(pointSchema).min(3, "a polygon needs at least 3 points"),
+    /** Polygon on the scene image (on a premium scene: the poster). */
+    points: polygonSchema,
+    /** rotation-360 only: the polygon on each frame (by 1-based frame number) where the hotspot is visible. */
+    frames: z.record(z.string().regex(/^[1-9]\d*$/, "frame numbers start at 1"), polygonSchema).optional(),
+    /** model-3d only: the name of the mesh in the model that this hotspot is. */
+    mesh: z.string().trim().min(1, "mesh name is required").optional(),
     target: hotspotTargetSchema,
   })
   .strict();
@@ -105,6 +136,10 @@ const sceneBaseSchema = z.object({
   type: z.enum(SCENE_RENDERER_TYPES).default(DEFAULT_SCENE_RENDERER_TYPE),
   title: localizedTextSchema,
   image: sceneImageSchema,
+  /** Required on, and only allowed on, a rotation-360 scene. */
+  rotation: sceneRotationSchema.optional(),
+  /** Required on, and only allowed on, a model-3d scene. */
+  model: sceneModelSchema.optional(),
   floors: typicalFloorsSchema.optional(),
   hotspots: z.array(hotspotSchema).default([]),
 });
@@ -133,6 +168,8 @@ export const projectConfigShapeSchema = z
 export type ProjectConfig = z.infer<typeof projectConfigShapeSchema>;
 export type ProjectConfigInput = z.input<typeof projectConfigShapeSchema>;
 export type ProjectInfo = z.infer<typeof projectInfoSchema>;
+export type SceneRotation = z.infer<typeof sceneRotationSchema>;
+export type SceneModel = z.infer<typeof sceneModelSchema>;
 export type SceneKind = (typeof SCENE_KINDS)[number];
 export type SceneRendererType = (typeof SCENE_RENDERER_TYPES)[number];
 export type SceneImage = z.infer<typeof sceneImageSchema>;

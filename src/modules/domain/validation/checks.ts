@@ -2,6 +2,7 @@
 // Shared by `npm run validate` (tools) and the editor's live problem list.
 import type { ProjectConfig, UnitRow, UnitsSource } from "@/modules/schema";
 import type { SceneTree } from "../scene-tree/scene-tree";
+import { rotationFramePaths } from "../premium/rotation-frames";
 import { checkBranding } from "./brand-checks";
 import { CONFIG_FILE, UNITS_FILE, type Finding } from "./report";
 
@@ -108,7 +109,11 @@ export const missingFile = (ref: FileReference): Finding => ({
 export function referencedFiles(config: ProjectConfig, tree: SceneTree, units: readonly UnitRow[], sheet: string = UNITS_FILE): FileReference[] {
   return [
     { path: config.project.branding.logo, file: CONFIG_FILE, location: "project.branding.logo" },
-    ...tree.scenes.map((s) => ({ path: s.image.path, file: CONFIG_FILE, location: `scene "${s.id}", image.path`, sceneId: s.id })),
+    ...tree.scenes.flatMap((s) => [
+      { path: s.image.path, file: CONFIG_FILE, location: `scene "${s.id}", image.path`, sceneId: s.id },
+      ...(s.rotation ? rotationFramePaths(s.rotation) : []).map((path, i) => ({ path, file: CONFIG_FILE, location: `scene "${s.id}", rotation frame ${i + 1}`, sceneId: s.id })),
+      ...(s.model ? [{ path: s.model.path, file: CONFIG_FILE, location: `scene "${s.id}", model.path`, sceneId: s.id }] : []),
+    ]),
     ...units.flatMap((u) => [
       ...(u.planImage ? [{ path: u.planImage, file: sheet, location: `row ${u.sheetRow}, plan_image` }] : []),
       ...(u.gallery ?? []).map((path) => ({ path, file: sheet, location: `row ${u.sheetRow}, gallery` })),
