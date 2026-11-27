@@ -81,4 +81,16 @@ describe("live validation matches npm run validate", () => {
     expect(live).toEqual(cli);
     expect(liveFindings).toEqual([expect.objectContaining({ severity: "error", sceneId: "first", hotspotId: "f-01" })]);
   });
+
+  it("reports the same brand colour warnings", async () => {
+    const { cli, live } = await bothCheckers((c) => {
+      c.project.branding.primaryColor = "#2f8f42";
+      c.project.branding.accentColor = "#333366";
+    }, ROWS);
+    expect(live).toEqual(cli);
+    expect(live).toEqual([
+      expect.stringContaining("project.branding.accentColor #333366 has contrast"),
+      expect.stringContaining('project.branding.primaryColor #2f8f42 looks like the "available" status colour'),
+    ]);
+  });
 });

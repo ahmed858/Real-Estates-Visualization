@@ -5,14 +5,15 @@
 // of covering it, the scene is at most 60% of the screen tall, the legend
 // follows the scene and the side panel becomes a bottom sheet. Each area is a slot, so later units replace one piece without
 // touching the rest.
-import type { CSSProperties, ReactNode } from "react";
+import type { ReactNode } from "react";
+import { brandStyle, type BrandColors } from "./brand-style";
 import type { ViewerLocale } from "./viewer-text";
 import { viewerText } from "./viewer-text";
 
 export interface ViewerLayoutProps {
   locale: ViewerLocale;
-  /** Project brand colours, exposed to children as --brand-primary / --brand-accent. */
-  brand: { primary: string; accent: string };
+  /** Project brand colours, exposed to children as CSS variables (see `brandStyle`). */
+  brand: BrandColors;
   header: ReactNode;
   /** Navigation above the scene, e.g. breadcrumbs. */
   nav?: ReactNode;
@@ -25,7 +26,7 @@ export interface ViewerLayoutProps {
 export const MOBILE_BREAKPOINT_PX = 768;
 
 export function ViewerLayout({ locale, brand, header, nav, scene, legend, panel }: ViewerLayoutProps) {
-  const style = { "--brand-primary": brand.primary, "--brand-accent": brand.accent } as CSSProperties;
+  const style = brandStyle(brand);
   return (
     <div
       lang={locale}

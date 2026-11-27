@@ -37,7 +37,7 @@ export function liveFindings({ config, units, existingFiles }: LiveProject): Fin
   const tree = createSceneTree(parsed.value);
   const sheet = unitsLabel(parsed.value.units ?? DEFAULT_UNITS_SOURCE);
   const findings = [
-    ...checkProjectFit(tree, units, sheet),
+    ...checkProjectFit(tree, units, sheet, parsed.value.project.branding),
     ...referencedFiles(parsed.value, tree, units ?? [], sheet)
       .filter((ref) => !existingFiles.has(ref.path))
       .map(missingFile),

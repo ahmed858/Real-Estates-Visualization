@@ -1,5 +1,9 @@
 // The validation report: a flat list of problems, each tied to a file and a location in it.
 
+/** File names findings point at, relative to the project folder. */
+export const CONFIG_FILE = "project.json";
+export const UNITS_FILE = "units.xlsx";
+
 export type Severity = "error" | "warning";
 
 export interface Finding {

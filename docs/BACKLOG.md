@@ -700,7 +700,7 @@ project without touching code.
 - Verify: `npm run check`.
 
 ### U-703 Readable brand colours
-- Phase 7 · `domain` + `viewer` + `tools` · Depends on: U-609 · Gated: no · Status: `todo`
+- Phase 7 · `domain` + `viewer` + `tools` · Depends on: U-609 · Gated: no · Status: `done`
 - A pure contrast helper (WCAG relative luminance) picks black or white text
   on `primaryColor` and `accentColor`, and the viewer uses it wherever text
   sits on a brand colour. `npm run validate` (and the editor's Problems
