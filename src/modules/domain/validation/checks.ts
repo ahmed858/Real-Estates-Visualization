@@ -29,6 +29,16 @@ export function hotspotUnitsExistInSheet(tree: SceneTree, units: readonly UnitRo
     }));
 }
 
+/** Every unit a premium scene lists in showsUnits must exist in the sheet. */
+export function shownUnitsExistInSheet(tree: SceneTree, units: readonly UnitRow[], sheet: string = UNITS_FILE): Finding[] {
+  const codes = new Set(units.map((u) => u.code));
+  return tree.scenes.flatMap((s) =>
+    (s.showsUnits ?? [])
+      .filter((code) => !codes.has(code))
+      .map((code) => ({ severity: "error" as const, file: CONFIG_FILE, location: `scene "${s.id}", showsUnits`, message: `unit "${code}" is not in ${sheet}`, sceneId: s.id })),
+  );
+}
+
 /** Every unit in the sheet must be drawn on some scene. */
 export function sheetUnitsArePlaced(tree: SceneTree, units: readonly UnitRow[], sheet: string = UNITS_FILE): Finding[] {
   const placed = new Set(tree.unitCodes());
@@ -139,6 +149,6 @@ export function checkProjectFit(
   return [
     ...(branding ? checkBranding(branding) : []),
     ...scenesAreReachable(tree),
-    ...(units ? [...hotspotUnitsExistInSheet(tree, units, sheet), ...sheetUnitsArePlaced(tree, units, sheet), ...sheetScenesMatch(tree, units, sheet)] : []),
+    ...(units ? [...hotspotUnitsExistInSheet(tree, units, sheet), ...shownUnitsExistInSheet(tree, units, sheet), ...sheetUnitsArePlaced(tree, units, sheet), ...sheetScenesMatch(tree, units, sheet)] : []),
   ];
 }

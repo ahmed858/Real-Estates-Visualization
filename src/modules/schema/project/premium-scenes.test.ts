@@ -124,3 +124,19 @@ describe("panorama-360 scenes", () => {
     expect(errors(scene({ type: "panorama-360", panorama: { ...panorama, height: 1500 } }))[0]).toMatchObject({ path: "root.panorama.width", message: expect.stringContaining("twice as wide") });
   });
 });
+
+describe("showsUnits", () => {
+  const panorama = { path: "panoramas/living.jpg", width: 4096, height: 2048 };
+
+  it("accepts unit codes on a premium scene", () => {
+    const result = parseProjectConfig(project(scene({ type: "panorama-360", panorama, showsUnits: ["1A", "2A"] })));
+    expect(result.ok).toBe(true);
+    if (result.ok) expect(result.value.root.showsUnits).toEqual(["1A", "2A"]);
+  });
+
+  it("rejects it on a 2D scene, an empty list and a code listed twice", () => {
+    expect(errors(scene({ showsUnits: ["1A"] }))[0]).toMatchObject({ path: "root.showsUnits", message: expect.stringContaining("only allowed on a premium scene") });
+    expect(errors(scene({ type: "panorama-360", panorama, showsUnits: [] }))[0]).toMatchObject({ path: "root.showsUnits", message: expect.stringContaining("at least one") });
+    expect(errors(scene({ type: "panorama-360", panorama, showsUnits: ["1A", "1A"] }))[0]).toMatchObject({ path: "root.showsUnits[1]", message: 'unit "1A" is listed twice' });
+  });
+});

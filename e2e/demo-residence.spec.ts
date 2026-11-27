@@ -31,3 +31,11 @@ test("demo residence: 360° panorama view, and its poster without WebGL", async 
   await expect(page.locator("[data-panorama-view]")).toHaveAttribute("data-panorama-view", "poster");
   await expect(page.locator("[data-panorama-view] img")).toBeVisible();
 });
+
+test("demo residence: counts on the 3D page, and a unit's 360° tour button", async ({ page }) => {
+  await page.goto("/p/demo-residence/building-3d?lang=en");
+  await expect(page.getByRole("region", { name: "Details" }).getByRole("definition").first()).toHaveText("24");
+  await page.goto("/p/demo-residence/floor-2?unit=2B&lang=en");
+  await page.getByRole("link", { name: /360° tour: Apartment B master bedroom/ }).click();
+  await expect(page).toHaveURL(/\/p\/demo-residence\/bedroom-b-360/);
+});

@@ -84,7 +84,7 @@ export interface ViewerText {
     columns: Record<"code" | "floor" | "type" | "bedrooms" | "areaM2" | "price" | "status", string>;
     filters: { label: string; toggle: string; toggleActive: string; min: string; max: string; clear: string; empty: string; count: (shown: string, total: string) => string };
   };
-  panel: { floor: string; bathrooms: string; notes: string; plan: (code: string) => string; close: string; units: string; priceRange: string; areaRange: string; photos: string; photo: (code: string, n: string, total: string) => string; previousPhoto: string; nextPhoto: string; location: string; openInMaps: string };
+  panel: { floor: string; bathrooms: string; notes: string; plan: (code: string) => string; close: string; units: string; priceRange: string; areaRange: string; photos: string; photo: (code: string, n: string, total: string) => string; previousPhoto: string; nextPhoto: string; location: string; openInMaps: string; tour: string };
 }
 
 const TEXT: Record<ViewerLocale, ViewerText> = {
@@ -159,6 +159,7 @@ const TEXT: Record<ViewerLocale, ViewerText> = {
       nextPhoto: "التالية",
       location: "الموقع",
       openInMaps: "افتح في الخرائط",
+      tour: "جولة 360°",
     },
   },
   en: {
@@ -232,6 +233,7 @@ const TEXT: Record<ViewerLocale, ViewerText> = {
       nextPhoto: "Next",
       location: "Location",
       openInMaps: "Open in maps",
+      tour: "360° tour",
     },
   },
 };

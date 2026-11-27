@@ -35,6 +35,10 @@ Last merge into `main`: PR #33 (up to U-401, the Arabic / English switch).
   of the building whose floors open their plans, plus 360° views of an
   apartment A living room, an apartment B master bedroom and the rooftop
   (U-1301).
+- **Unit counts on 3D and 360° pages, and a 360° tour button:** the status
+  legend and summary on 3D, turntable and 360° pages no longer show 0 (the
+  villa's turntable and model too), and a unit's panel opens the 360° tour
+  of its apartment type (U-1302).
 
 ### What a client gets
 

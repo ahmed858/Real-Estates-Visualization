@@ -1,6 +1,6 @@
 "use client";
 // Side panel content for a selected unit: its facts, a WhatsApp enquiry
-// button, the lead form (when the project has a webhook), a share button,
+// button, 360° tour links, the lead form (when the project has a webhook), a share button,
 // plan image and notes.
 import Link from "next/link";
 import { useState } from "react";
@@ -65,6 +65,17 @@ export function UnitDetails({ unit, text, locale, currency, onClose, enquiryHref
           </div>
         ))}
       </dl>
+      {unit.tours && unit.tours.length > 0 && (
+        <ul aria-label={text.panel.tour} className="flex flex-wrap gap-2">
+          {unit.tours.map((tour) => (
+            <li key={tour.href}>
+              <Link href={tour.href} title={tour.title} aria-label={`${text.panel.tour}: ${tour.title}`} className="inline-flex items-center rounded-md border border-white/20 px-3 py-1.5 text-sm font-medium hover:bg-white/10">
+                {text.panel.tour}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      )}
       {enquiryHref && <WhatsAppButton href={enquiryHref} label={text.contact.unitButton} />}
       {/* Keyed by unit so switching units starts a fresh form. */}
       {leadSlug && <LeadForm key={unit.code} slug={leadSlug} unitCode={unit.code} locale={locale} text={text} whatsappHref={enquiryHref} send={leadSend} />}

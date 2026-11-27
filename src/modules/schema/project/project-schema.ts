@@ -168,6 +168,12 @@ const sceneBaseSchema = z.object({
   model: sceneModelSchema.optional(),
   /** Required on, and only allowed on, a panorama-360 scene. */
   panorama: scenePanoramaSchema.optional(),
+  /**
+   * Premium scenes only: unit codes this view shows, e.g. every apartment
+   * with the layout a 360° tour was taken in. Their panels get a link to the
+   * view, and the view's counts cover them.
+   */
+  showsUnits: z.array(z.string().trim().min(1, "unit code is required")).min(1, "list at least one unit code, or leave showsUnits out").optional(),
   floors: typicalFloorsSchema.optional(),
   hotspots: z.array(hotspotSchema).default([]),
 });

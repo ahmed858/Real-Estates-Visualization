@@ -12,6 +12,7 @@ export const CROSS_FIELD_RULES = [
   "floors (typical floors) is only allowed on kind \"floor\", needs from <= to, and its hotspots use unitSuffix, never unit.",
   "unitSuffix targets are only allowed on a typical floor.",
   "rotation is required on and only allowed on type \"rotation-360\"; model likewise on type \"model-3d\"; panorama likewise on type \"panorama-360\".",
+  "showsUnits is only allowed on a premium scene, lists each code once, and every code exists in the units sheet.",
   "Paths are relative to the project folder and never contain \"..\".",
 ] as const;
 
