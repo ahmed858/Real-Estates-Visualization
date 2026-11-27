@@ -13,7 +13,13 @@ import { unitsSourceSchema } from "./units-source";
 
 export const PROJECT_SCHEMA_VERSION = 1;
 
-export const SCENE_KINDS = ["facade", "masterplan", "building", "floor", "unit-plan", "other"] as const;
+/**
+ * What a scene shows. The kind labels the level for people and agents; the
+ * tree itself has no fixed depth, so a tower (building → floor), a compound
+ * (masterplan → phase → block → cluster → villa units) or a mix all use the
+ * same scene shape. Only `floor` has extra rules (typical floors).
+ */
+export const SCENE_KINDS = ["facade", "masterplan", "phase", "block", "cluster", "building", "floor", "unit-plan", "other"] as const;
 
 /**
  * Scene renderer types (Strategy hook). `image-2d` is the core; the premium

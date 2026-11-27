@@ -30,11 +30,19 @@ Each client project is a folder: a config file (scene tree, hotspots, branding),
 its images, and a units sheet. The exact format is defined in Phase 1 and
 documented in the collection guide.
 
+## Project intake skill
+
+`.claude/skills/project-intake/` is an agent skill: how to turn a client's
+images, units sheet and description into a project, with the JSON Schema of
+`project.json` (generated from `schema` by `npm run generate:schema`) and two
+worked examples (tower, villa compound) that a test validates.
+
 ## Core patterns
 
 - **Composite** for the scene tree: every scene is an image with hotspots; a
   hotspot targets a child scene or a unit. Works for a single villa, a tower,
-  a compound or a mix. A "typical floor" lets one plan serve a range of floors.
+  a compound (phases, blocks, clusters) or a mix, at any depth; a scene's
+  `kind` is only a label. A "typical floor" lets one plan serve a range of floors.
 - **Strategy** for scene rendering: `Image2DScene`, `Rotation360Scene` and
   `Model3DScene`, picked by `scene.type`, without changing the tree or the
   data. `Model3DScene` loads its three.js canvas with a dynamic import, so

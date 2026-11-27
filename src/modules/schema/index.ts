@@ -36,6 +36,7 @@ export {
 export type { UnitsSource, UnitsSourceKind } from "./project/units-source";
 export { LOCALES } from "./project/primitives";
 export { formatPath, parseProjectConfig } from "./project/parse-project-config";
+export { projectConfigJsonSchema } from "./project/json-schema";
 export type { ParseResult, ValidationError } from "./project/parse-project-config";
 export {
   OPTIONAL_UNIT_COLUMNS,

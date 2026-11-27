@@ -31,3 +31,6 @@ export { buildXlsx } from "./xlsx/write-xlsx";
 export type { XlsxCell } from "./xlsx/write-xlsx";
 export { createProject, NewProjectError, PLACEHOLDERS, runNewProjectCli, scaffoldProjectConfig } from "./new-project/create-project";
 export type { CreateProjectOptions } from "./new-project/create-project";
+export { runUnitsFromCsvCli, unitsXlsxFromCsv } from "./units-csv/units-from-csv";
+export type { UnitsCsvResult } from "./units-csv/units-from-csv";
+export { projectJsonSchemaText, writeProjectJsonSchema } from "./json-schema/write-json-schema";

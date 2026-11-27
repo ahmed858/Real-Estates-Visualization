@@ -1136,3 +1136,22 @@ planned roadmap is complete. What is left:
 - Waits for Q-4. Turn the owner's answer into units here (or record that
   development pauses until client feedback).
 - Verify: `npm run check`.
+
+## Phase 12 · Any project shape
+
+Asked by the owner on 2026-11-27: every client's project is shaped
+differently (towers, compounds of blocks with villas, unknown floor counts),
+so preparing a project should be an agent's job with one instruction file,
+not a rigid template.
+
+### U-1201 Project intake skill
+- Phase 12 · Docs + tools · Depends on: U-1102 · Gated: no · Status: `done`
+- Scene kinds `phase`, `block` and `cluster` (the tree already nests to any
+  depth). `.claude/skills/project-intake/`: `SKILL.md` (inputs, questions for
+  the client, navigation path, deriving hotspots, writing and validating the
+  files), `project.schema.json` generated from the Zod schema
+  (`npm run generate:schema`, a test fails when stale), worked examples for
+  a tower and a villa compound (validated by a test).
+  `npm run units:from-csv -- <slug> <file.csv>` writes units.xlsx from a
+  validated CSV.
+- Verify: `npm run check`.

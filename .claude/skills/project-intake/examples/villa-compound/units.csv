@@ -1,0 +1,13 @@
+code,scene,floor,type,bedrooms,bathrooms,area_m2,price,status,plan_image,notes
+A-01,block-a,0,Standalone villa,4,4,320,18500000,available,images/villa-standalone.png,Private garden
+A-02,block-a,0,Standalone villa,4,4,320,18500000,sold,images/villa-standalone.png,Private garden
+A-03,block-a,0,Twin villa,3,3,240,13900000,reserved,images/villa-twin.png,Private garden
+A-04,block-a,0,Twin villa,3,3,240,13900000,available,images/villa-twin.png,Private garden
+B1-01,b1-ground,0,Apartment,3,2,150,5200000,sold,images/apartment-type-a.png,Garden
+B1-02,b1-ground,0,Apartment,3,2,150,5200000,available,images/apartment-type-a.png,Garden
+B1-11,b1-first,1,Apartment,3,2,150,5350000,available,images/apartment-type-a.png,
+B1-12,b1-first,1,Apartment,3,2,150,5350000,available,images/apartment-type-a.png,
+B2-01,b2-ground,0,Apartment,3,2,150,5200000,available,images/apartment-type-a.png,Garden
+B2-02,b2-ground,0,Apartment,3,2,150,5200000,available,images/apartment-type-a.png,Garden
+B2-11,b2-first,1,Apartment,3,2,150,5350000,available,images/apartment-type-a.png,
+B2-12,b2-first,1,Apartment,3,2,150,5350000,available,images/apartment-type-a.png,

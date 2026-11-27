@@ -362,3 +362,29 @@ describe("project.published", () => {
     expect(errorsOf(input).map((e) => e.path)).toContain("project.published");
   });
 });
+
+describe("compound levels", () => {
+  it("accepts phase, block and cluster scenes at any depth", () => {
+    const scene = (id: string, kind: string, children: unknown[] = []) => ({
+      id,
+      kind,
+      title: { ar: id, en: id },
+      image: { path: `images/${id}.jpg`, width: 100, height: 100 },
+      hotspots: children.map((c) => ({ id: (c as { id: string }).id, points: [[0, 0], [10, 0], [10, 10]], target: { scene: (c as { id: string }).id } })),
+      children,
+    });
+    const result = parseProjectConfig({
+      schemaVersion: 1,
+      project: {
+        slug: "compound",
+        name: { ar: "كمبوند", en: "Compound" },
+        defaultLocale: "ar",
+        currency: "EGP",
+        contact: { whatsapp: "+201001234567" },
+        branding: { logo: "images/logo.svg", primaryColor: "#1a6b4f", accentColor: "#c89b3c" },
+      },
+      root: scene("site", "masterplan", [scene("phase-1", "phase", [scene("block-a", "block", [scene("cluster-1", "cluster")])])]),
+    });
+    expect(result.ok ? [] : result.errors).toEqual([]);
+  });
+});

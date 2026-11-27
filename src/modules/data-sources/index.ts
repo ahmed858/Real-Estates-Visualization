@@ -9,6 +9,7 @@ export { GoogleSheetCsvSource, googleSheetCsvUrl } from "./google-sheet-csv-sour
 export type { FetchLike } from "./google-sheet-csv-source";
 export { XlsxFileSource } from "./xlsx-file-source";
 export { sheetTableFromRows } from "./sheet-table";
+export { parseCsv } from "./csv";
 export { ProjectSourceError } from "./project-source";
 export type { LoadedProject, ProjectSource, ProjectSourceErrorKind } from "./project-source";
 export { FileProjectSource, PROJECT_CONFIG_FILE } from "./file-project-source";
