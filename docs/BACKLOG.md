@@ -899,7 +899,7 @@ Rules that keep the 2D core unchanged:
   gated.
 
 ### U-901 Premium scene data in the schema
-- Phase 9 · `schema` + `domain` · Depends on: U-806 · **Gated: yes** · Status: `todo`
+- Phase 9 · `schema` + `domain` · Depends on: U-806 · **Gated: yes** · Status: `done`
 - `SCENE_RENDERER_TYPES` gains `rotation-360` and `model-3d`. A
   `rotation-360` scene requires `rotation: { frames, count, width, height,
   start? }`, where `frames` is a project path with `{index}` (e.g.

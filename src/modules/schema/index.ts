@@ -5,6 +5,8 @@ export {
   DEFAULT_SCENE_RENDERER_TYPE,
   isProjectPublished,
   PROJECT_SCHEMA_VERSION,
+  ROTATION_FRAME_PLACEHOLDER,
+  ROTATION_MAX_FRAMES,
   SCENE_KINDS,
   SCENE_RENDERER_TYPES,
   projectConfigShapeSchema,
@@ -21,7 +23,9 @@ export type {
   SceneImage,
   SceneInput,
   SceneKind,
+  SceneModel,
   SceneRendererType,
+  SceneRotation,
   TypicalFloors,
 } from "./project/project-schema";
 export {

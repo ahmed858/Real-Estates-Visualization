@@ -80,6 +80,46 @@ function pointsInsideImage({ scene, path }: VisitedScene): RuleIssue[] {
   return issues;
 }
 
+/** The rotation and model blocks, per-frame polygons and mesh names belong to their renderer type only. */
+function premiumBlocks({ scene, path }: VisitedScene): RuleIssue[] {
+  const issues: RuleIssue[] = [];
+  const isRotation = scene.type === "rotation-360";
+  const isModel = scene.type === "model-3d";
+  if (isRotation && !scene.rotation) issues.push({ path: [...path, "rotation"], message: 'a scene of type "rotation-360" needs a rotation block (frames, count, width, height)' });
+  if (!isRotation && scene.rotation) issues.push({ path: [...path, "rotation"], message: `rotation is only allowed on a scene of type "rotation-360", not "${scene.type}"` });
+  if (isModel && !scene.model) issues.push({ path: [...path, "model"], message: 'a scene of type "model-3d" needs a model block (path to a .glb file)' });
+  if (!isModel && scene.model) issues.push({ path: [...path, "model"], message: `model is only allowed on a scene of type "model-3d", not "${scene.type}"` });
+  if (scene.rotation?.start !== undefined && scene.rotation.start > scene.rotation.count) {
+    issues.push({ path: [...path, "rotation", "start"], message: `start (${scene.rotation.start}) must be a frame between 1 and count (${scene.rotation.count})` });
+  }
+  const meshes = new Map<string, string>();
+  scene.hotspots.forEach((h, i) => {
+    const hotspotPath = [...path, "hotspots", i];
+    if (h.frames && !isRotation) issues.push({ path: [...hotspotPath, "frames"], message: `frames is only allowed on a scene of type "rotation-360"` });
+    if (h.frames && isRotation && scene.rotation) {
+      const { count, width, height } = scene.rotation;
+      for (const [frame, points] of Object.entries(h.frames)) {
+        if (Number(frame) > count) {
+          issues.push({ path: [...hotspotPath, "frames", frame], message: `frame ${frame} does not exist (the rotation has ${count} frames)` });
+          continue;
+        }
+        points.forEach(([x, y], j) => {
+          if (x < 0 || y < 0 || x > width || y > height) {
+            issues.push({ path: [...hotspotPath, "frames", frame, j], message: `point [${x}, ${y}] is outside the frame (${width}x${height})` });
+          }
+        });
+      }
+    }
+    if (h.mesh !== undefined && !isModel) issues.push({ path: [...hotspotPath, "mesh"], message: `mesh is only allowed on a scene of type "model-3d"` });
+    if (h.mesh !== undefined && isModel) {
+      const first = meshes.get(h.mesh);
+      if (first) issues.push({ path: [...hotspotPath, "mesh"], message: `mesh "${h.mesh}" is already used by hotspot "${first}"` });
+      else meshes.set(h.mesh, h.id);
+    }
+  });
+  return issues;
+}
+
 function typicalFloors({ scene, path }: VisitedScene): RuleIssue[] {
   if (!scene.floors) return [];
   const issues: RuleIssue[] = [];
@@ -110,6 +150,7 @@ export function checkTreeRules(config: ProjectConfig): RuleIssue[] {
       ...uniqueHotspotIds(s),
       ...hotspotTargets(s, sceneIds),
       ...pointsInsideImage(s),
+      ...premiumBlocks(s),
       ...typicalFloors(s),
     ]),
   ];

@@ -62,4 +62,25 @@ describe("serializeProjectConfig", () => {
     const placed = { ...config, project: { ...config.project, location } };
     expect(JSON.parse(serializeProjectConfig(placed)).project.location).toEqual(location);
   });
+  it("keeps premium blocks in schema key order and reads them back", async () => {
+    const { config } = await load("projects/demo-villa/project.json");
+    const sq: [number, number][] = [[1, 1], [5, 1], [5, 5]];
+    const premium: ProjectConfig = {
+      ...config,
+      root: {
+        ...config.root,
+        children: [
+          ...config.root.children,
+          { id: "spin", kind: "building", type: "rotation-360", title: { ar: "دوران", en: "Spin" }, image: { path: "images/p.png", width: 10, height: 10 }, rotation: { frames: "rotations/spin/f{index}.jpg", count: 4, width: 10, height: 10 }, hotspots: [{ id: "u", points: sq, frames: { "2": sq }, target: { scene: config.root.id } }], children: [] },
+          { id: "model", kind: "building", type: "model-3d", title: { ar: "نموذج", en: "Model" }, image: { path: "images/p.png", width: 10, height: 10 }, model: { path: "models/m.glb" }, hotspots: [{ id: "u", points: sq, mesh: "Unit_U", target: { scene: config.root.id } }], children: [] },
+        ],
+      },
+    };
+    const json = JSON.parse(serializeProjectConfig(premium));
+    const [spin, model] = json.root.children.slice(-2);
+    expect(Object.keys(spin)).toEqual(["id", "kind", "type", "title", "image", "rotation", "hotspots"]);
+    expect(Object.keys(model)).toEqual(["id", "kind", "type", "title", "image", "model", "hotspots"]);
+    const back = parseProjectConfig(json);
+    expect(back.ok && back.value).toEqual(premium);
+  });
 });

@@ -44,3 +44,4 @@ export type { Finding, Severity, ValidationReport } from "./validation/report";
 export { BLACK, colorDifference, contrastRatio, parseHexColor, readableTextColor, relativeLuminance, WHITE } from "./colour/contrast";
 export type { Rgb } from "./colour/contrast";
 export { STAGE_COLOR, STATUS_COLORS } from "./colour/palette";
+export { rotationFramePath, rotationFramePaths } from "./premium/rotation-frames";
