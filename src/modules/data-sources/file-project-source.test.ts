@@ -129,3 +129,37 @@ describe("FileProjectSource: stale units", () => {
     expect(project).not.toHaveProperty("unitsStale");
   });
 });
+
+describe("FileProjectSource.list", () => {
+  it("lists every project with a valid config, sorted by slug, without reading unit sheets", async () => {
+    const neverLoaded = () => {
+      throw new Error("list() must not read unit sheets");
+    };
+    const list = await new FileProjectSource(projectsDir, neverLoaded).list();
+    expect(list.map((p) => p.slug)).toEqual(["demo-residence", "demo-villa"]);
+    expect(list[1].name.en).toBeTruthy();
+  });
+
+  it("leaves out invalid projects, stray files and folders without a config", async () => {
+    const source = await brokenCopy(async () => {});
+    const root = join((source as unknown as { projectsDir: string }).projectsDir);
+    await cp(join(root, "demo-villa"), join(root, "broken"), { recursive: true });
+    await writeFile(join(root, "broken", "project.json"), "{");
+    await cp(join(root, "demo-villa", "images"), join(root, "no-config"), { recursive: true });
+    await writeFile(join(root, "notes.txt"), "x");
+    expect((await source.list()).map((p) => p.slug)).toEqual(["demo-villa"]);
+  });
+
+  it("uses the folder name as the slug, since that is the URL", async () => {
+    const source = await brokenCopy(async (dir) => {
+      const config = JSON.parse(await readFile(join(dir, "project.json"), "utf8"));
+      config.project.slug = "other-name";
+      await writeFile(join(dir, "project.json"), JSON.stringify(config));
+    });
+    expect((await source.list()).map((p) => p.slug)).toEqual(["demo-villa"]);
+  });
+
+  it("is empty when the projects folder does not exist", async () => {
+    expect(await new FileProjectSource(join(tmpdir(), "no-such-projects-dir")).list()).toEqual([]);
+  });
+});

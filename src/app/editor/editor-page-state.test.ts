@@ -16,8 +16,8 @@ describe("editorPageState", () => {
 
   it("is not found while the editor is disabled, without loading anything", async () => {
     const load = vi.fn<ProjectSource["load"]>();
-    expect(await editorPageState("demo-villa", {}, { load })).toEqual({ kind: "not-found" });
-    expect(await editorPageState("demo-villa", { EDITOR_ENABLED: "false" }, { load })).toEqual({ kind: "not-found" });
+    expect(await editorPageState("demo-villa", {}, { load, list: async () => [] })).toEqual({ kind: "not-found" });
+    expect(await editorPageState("demo-villa", { EDITOR_ENABLED: "false" }, { load, list: async () => [] })).toEqual({ kind: "not-found" });
     expect(load).not.toHaveBeenCalled();
   });
 
@@ -29,6 +29,6 @@ describe("editorPageState", () => {
     const load = async () => {
       throw new ProjectSourceError("x", "invalid-units", ["row 4, price: must be a number"]);
     };
-    expect(await editorPageState("x", ON, { load })).toEqual({ kind: "invalid", issues: ["row 4, price: must be a number"] });
+    expect(await editorPageState("x", ON, { load, list: async () => [] })).toEqual({ kind: "invalid", issues: ["row 4, price: must be a number"] });
   });
 });

@@ -6,7 +6,7 @@ const loaded = (published?: boolean): LoadedProject => ({
   config: { project: { slug: "p", ...(published !== undefined && { published }) } } as unknown as ProjectConfig,
   units: [],
 });
-const source = (project: LoadedProject): ProjectSource => ({ load: vi.fn(async () => project) });
+const source = (project: LoadedProject): ProjectSource => ({ load: vi.fn(async () => project), list: async () => [] });
 
 async function errorOf(load: Promise<unknown>) {
   const error = await load.then(() => undefined, (e: unknown) => e);
@@ -31,8 +31,23 @@ describe("PublishedProjectSource", () => {
   });
 
   it("passes errors of the wrapped source through", async () => {
-    const failing: ProjectSource = { load: async () => Promise.reject(new ProjectSourceError("p", "invalid-config", ["x"])) };
+    const failing: ProjectSource = { load: async () => Promise.reject(new ProjectSourceError("p", "invalid-config", ["x"])), list: async () => [] };
     expect((await errorOf(new PublishedProjectSource(failing, { preview: false }).load("p"))).kind).toBe("invalid-config");
+  });
+});
+
+describe("PublishedProjectSource.list", () => {
+  const all: ProjectSource = {
+    load: async () => loaded(),
+    list: async () => [loaded().config.project, loaded(true).config.project, { ...loaded(false).config.project, slug: "hidden" }],
+  };
+
+  it("leaves out hidden projects", async () => {
+    expect((await new PublishedProjectSource(all, { preview: false }).list()).map((p) => p.slug)).toEqual(["p", "p"]);
+  });
+
+  it("keeps hidden projects when preview is on", async () => {
+    expect((await new PublishedProjectSource(all, { preview: true }).list()).map((p) => p.slug)).toEqual(["p", "p", "hidden"]);
   });
 });
 
