@@ -36,6 +36,17 @@ function uniqueSceneIds(scenes: VisitedScene[]): RuleIssue[] {
   return issues;
 }
 
+/** Page names under /p/<slug>/ that a scene id would collide with (a scene lives at /p/<slug>/<id>). */
+export const RESERVED_SCENE_IDS = ["units", "compare", "lead", "explore"] as const;
+
+function sceneIdsAreNotPageNames(scenes: VisitedScene[]): RuleIssue[] {
+  return scenes.flatMap(({ scene, path }) =>
+    (RESERVED_SCENE_IDS as readonly string[]).includes(scene.id)
+      ? [{ path: [...path, "id"], message: `scene id "${scene.id}" is the name of a page (${RESERVED_SCENE_IDS.join(", ")}); pick another id` }]
+      : [],
+  );
+}
+
 function uniqueHotspotIds({ scene, path }: VisitedScene): RuleIssue[] {
   const seen = new Set<string>();
   const issues: RuleIssue[] = [];
@@ -153,6 +164,7 @@ export function checkTreeRules(config: ProjectConfig): RuleIssue[] {
   const sceneIds = new Set(scenes.map((s) => s.scene.id));
   return [
     ...uniqueSceneIds(scenes),
+    ...sceneIdsAreNotPageNames(scenes),
     ...scenes.flatMap((s) => [
       ...uniqueHotspotIds(s),
       ...hotspotTargets(s, sceneIds),

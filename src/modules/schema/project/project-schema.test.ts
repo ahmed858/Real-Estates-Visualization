@@ -190,6 +190,24 @@ describe("parseProjectConfig: error messages carry path and reason", () => {
     expect(errorsOf(typo).map((e) => e.path)).toEqual(expect.arrayContaining(["project.location.lng"]));
   });
 
+  it("keeps the globe labels and nearby places, and checks the drive times", () => {
+    const input = minimal();
+    const location = {
+      lat: 30.03,
+      lng: 31.47,
+      address: title("New Cairo"),
+      country: title("Egypt"),
+      city: title("New Cairo"),
+      nearby: [{ name: title("Airport"), minutes: 25 }],
+    };
+    input.project.location = location;
+    expect(expectValid(input).project.location).toEqual(location);
+    input.project.location = { ...location, nearby: [{ name: title("Mall"), minutes: 0 }, { name: title("Far"), minutes: 2.5 }] };
+    expect(errorsOf(input).map((e) => e.path)).toEqual(expect.arrayContaining(["project.location.nearby[0].minutes", "project.location.nearby[1].minutes"]));
+    input.project.location = { ...location, nearby: Array.from({ length: 9 }, () => ({ name: title("Place"), minutes: 5 })) };
+    expect(errorsOf(input).find((e) => e.path === "project.location.nearby")?.message).toMatch(/at most 8/);
+  });
+
   it("rejects unknown fields so typos are caught", () => {
     const input = { ...minimal(), extra: true };
     expect(errorsOf(input)[0].path).toBe("(root)");
@@ -261,6 +279,18 @@ describe("parseProjectConfig: error messages carry path and reason", () => {
     const errors = errorsOf(input);
     expect(errors).toContainEqual({ path: "root.children[1].id", message: 'duplicate scene id "floor" (first used at root.children.0)' });
     expect(errors).toContainEqual({ path: "root.hotspots[1].id", message: 'duplicate hotspot id "h" in scene "facade"' });
+  });
+
+  it("rejects scene ids that are page names, which their URL would collide with", () => {
+    const input = project({
+      id: "facade",
+      kind: "facade",
+      title: title("Facade"),
+      image: image(),
+      hotspots: [{ id: "h", points: square(), target: { scene: "explore" } }],
+      children: [{ id: "explore", kind: "floor", title: title("A"), image: image() }],
+    });
+    expect(errorsOf(input)).toContainEqual({ path: "root.children[0].id", message: expect.stringMatching(/scene id "explore" is the name of a page/) });
   });
 
   it("rejects hotspots that point at a missing scene or at their own scene", () => {

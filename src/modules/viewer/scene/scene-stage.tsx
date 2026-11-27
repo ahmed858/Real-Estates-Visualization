@@ -17,6 +17,9 @@ import { HoverCard, formatPrice, type HoverCardContent, type SceneSummary, type 
 import { useSelectedFloor, useSelectedUnit } from "../selection/use-selected-unit";
 import { SceneView } from "./scene-view";
 import { Zoomable } from "./zoomable";
+import type { SceneTourStep } from "../tour/tour-step";
+import { useGuidedTour } from "../tour/use-guided-tour";
+import { TourBar } from "../tour/tour-bar";
 
 export interface SceneStageProps {
   scene: Scene;
@@ -41,6 +44,8 @@ export interface SceneStageProps {
   locale: ViewerLocale;
   /** For a typical floor scene: each concrete floor with its hotspot id → unit code map. */
   floors?: readonly ConcreteFloorCodes[];
+  /** What the guided tour does on this scene while ?tour=1 is in the URL (see useGuidedTour). */
+  tour?: SceneTourStep;
 }
 
 export interface ConcreteFloorCodes {
@@ -124,11 +129,16 @@ export function SceneStage(props: SceneStageProps) {
   const num = new Intl.NumberFormat(locale === "ar" ? "ar-EG" : "en-US");
   const matchesBelow = (h: Hotspot) => ("scene" in h.target ? filterUnits(props.sceneUnits?.[h.target.scene] ?? [], filter).length : 0);
   const anchor = hovered ? anchorOf(hovered, scene) : null;
+  const guided = useGuidedTour(scene, props.tour, setHovered);
   // The scene fits the stage: as wide as the stage allows, and never taller
   // than --stage-height (set by the viewer layout; the viewport by default).
   const ratio = scene.image.width / scene.image.height;
   return (
-    <div className="relative mx-auto w-full" style={{ maxWidth: `calc(var(--stage-height, 100dvh) * ${ratio})` }} data-testid="scene-stage">
+    <div className="relative mx-auto w-full" style={{ maxWidth: `calc(var(--stage-height, 100dvh) * ${ratio})` }} data-testid="scene-stage" data-tour={guided.active ? "on" : undefined}>
+      {guided.active && <TourBar locale={locale} onStop={guided.stop} />}
+      {/* Two wrappers: the entrance animation and the zoom both set a transform. */}
+      <div className={guided.active ? "tour-enter" : undefined}>
+      <div style={guided.zoomStyle}>
       <Zoomable text={text}>
         <SceneView
           scene={scene}
@@ -173,6 +183,8 @@ export function SceneStage(props: SceneStageProps) {
           </div>
         )}
       </Zoomable>
+      </div>
+      </div>
       {/* Screen readers hear the card of the hotspot under focus (the card itself is visual). */}
       <p className="sr-only" aria-live="polite" data-testid="card-announcement">
         {content ? cardAnnouncement(content, text, locale, currency) : ""}

@@ -37,6 +37,21 @@ export const projectLocationSchema = z
     lat: z.number().min(-90, "must be between -90 and 90").max(90, "must be between -90 and 90"),
     lng: z.number().min(-180, "must be between -180 and 180").max(180, "must be between -180 and 180"),
     address: localizedTextSchema,
+    /** Country and city names for the globe intro's labels (earth → country → city → site). */
+    country: localizedTextSchema.optional(),
+    city: localizedTextSchema.optional(),
+    /** Places nearby with the drive time, listed when the globe intro reaches the site. */
+    nearby: z
+      .array(
+        z
+          .object({
+            name: localizedTextSchema,
+            minutes: z.number().int().min(1, "at least 1 minute").max(240, "at most 240 minutes"),
+          })
+          .strict(),
+      )
+      .max(8, "list at most 8 nearby places")
+      .optional(),
   })
   .strict();
 

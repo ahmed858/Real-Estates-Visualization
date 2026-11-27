@@ -111,6 +111,79 @@
                 "en"
               ],
               "additionalProperties": false
+            },
+            "country": {
+              "type": "object",
+              "properties": {
+                "ar": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "en": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "ar",
+                "en"
+              ],
+              "additionalProperties": false
+            },
+            "city": {
+              "type": "object",
+              "properties": {
+                "ar": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "en": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "ar",
+                "en"
+              ],
+              "additionalProperties": false
+            },
+            "nearby": {
+              "maxItems": 8,
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "object",
+                    "properties": {
+                      "ar": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "en": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "required": [
+                      "ar",
+                      "en"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "minutes": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 240
+                  }
+                },
+                "required": [
+                  "name",
+                  "minutes"
+                ],
+                "additionalProperties": false
+              }
             }
           },
           "required": [

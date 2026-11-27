@@ -15,6 +15,52 @@
       "logo": "images/logo.svg",
       "primaryColor": "#5b4636",
       "accentColor": "#c9a46a"
+    },
+    "location": {
+      "lat": 30.0131,
+      "lng": 31.4913,
+      "address": {
+        "ar": "التجمع الخامس، القاهرة الجديدة (عنوان تجريبي)",
+        "en": "Fifth Settlement, New Cairo (demo address)"
+      },
+      "country": {
+        "ar": "مصر",
+        "en": "Egypt"
+      },
+      "city": {
+        "ar": "القاهرة الجديدة",
+        "en": "New Cairo"
+      },
+      "nearby": [
+        {
+          "name": {
+            "ar": "الجامعة الأمريكية",
+            "en": "American University in Cairo"
+          },
+          "minutes": 7
+        },
+        {
+          "name": {
+            "ar": "شارع التسعين",
+            "en": "90th Street"
+          },
+          "minutes": 5
+        },
+        {
+          "name": {
+            "ar": "مطار القاهرة الدولي",
+            "en": "Cairo International Airport"
+          },
+          "minutes": 25
+        },
+        {
+          "name": {
+            "ar": "العاصمة الإدارية",
+            "en": "New Administrative Capital"
+          },
+          "minutes": 35
+        }
+      ]
     }
   },
   "root": {

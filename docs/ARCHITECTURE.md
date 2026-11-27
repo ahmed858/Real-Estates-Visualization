@@ -49,3 +49,11 @@ worked examples (tower, villa compound) that a test validates.
   only 3D scenes download the 3D code.
 - **Adapter** for unit sources: `XlsxFileSource` (demo) and
   `GoogleSheetSource` (clients) implement the same `UnitSource` interface.
+- **Strategy** for the globe intro's renderer: `GlobeIntro` (viewer) runs the
+  camera flight and hands each pose to a `GlobeRendererHandle`, the WebGL
+  globe (`globe-canvas.tsx`, loaded on demand) or the flat SVG map
+  (`static-map.tsx`) for devices without WebGL or with little power. The
+  camera maths, the stages (earth → country → city → site) and the TopoJSON
+  decoder are pure functions in `domain/geo`. The globe is the level above a
+  project's root scene; the guided tour that follows it walks the scene tree
+  (`domain/scene-tree/guided-tour.ts`), so it works for any project shape.

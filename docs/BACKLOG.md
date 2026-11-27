@@ -1188,3 +1188,34 @@ and no real assets exist, so generate them.
   units on the living room tour and the B/C (2-bedroom) units on the
   bedroom tour.
 - Verify: `npm run check`, `npm run e2e`.
+
+## Phase 14 · Globe intro
+
+Asked by the owner on 2026-11-27: open with a 3D globe like the reference
+site's intro; pressing "explore" zooms into the project's country and keeps
+zooming until the visitor is inside a unit.
+
+### U-1401 Globe intro and guided tour down to a unit
+- Phase 14 · `schema` + `domain` + `viewer` + app + `projects` · Depends on: U-1302 · Gated: no · Status: `done`
+- `project.location` gains optional `country`, `city` (both languages) and
+  `nearby` (up to 8 places with drive minutes). Scene ids `units`,
+  `compare`, `lead` and `explore` are refused (page names).
+- `/p/<slug>/explore?stage=earth|country|city|site`: a three.js globe
+  painted in the browser from Natural Earth 1:110m country shapes
+  (`public/globe/`, public domain, 39 KB gzipped, loaded after first paint),
+  the project's country outlined in the brand accent, a generated close-up
+  city around the project, stars and atmosphere. One continuous camera
+  flight (turn, then a geometric dive) from any stage to any other; the
+  marker steps one stage down, "Back" one stage up, the stage picker jumps;
+  "Explore the project" flies all the way down and opens into the facade.
+  Weak devices (≤ 2 cores, ≤ 2 GB, data saver) and browsers without WebGL
+  get a flat SVG map driven by the same flight. Reduced motion: no spin, the
+  camera jumps.
+- Guided tour (`?tour=1` on scene pages): `guidedTour` picks the best unit
+  reachable through image scenes (available, with a 360° view first); each
+  scene zooms into the next hotspot and opens it, the last shows and selects
+  the unit, then enters its 360° view. Any press or key stops it.
+- Projects with a location link back to the globe from the breadcrumbs
+  ("Location") and open on it from the home page. demo-residence has a
+  demo location in New Cairo with four nearby places.
+- Verify: `npm run check`, `npm run e2e`.
