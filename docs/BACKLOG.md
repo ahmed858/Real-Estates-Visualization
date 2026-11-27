@@ -688,7 +688,7 @@ project without touching code.
 - Verify: `npm run check`.
 
 ### U-702 Page title, description and icon per project
-- Phase 7 · App · Depends on: U-609 · Gated: no · Status: `todo`
+- Phase 7 · App · Depends on: U-609 · Gated: no · Status: `done`
 - `generateMetadata` for `/p/<slug>`, its scenes and `/p/<slug>/units`:
   title from the project and scene name in the page's locale, a short
   description, the client logo as icon and the root image as the Open Graph

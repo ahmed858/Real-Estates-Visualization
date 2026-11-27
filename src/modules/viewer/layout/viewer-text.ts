@@ -15,6 +15,8 @@ export interface ViewerText {
   breadcrumbs: string;
   /** Shown when the unit statuses come from the last good copy of the sheet. */
   staleNote: string;
+  /** Page description for link previews (WhatsApp, search results). */
+  metaDescription: (projectName: string) => string;
   card: {
     type: string;
     bedrooms: string;
@@ -62,6 +64,7 @@ const TEXT: Record<ViewerLocale, ViewerText> = {
     logoAlt: (name) => `شعار ${name}`,
     breadcrumbs: "مسار التصفح",
     staleNote: "قد لا تكون حالة الوحدات محدّثة الآن.",
+    metaDescription: (name) => `مخططات تفاعلية لمشروع ${name}: تصفّح الأدوار واعرف الوحدات المتاحة.`,
     card: {
       type: "النوع",
       bedrooms: "غرف النوم",
@@ -110,6 +113,7 @@ const TEXT: Record<ViewerLocale, ViewerText> = {
     logoAlt: (name) => `${name} logo`,
     breadcrumbs: "Breadcrumbs",
     staleNote: "Unit status may be out of date.",
+    metaDescription: (name) => `Interactive floor plans of ${name}: browse the floors and see which units are available.`,
     card: {
       type: "Type",
       bedrooms: "Bedrooms",
