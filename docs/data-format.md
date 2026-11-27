@@ -124,6 +124,14 @@ the side panel work the same. Only the extra blocks below are new.
 | --- | --- | --- | --- |
 | `model.path` | file path | yes | A `.glb` file in the `models/` folder, e.g. `models/tower.glb`. Must exist. |
 
+In the viewer the visitor orbits the model (drag, pinch, arrow keys on the
+focused view). Every mesh named by a hotspot's `mesh` (or a child of a node
+with that name) is tinted with its unit's status colour (scene links in the
+link colour) and opens like a 2D hotspot; other meshes keep their own
+materials. A list of the scene's hotspots stays under the view for keyboard
+and screen reader users, and the poster shows while the model loads, if it
+fails to load, and on devices without WebGL.
+
 Size limits: each rotation frame (any file under `rotations/`) at most 2 MB,
 each model at most 30 MB. The site does not serve larger files and
 `npm run validate` reports them.

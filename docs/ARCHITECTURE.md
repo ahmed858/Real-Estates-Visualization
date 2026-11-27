@@ -35,7 +35,9 @@ documented in the collection guide.
 - **Composite** for the scene tree: every scene is an image with hotspots; a
   hotspot targets a child scene or a unit. Works for a single villa, a tower,
   a compound or a mix. A "typical floor" lets one plan serve a range of floors.
-- **Strategy** for scene rendering: `Image2DScene` now; `Rotation360Scene` and
-  `Model3DScene` later, without changing the tree or the data.
+- **Strategy** for scene rendering: `Image2DScene`, `Rotation360Scene` and
+  `Model3DScene`, picked by `scene.type`, without changing the tree or the
+  data. `Model3DScene` loads its three.js canvas with a dynamic import, so
+  only 3D scenes download the 3D code.
 - **Adapter** for unit sources: `XlsxFileSource` (demo) and
   `GoogleSheetSource` (clients) implement the same `UnitSource` interface.
